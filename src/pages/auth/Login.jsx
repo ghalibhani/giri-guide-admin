@@ -19,19 +19,10 @@ const Login = () => {
 
   useEffect(() => {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (emailRegex.test(email)) {
-      setIsEmailValid(true);
-    } else {
-      setIsEmailValid(false);
-    }
+    setIsEmailValid(email ? emailRegex.test(email) : true);
     const passwordRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    if (passwordRegex.test(password)) {
-      setIsPasswordValid(true);
-    } else {
-      setIsPasswordValid(false);
-    }
-    console.log(isEmailValid, isPasswordValid);
+    setIsPasswordValid(password ? passwordRegex.test(password) : true);
   }, [email, password]);
 
   const handleLogin = async () => {
@@ -51,7 +42,7 @@ const Login = () => {
       const token = await getData("token");
       if (token) {
         dispatch(keepLogin(token));
-        navigate("/home");
+        navigate("/dashboard");
       }
     };
     getKeepLogin();
@@ -62,17 +53,16 @@ const Login = () => {
       localStorage.setItem("isLoggedIn", "true");
       navigate("/home");
     }
-  }, [isLoggedIn]);
-
+  }, [isLoggedIn, navigate, token]);
   useEffect(() => {
-    if (status == "failed") {
+    if (status === "failed") {
       alert("Email atau Password anda salah");
     }
   }, [status]);
   return (
     <div className="flex flex-col justify-center items-center h-screen w-screen">
-      <div className="flex flex-col gap-4 justify-center items-center h-[300px] px-4 py-2 rounded-2xl bg-[#fefefe] w-96">
-        <h3>Login as a admin</h3>
+      <div className="flex flex-col gap-4 justify-center items-center h-[400px] px-4 py-2 rounded-2xl bg-[#fefefe] w-96">
+        <h3 className="text-3xl font-bold">Login as a admin</h3>
         <section className="w-full">
           <Input
             key="bordered"
@@ -103,7 +93,11 @@ const Login = () => {
           )}
         </section>
         <Button
-          className="bg-successful hover:bg-successfulHover px-5 py-2 rounded-md text-bgLight font-bold w-full"
+          className={` px-5 py-2 rounded-md text-bgLight font-bold w-full ${
+            !isEmailValid || !isPasswordValid
+              ? "bg-successfulSecondary text-neutral-900"
+              : "bg-successful hover:bg-successfulHover"
+          }`}
           onClick={handleLogin}>
           Login
         </Button>
