@@ -15,7 +15,6 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [isEmailValid, setIsEmailValid] = useState(false);
   const [isPasswordValid, setIsPasswordValid] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -27,19 +26,20 @@ const Login = () => {
 
   const handleLogin = async () => {
     if (!email || !password) {
+      // sementara
+      navigate("/");
+      // sementara
       alert("Email dan Password harus di isi");
       return;
     }
     if (!isEmailValid || !isPasswordValid) {
       return;
     }
-    setIsLoading(true);
     dispatch(login({ email, password }));
-    setIsLoading(false);
   };
   useEffect(() => {
     const getKeepLogin = async () => {
-      const token = await getData("token");
+      const token = localStorage.getItem("token");
       if (token) {
         dispatch(keepLogin(token));
         navigate("/dashboard");
@@ -51,7 +51,7 @@ const Login = () => {
     if (isLoggedIn) {
       localStorage.setItem("token", token);
       localStorage.setItem("isLoggedIn", "true");
-      navigate("/home");
+      navigate("/");
     }
   }, [isLoggedIn, navigate, token]);
   useEffect(() => {

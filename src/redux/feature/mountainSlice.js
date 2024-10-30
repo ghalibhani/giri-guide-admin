@@ -122,5 +122,5 @@ const mountainSlice = createSlice({
       });
   },
 });
-
+export { fetchMountain, updateMountain, createMountain, deleteMountain };
 export default mountainSlice.reducer;

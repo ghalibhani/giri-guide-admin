@@ -9,14 +9,27 @@ import { Provider } from "react-redux";
 import store from "./redux/store.js";
 import Mountain from "./pages/mountain/Mountain.jsx";
 import TourGuide from "./pages/tour-guide/TourGuide.jsx";
-import Dashboard from "./pages/Dashboard.jsx";
+import WithNavbar from "./components/Navbar.jsx";
 
 const router = createBrowserRouter([
   { path: "/", element: <App /> },
   { path: "/login", element: <Login /> },
-  { path: "/mountain", element: <Mountain /> },
-  { path: "/dashboard", element: <Dashboard /> },
-  { path: "/tour-guide", element: <TourGuide /> },
+  {
+    path: "/mountain",
+    element: (
+      <WithNavbar>
+        <Mountain />
+      </WithNavbar>
+    ),
+  },
+  {
+    path: "/tour-guide",
+    element: (
+      <WithNavbar>
+        <TourGuide />
+      </WithNavbar>
+    ),
+  },
   { path: "*", element: <div>Not Found</div> },
 ]);
 createRoot(document.getElementById("root")).render(

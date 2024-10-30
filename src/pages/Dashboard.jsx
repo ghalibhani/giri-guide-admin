@@ -13,11 +13,11 @@ const Dashboard = () => {
 
   const handleLogout = async () => {
     dispatch(logout());
-    navigate("/");
+    navigate("/login");
   };
   return (
     <section className="flex flex-col w-screen min-h-screen justify-center items-center">
-      <section className="flex gap-4 flex-col bg-mainSoil px-8 py-4 rounded-2xl">
+      <section className="flex gap-4 flex-col bg-mainSoil px-16 py-8 rounded-2xl">
         <section className="flex justify-between">
           <h1 className="text-3xl font-bold text-neutral-50">
             Dashboard for admin
@@ -71,20 +71,6 @@ const Dashboard = () => {
               </p>
             </CardFooter>
           </Card>
-          {/* <section
-            className="mountain bg-successful h-52"
-            onClick={() => {
-              navigate("/mountain");
-            }}>
-            Mountain
-          </section>
-          <section
-            className="tour-guide bg-successful h-52"
-            onClick={() => {
-              navigate("/tour-guide");
-            }}>
-            Tour Guide
-          </section> */}
         </section>
       </section>
     </section>

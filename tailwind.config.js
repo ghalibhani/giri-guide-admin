@@ -23,6 +23,10 @@ export default {
         errorSecondary: "#ffe2e5",
       },
     },
+    fontFamily: {
+      inter: ["Inter", "sans-serif"],
+      playWrite: "Playwrite GB S",
+    },
   },
   plugins: [],
   plugins: [nextui()],
