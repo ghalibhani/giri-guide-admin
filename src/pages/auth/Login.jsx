@@ -24,7 +24,9 @@ const Login = () => {
     } else {
       setIsEmailValid(false);
     }
-    if (password.length >= 6) {
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (passwordRegex.test(password)) {
       setIsPasswordValid(true);
     } else {
       setIsPasswordValid(false);
@@ -94,7 +96,10 @@ const Login = () => {
           {isPasswordValid ? (
             ""
           ) : (
-            <p className="text-error">Password Invalid</p>
+            <p className="text-error">
+              Password Invalid ( minimal 8 character , uppercase , lowercase ,
+              number , special character)
+            </p>
           )}
         </section>
         <Button
