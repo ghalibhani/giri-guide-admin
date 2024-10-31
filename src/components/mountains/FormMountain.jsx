@@ -58,11 +58,17 @@ const FormMountain = () => {
     setPointsOfInterest("");
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImage(file);
+    }
+  };
+
   return (
     <form className="flex flex-col gap-4 justify-center items-center">
       <h3 className="text-3xl text-successfulHover">Add New Mountain</h3>
       <Input
-        key="bordered"
         type="text"
         label="Name"
         color="successSecondary"
@@ -70,7 +76,6 @@ const FormMountain = () => {
         onChange={(e) => setName(e.target.value)}
       />
       <Input
-        key="bordered"
         type="text"
         label="Location"
         color="successSecondary"
@@ -78,7 +83,6 @@ const FormMountain = () => {
         onChange={(e) => setLocation(e.target.value)}
       />
       <Textarea
-        key="bordered"
         type="text"
         label="Description"
         color="successSecondary"
@@ -94,27 +98,16 @@ const FormMountain = () => {
         </p>
       )}
       <Input
-        key="bordered"
         type="file"
         label="Image"
         color="successSecondary"
         variant="bordered"
-        onChange={(e) => {
-          const selectedImage = e.target.files[0];
-          if (selectedImage && selectedImage.type === "image/jpeg") {
-            setImage(selectedImage);
-          } else if (selectedImage && selectedImage.type === "image/png") {
-            setImage(selectedImage);
-          } else {
-            setImage(null);
-          }
-        }}
+        onChange={handleImageChange}
       />
       {!isImageValid && (
         <p className="text-error">Image must be in JPEG or PNG format</p>
       )}
       <Textarea
-        key="bordered"
         type="text"
         label="Points of Interest"
         color="successSecondary"

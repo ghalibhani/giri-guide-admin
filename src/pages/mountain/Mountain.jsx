@@ -11,6 +11,7 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import { useState } from "react";
+import CustomButton from "../../components/CustomButton";
 
 const Mountain = () => {
   const mountains = useSelector((state) => state.mountain.mountains || []);
@@ -20,23 +21,24 @@ const Mountain = () => {
   return (
     <section className="w-96 font-inter">
       <h1>Mountain Management</h1>
-      <Button onPress={onOpen}>Add Mountain</Button>
+
+      <CustomButton onClick={onOpen}>Add Mountain</CustomButton>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
           {(closeModal) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                Modal Title
+                Add New Mountain
               </ModalHeader>
               <ModalBody>
                 <FormMountain onClose={closeModal} />
               </ModalBody>
               <ModalFooter>
-                <Button color="danger" variant="light" onPress={closeModal}>
+                <Button color="danger" variant="light" onPress={onClose}>
                   Close
                 </Button>
                 <Button color="primary" onPress={closeModal}>
-                  Action
+                  Add
                 </Button>
               </ModalFooter>
             </>
