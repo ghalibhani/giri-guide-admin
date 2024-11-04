@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import FormMountain from "../../components/mountains/FormMountain";
 import MountainList from "../../components/mountains/MountainList";
 import {
@@ -12,18 +12,25 @@ import {
 } from "@nextui-org/react";
 import { useState } from "react";
 import CustomButton from "../../components/CustomButton";
+import { useNavigate } from "react-router-dom";
 
 const Mountain = () => {
   const mountains = useSelector((state) => state.mountain.mountains || []);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [isOpenModal, setIsOpenModal] = useState(false);
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure(false);
+  console.log(mountains);
 
   return (
-    <section className="w-96 font-inter">
-      <h1>Mountain Management</h1>
+    <section className="font-inter h-full overflow-y-scroll">
+      <h1 className="mb-5 text-3xl">Mountain Management</h1>
 
       <CustomButton onClick={onOpen}>Add Mountain</CustomButton>
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        className="h-4/5 overflow-scroll">
         <ModalContent>
           {(closeModal) => (
             <>

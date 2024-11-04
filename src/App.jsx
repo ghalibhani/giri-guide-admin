@@ -1,11 +1,14 @@
-import { useState } from "react";
 import "./App.css";
-import Dashboard from "./pages/Dashboard";
-
+import Login from "./pages/auth/Login";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 function App() {
-  const [count, setCount] = useState(0);
-
-  return <Dashboard />;
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const navigate = useNavigate();
+  if (isLoggedIn) {
+    navigate("/mountain");
+  }
+  return <Login />;
 }
 
 export default App;

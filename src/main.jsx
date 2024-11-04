@@ -9,7 +9,8 @@ import { Provider } from "react-redux";
 import store from "./redux/store.js";
 import Mountain from "./pages/mountain/Mountain.jsx";
 import TourGuide from "./pages/tour-guide/TourGuide.jsx";
-import WithNavbar from "./components/Navbar.jsx";
+import SideBar from "./components/SideBar.jsx";
+import SecureLink from "./HOC/SecureLink.jsx";
 
 const router = createBrowserRouter([
   { path: "/", element: <App /> },
@@ -17,17 +18,21 @@ const router = createBrowserRouter([
   {
     path: "/mountain",
     element: (
-      <WithNavbar>
-        <Mountain />
-      </WithNavbar>
+      <SecureLink>
+        <SideBar>
+          <Mountain />
+        </SideBar>
+      </SecureLink>
     ),
   },
   {
     path: "/tour-guide",
     element: (
-      <WithNavbar>
-        <TourGuide />
-      </WithNavbar>
+      <SecureLink>
+        <SideBar active="tour-guide">
+          <TourGuide />
+        </SideBar>
+      </SecureLink>
     ),
   },
   { path: "*", element: <div>Not Found</div> },

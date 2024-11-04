@@ -1,13 +1,15 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "http://10.10.102.25:8082/api/v1",
+  baseURL: "http://10.10.102.67:8080/api/v1",
 });
 
 axiosInstance.interceptors.request.use(
   async (config) => {
     try {
       const token = localStorage.getItem("token");
+      console.log("Token when request", token);
+      console.log("usrl when request", config.baseURL + config.url);
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }

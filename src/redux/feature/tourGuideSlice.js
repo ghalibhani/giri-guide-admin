@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axiosInstance from "../../../api/axiosInstance";
+import axiosInstance from "../../api/axiosInstance";
 
 const fetchTourGuide = createAsyncThunk(
   "tourGuide/fetchTourGuide",
@@ -55,31 +55,44 @@ const tourGuideSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchTourGuide.pending, (state) => {
+        console.log("fetch tour guide is pending", "current state", state);
         state.status = "loading";
       })
       .addCase(fetchTourGuide.fulfilled, (state, action) => {
+        console.log("fetch tour guide is fulfilled", "current state", state);
+        console.log("action payload", action.payload);
         state.status = "succeeded";
         state.tourGuides = action.payload;
       })
       .addCase(fetchTourGuide.rejected, (state, action) => {
+        console.log("fetch tour guide is rejected", "current state", state);
+        console.log("action error", action.error);
         state.status = "failed";
         state.error = action.error.message;
       })
       .addCase(createTourGuide.pending, (state) => {
+        console.log("create tour guide is pending", "current state", state);
         state.status = "loading";
       })
       .addCase(createTourGuide.fulfilled, (state, action) => {
+        console.log("create tour guide is fulfilled", "current state", state);
+        console.log("action payload", action.payload);
         state.status = "succeeded";
         state.tourGuides.push(action.payload);
       })
       .addCase(createTourGuide.rejected, (state, action) => {
+        console.log("create tour guide is rejected", "current state", state);
+        console.log("action error", action.error);
         state.status = "failed";
         state.error = action.error.message;
       })
       .addCase(updateTourGuide.pending, (state) => {
+        console.log("update tour guide is pending", "current state", state);
         state.status = "loading";
       })
       .addCase(updateTourGuide.fulfilled, (state, action) => {
+        console.log("update tour guide is fulfilled", "current state", state);
+        console.log("action payload", action.payload);
         state.status = "succeeded";
         state.tourGuides = state.tourGuides.map((tourGuide) => {
           if (tourGuide._id === action.payload._id) {
@@ -89,19 +102,26 @@ const tourGuideSlice = createSlice({
         });
       })
       .addCase(updateTourGuide.rejected, (state, action) => {
+        console.log("update tour guide is rejected", "current state", state);
+        console.log("action error", action.error);
         state.status = "failed";
         state.error = action.error.message;
       })
       .addCase(deleteTourGuide.pending, (state) => {
+        console.log("delete tour guide is pending", "current state", state);
         state.status = "loading";
       })
       .addCase(deleteTourGuide.fulfilled, (state, action) => {
+        console.log("delete tour guide is fulfilled", "current state", state);
+        console.log("action payload", action.payload);
         state.status = "succeeded";
         state.tourGuides = state.tourGuides.filter(
           (tourGuide) => tourGuide._id !== action.payload._id
         );
       })
       .addCase(deleteTourGuide.rejected, (state, action) => {
+        console.log("delete tour guide is rejected", "current state", state);
+        console.log("action error", action.error);
         state.status = "failed";
         state.error = action.error.message;
       });

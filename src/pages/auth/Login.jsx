@@ -15,6 +15,9 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [isEmailValid, setIsEmailValid] = useState(false);
   const [isPasswordValid, setIsPasswordValid] = useState(false);
+  const role = useSelector((state) => state.auth.role);
+  const userId = useSelector((state) => state.auth.userId);
+  const emailUser = useSelector((state) => state.auth.email);
 
   useEffect(() => {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -26,9 +29,6 @@ const Login = () => {
 
   const handleLogin = async () => {
     if (!email || !password) {
-      // sementara
-      navigate("/");
-      // sementara
       alert("Email dan Password harus di isi");
       return;
     }
@@ -37,28 +37,54 @@ const Login = () => {
     }
     dispatch(login({ email, password }));
   };
+
   useEffect(() => {
     const getKeepLogin = async () => {
       const token = localStorage.getItem("token");
+      console.log(token);
       if (token) {
         dispatch(keepLogin(token));
-        navigate("/dashboard");
       }
     };
     getKeepLogin();
   }, []);
+
+  useEffect(() => {
+    console.log(userId, email, role, emailUser, status);
+  }, [userId, email, role, emailUser, status]);
   useEffect(() => {
     if (isLoggedIn) {
       localStorage.setItem("token", token);
       localStorage.setItem("isLoggedIn", "true");
-      navigate("/");
+      localStorage.setItem("userId", "admin");
+      localStorage.setItem("email", "admin");
+      localStorage.setItem("role", "admin");
+      console.log(
+        "token",
+        token,
+        "isLoggedIn",
+        isLoggedIn,
+        "userId",
+        userId,
+        "email",
+        emailUser,
+        "role",
+        role,
+        "emailUser",
+        emailUser,
+        "status",
+        status
+      );
+      navigate("/mountain");
     }
   }, [isLoggedIn, navigate, token]);
+
   useEffect(() => {
     if (status === "failed") {
       alert("Email atau Password anda salah");
     }
   }, [status]);
+
   return (
     <div className="flex flex-col justify-center items-center h-screen w-screen">
       <div className="flex flex-col gap-4 justify-center items-center h-[400px] px-4 py-2 rounded-2xl bg-[#fefefe] w-96">
