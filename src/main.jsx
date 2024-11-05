@@ -10,7 +10,7 @@ import store from "./redux/store.js";
 import Mountain from "./pages/mountain/Mountain";
 import TourGuide from "./pages/tour-guide/TourGuide.jsx";
 import SideBar from "./components/SideBar.jsx";
-// import SecureLink from "./HOC/SecureLink.jsx";
+import SecureLink from "./HOC/SecureLink.jsx";
 import HikingPoint from "./pages/hikingPoint/HikingPoint.jsx";
 
 const router = createBrowserRouter([
@@ -19,31 +19,31 @@ const router = createBrowserRouter([
   {
     path: "/mountain",
     element: (
-      // <SecureLink>
-      <SideBar>
-        <Mountain />
-      </SideBar>
-      // </SecureLink>
+      <SecureLink>
+        <SideBar active="/mountain">
+          <Mountain />
+        </SideBar>
+      </SecureLink>
     ),
   },
   {
     path: "/tour-guide",
     element: (
-      // <SecureLink>
-      <SideBar active="tour-guide">
-        <TourGuide />
-      </SideBar>
-      /* </SecureLink> */
+      <SecureLink>
+        <SideBar active="/tour-guide">
+          <TourGuide />
+        </SideBar>
+      </SecureLink>
     ),
   },
   {
     path: "/hiking-point",
     element: (
-      // <SecureLink>
-      <SideBar active="hiking-point">
-        <HikingPoint />
-      </SideBar>
-      /* </SecureLink> */
+      <SecureLink>
+        <SideBar active="/hiking-point">
+          <HikingPoint />
+        </SideBar>
+      </SecureLink>
     ),
   },
   { path: "*", element: <div>Not Found</div> },

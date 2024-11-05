@@ -1,18 +1,34 @@
 import { Input } from "@nextui-org/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CustomButton from "../CustomButton";
-import { createHikingPoint } from "../../redux/feature/hikingPointSlice";
+import {
+  clearSeletedHikingPoint,
+  createHikingPoint,
+  setIsUpdate,
+  updateHikingPoint,
+} from "../../redux/feature/hikingPointSlice";
 import { useDispatch, useSelector } from "react-redux";
 
-const FormHikingPoint = ({ isEdit = false, id = null }) => {
+const FormHikingPoint = () => {
   const [name, setName] = useState("");
   const [coordinate, setCoordinate] = useState("");
   const [price, setPrice] = useState("");
   const [error, setError] = useState(null);
+
   const dispatch = useDispatch();
-
   const { mountainId } = useSelector((state) => state.hikingPoint);
-
+  const { selectedHikingPoint, isUpdate } = useSelector(
+    (state) => state.hikingPoint
+  );
+  useEffect(() => {
+    if (isUpdate && selectedHikingPoint) {
+      setName(selectedHikingPoint?.name ?? "");
+      setCoordinate(selectedHikingPoint?.coordinate ?? "");
+      setPrice(selectedHikingPoint?.price ?? "");
+    } else {
+      clearForm();
+    }
+  }, [isUpdate, selectedHikingPoint]);
   const validateInput = () => {
     if (!name || !coordinate || !price) {
       setError("Isi semua data");
@@ -28,21 +44,30 @@ const FormHikingPoint = ({ isEdit = false, id = null }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateInput()) {
-      return;
-    }
     try {
-      console.log(id);
-      console.log(name, coordinate, price);
-      dispatch(
-        createHikingPoint({
-          data: { name, coordinate, price },
-          id: mountainId,
-        })
-      );
+      if (!validateInput()) {
+        return;
+      }
+      if (isUpdate && selectedHikingPoint) {
+        dispatch(
+          updateHikingPoint({
+            idHikingPoint: selectedHikingPoint.id,
+            data: { name, coordinate, price },
+          })
+        );
+        dispatch(setIsUpdate(false));
+        dispatch(clearSeletedHikingPoint());
+      } else if (mountainId) {
+        dispatch(
+          createHikingPoint({
+            data: { name, coordinate, price },
+            id: mountainId,
+          })
+        );
+      }
       clearForm();
     } catch (error) {
-      setError(error.message);
+      setError(error?.message ?? "Terjadi kesalahan");
     }
   };
 
@@ -57,24 +82,21 @@ const FormHikingPoint = ({ isEdit = false, id = null }) => {
       <Input
         placeholder="Name"
         value={name}
-        disabled={isEdit}
         onChange={(e) => setName(e.target.value)}
       />
       <Input
         placeholder="Coordinate"
         value={coordinate}
-        disabled={isEdit}
         onChange={(e) => setCoordinate(e.target.value)}
       />
       <Input
         placeholder="Price"
         value={price}
-        disabled={isEdit}
         onChange={(e) => setPrice(e.target.value)}
       />
       {error && <p className="text-red-500">{error}</p>}
       <CustomButton type="submit" customStyles>
-        {isEdit ? "Update" : "Add"} Hiking Point
+        {isUpdate && selectedHikingPoint ? "Update" : "Add"} Hiking Point
       </CustomButton>
     </form>
   );

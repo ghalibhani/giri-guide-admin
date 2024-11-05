@@ -27,7 +27,10 @@ const TourGuide = () => {
       <h1 className="mb-5 text-3xl">Tour Guide Management</h1>
 
       <CustomButton onClick={handleOpenModal}>Add Tour Guide</CustomButton>
-      <Modal isOpen={isOpenModal} onOpenChange={setIsOpenModal}>
+      <Modal
+        isOpen={isOpenModal}
+        onOpenChange={(open) => setIsOpenModal(open)} // pastikan modal terbuka/tutup sesuai state
+      >
         <ModalContent>
           {(closeModal) => (
             <>
@@ -41,10 +44,16 @@ const TourGuide = () => {
                 <Button
                   color="danger"
                   variant="light"
-                  onPress={handleCloseModal}>
+                  onPress={handleCloseModal} // pastikan modal tertutup dengan benar
+                >
                   Close
                 </Button>
-                <Button color="primary" onPress={closeModal}>
+                <Button
+                  color="primary"
+                  onPress={() => {
+                    // Proses penambahan data jika diperlukan, kemudian tutup modal
+                    closeModal();
+                  }}>
                   Add
                 </Button>
               </ModalFooter>

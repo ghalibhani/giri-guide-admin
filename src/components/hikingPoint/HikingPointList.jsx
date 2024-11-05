@@ -1,9 +1,10 @@
 import { Card, CardBody, CardFooter, CardHeader } from "@nextui-org/react";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  addSelectedHikingPoint,
   deleteHikingPoint,
   fetchHikingPoint,
-  updateHikingPoint,
+  setIsUpdate,
 } from "../../redux/feature/hikingPointSlice";
 import { useEffect } from "react";
 import CustomButton from "../CustomButton";
@@ -15,13 +16,8 @@ const HikingPointList = () => {
     status,
     isError,
     error,
+    mountainId,
   } = useSelector((state) => state.hikingPoint);
-
-  const mountainId = useSelector((state) => state.hikingPoint.mountainId);
-  console.log("mountainId", mountainId);
-  const handleUpdateHikingPoint = (idHikingPoint, data) => {
-    dispatch(updateHikingPoint({ idHikingPoint, data }));
-  };
 
   const handleDeleteHikingPoint = (idHikingPoint) => {
     const acceptdDelete = window.confirm(
@@ -42,7 +38,7 @@ const HikingPointList = () => {
   }
 
   if (isError) {
-    return <div>Error: {error?.message || "An error occurred"}</div>;
+    return <div>Error: {error?.message || "Error"}</div>;
   }
 
   return (
@@ -57,18 +53,21 @@ const HikingPointList = () => {
           <CardHeader>
             <p>{hikingPoint?.name || "Unnamed Hiking Point"}</p>
           </CardHeader>
-          <CardBody css={{ py: "$6" }}>
+
+          <CardBody>
             <p>
               Coordinate: {hikingPoint?.coordinate || "N/A"}
               <br />
               Price: {hikingPoint?.price || "N/A"}
             </p>
           </CardBody>
+
           <CardFooter className="flex items-center justify-between gap-4">
             <CustomButton
-              onPress={() =>
-                handleUpdateHikingPoint(hikingPointId, hikingPointUpdated)
-              }>
+              onPress={() => {
+                dispatch(addSelectedHikingPoint(hikingPoint));
+                dispatch(setIsUpdate(true));
+              }}>
               Edit
             </CustomButton>
             <CustomButton

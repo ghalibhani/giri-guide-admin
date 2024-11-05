@@ -1,9 +1,10 @@
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@nextui-org/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { logout } from "../redux/feature/authSlice";
-const SideBar = ({ children }) => {
+
+const SideBar = ({ children, active }) => {
   const links = [
     { name: "Dashboard", link: "/mountain" },
     { name: "Mountain", link: "/mountain" },
@@ -11,18 +12,15 @@ const SideBar = ({ children }) => {
   ];
 
   const navigate = useNavigate();
-  const [navbarActive, setNavbarActive] = useState("/mountain");
+  const [navbarActive, setNavbarActive] = useState(active || "/mountain");
   const [searchMountain, setSearchMountain] = useState("");
   const dispatch = useDispatch();
 
   const handleLogout = () => {
     try {
-      localStorage.removeItem("token");
-      localStorage.removeItem("isLoggedIn");
-      localStorage.removeItem("userId");
-      localStorage.removeItem("role");
-      localStorage.removeItem("email");
+      localStorage.clear();
       dispatch(logout());
+      navigate("/login"); // Redirect to login after logout
     } catch (error) {
       console.error("Error during logout:", error);
     }
@@ -37,6 +35,12 @@ const SideBar = ({ children }) => {
     navigate(`/mountain?name=${searchMountain}`);
   };
 
+  useEffect(() => {
+    if (active) {
+      setNavbarActive(active);
+    }
+  }, [active]);
+
   return (
     <div className="flex h-screen">
       <nav className="w-64 bg-gray-100 h-screen flex flex-col shadow-lg">
@@ -48,14 +52,12 @@ const SideBar = ({ children }) => {
             <li
               key={link.name}
               className={`p-4 hover:bg-mainGreen hover:text-white transition-colors ${
-                navbarActive == link.name.toLowerCase()
-                  ? "bg-mainGreen text-white"
-                  : ""
+                navbarActive === link.link ? "bg-mainGreen text-white" : ""
               }`}
-              onClick={() => setNavbarActive(link.name.toLowerCase())}>
-              <a href={link.link} className="block">
+              onClick={() => setNavbarActive(link.link)}>
+              <Link to={link.link} className="block">
                 {link.name}
-              </a>
+              </Link>
             </li>
           ))}
           <li className="p-4 hover:bg-red-600 hover:text-white transition-colors">

@@ -14,6 +14,19 @@ const fetchHikingPoint = createAsyncThunk(
     }
   }
 );
+const fetchHikingPointById = createAsyncThunk(
+  "hikingPoint/fetchHikingPointById",
+  async (idHikingPoint, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get(
+        `/hiking-points/${idHikingPoint}`
+      );
+      return response.data;
+    } catch (e) {
+      return rejectWithValue(e.response ? e.response.data : e.message);
+    }
+  }
+);
 
 const createHikingPoint = createAsyncThunk(
   "hikingPoint/createHikingPoint",
@@ -35,7 +48,7 @@ const updateHikingPoint = createAsyncThunk(
   async ({ idHikingPoint, data }, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.put(
-        `/hiking-points/${idHikingPoint}`,
+        `mountains/hiking-points/${idHikingPoint}`,
         data
       );
       return response.data;
@@ -62,6 +75,7 @@ const hikingPointSlice = createSlice({
   initialState: {
     hikingPoints: [],
     selectedHikingPoint: null,
+    isUpdate: false,
     mountainId: null,
     paging: null,
     status: null,
@@ -70,6 +84,18 @@ const hikingPointSlice = createSlice({
   reducers: {
     addMountainId: (state, action) => {
       state.mountainId = action.payload;
+    },
+    addSelectedHikingPoint: (state, action) => {
+      state.selectedHikingPoint = action.payload;
+    },
+    setIsUpdate: (state, action) => {
+      state.isUpdate = action.payload;
+    },
+    clearSeletedHikingPoint: (state) => {
+      state.selectedHikingPoint = null;
+    },
+    clearMountainId: (state) => {
+      state.mountainId = null;
     },
   },
   extraReducers: (builder) => {
@@ -84,6 +110,17 @@ const hikingPointSlice = createSlice({
         state.status = "success";
       })
       .addCase(fetchHikingPoint.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload || action.error.message;
+      })
+      .addCase(fetchHikingPointById.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchHikingPointById.fulfilled, (state, action) => {
+        state.selectedHikingPoint = action.payload;
+        state.status = "success";
+      })
+      .addCase(fetchHikingPointById.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload || action.error.message;
       })
@@ -133,10 +170,17 @@ const hikingPointSlice = createSlice({
 });
 
 export default hikingPointSlice.reducer;
-export const { addMountainId } = hikingPointSlice.actions;
+export const {
+  addMountainId,
+  addSelectedHikingPoint,
+  clearSeletedHikingPoint,
+  clearMountainId,
+  setIsUpdate,
+} = hikingPointSlice.actions;
 export {
   fetchHikingPoint,
   createHikingPoint,
   updateHikingPoint,
   deleteHikingPoint,
+  fetchHikingPointById,
 };

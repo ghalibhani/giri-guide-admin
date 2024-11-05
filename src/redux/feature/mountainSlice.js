@@ -67,11 +67,16 @@ const mountainSlice = createSlice({
   initialState: {
     mountains: [],
     selectedMountain: null,
+    isMountainUpdating: false,
     paging: null,
     status: null,
     error: null,
   },
-  reducers: {},
+  reducers: {
+    setIsMountainUpdating: (state, action) => {
+      return (state = { ...state, isMountainUpdating: action.payload });
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchMountain.pending, (state) => {
@@ -194,4 +199,5 @@ export {
   deleteMountain,
   fetchMountainById,
 };
+export const { setIsUpdate } = mountainSlice.actions;
 export default mountainSlice.reducer;

@@ -22,7 +22,9 @@ import { useEffect, useState } from "react";
 import FormMountain from "./FormMountain";
 import {
   addMountainId,
+  clearSeletedHikingPoint,
   fetchHikingPoint,
+  setIsUpdate,
 } from "../../redux/feature/hikingPointSlice";
 import { useNavigate } from "react-router-dom";
 import FormHikingPoint from "../hikingPoint/FormHikingPoint";
@@ -50,7 +52,7 @@ const MountainList = () => {
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure(false);
   const mountainId = useSelector((state) => state.mountain.mountainId);
   const [isMountainUpdate, setIsMountainUpdate] = useState(false);
-  const [isHikingPointUpdate, setIsHikingPointUpdate] = useState(false);
+  const isHikingPointUpdating = useSelector((state) => state.hikingPoint.isUpdate);
 
   const handleDelete = (id) => {
     if (!id) {
@@ -126,14 +128,18 @@ const MountainList = () => {
               <ModalBody>
                 <section className="flex gap-5 w-full px-5 py-2">
                   <FormMountain
-                    onClose={closeModal}
+                    onClose={() => {
+                      closeModal();
+                      setIsMountainUpdate(false);
+                      dispatch(clearSeletedHikingPoint());
+                    }}
                     isEdit={true}
                     id={idForEditingMountain}
                     disabled={isMountainUpdate}
                     onUpdate={handleUpdate}
                   />
                   <section className="w-full">
-                    <FormHikingPoint onClose={closeModal} />
+                    <FormHikingPoint onClose={closeModal}/>
                     <HikingPointList id={selectedMountain?.id} />
                   </section>
                 </section>
