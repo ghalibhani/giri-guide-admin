@@ -3,10 +3,10 @@ import axiosInstance from "../../api/axiosInstance";
 
 const fetchMountain = createAsyncThunk(
   "mountain/fetchMountain",
-  async (data) => {
+  async ({ page, limit }) => {
     try {
       const response = await axiosInstance.get(
-        `/mountains?page=${data.page}&limit=${data.limit}`
+        `/mountains?page=${page}&size=${limit}`
       );
       return response.data;
     } catch (e) {
@@ -38,13 +38,25 @@ const updateMountain = createAsyncThunk(
     }
   }
 );
+const updateImageMountain = createAsyncThunk(
+  "mountain/updateImageMountain",
+  async ({ id, data }) => {
+    try {
+      await axiosInstance.patch(`/image/${id}`, data);
+      const res = await axiosInstance.get(`/mountains?page=1&limit=20`);
+      return res.data;
+    } catch (e) {
+      return e.response.data;
+    }
+  }
+);
 
 const createMountain = createAsyncThunk(
   "mountain/createMountain",
   async (data) => {
     try {
       await axiosInstance.post(`/mountains`, data);
-      const response = await axiosInstance.get(`/mountains?page=1&limit=20`);
+      const response = await axiosInstance.get(`/mountains?page=1&size=20`);
       return response.data;
     } catch (e) {
       return e.response.data;
@@ -75,6 +87,9 @@ const mountainSlice = createSlice({
   reducers: {
     setIsMountainUpdating: (state, action) => {
       return (state = { ...state, isMountainUpdating: action.payload });
+    },
+    setSelectedMountain: (state, action) => {
+      return (state = { ...state, selectedMountain: action.payload });
     },
   },
   extraReducers: (builder) => {
@@ -146,6 +161,36 @@ const mountainSlice = createSlice({
           error: action.error.message,
         });
       })
+      .addCase(updateImageMountain.pending, (state) => {
+        console.log("update image mountain is pending", "current state", state);
+        return (state = { ...state, status: "loading" });
+      })
+      .addCase(updateImageMountain.fulfilled, (state, action) => {
+        console.log(
+          "update image mountain is fulfilled",
+          "current state",
+          state
+        );
+        console.log("payload", action.payload);
+        return {
+          ...state,
+          mountains: action.payload.data,
+          status: "success",
+        };
+      })
+      .addCase(updateImageMountain.rejected, (state, action) => {
+        console.log(
+          "update image mountain is rejected",
+          "current state",
+          state
+        );
+        console.log("error", action.error);
+        return {
+          ...state,
+          status: "failed",
+          error: action.error.message,
+        };
+      })
       .addCase(createMountain.pending, (state) => {
         console.log("create mountain is pending", "current state", state);
         return (state = { ...state, status: "loading" });
@@ -198,6 +243,8 @@ export {
   createMountain,
   deleteMountain,
   fetchMountainById,
+  updateImageMountain,
 };
-export const { setIsUpdate } = mountainSlice.actions;
+export const { setIsMountainUpdating, setSelectedMountain } =
+  mountainSlice.actions;
 export default mountainSlice.reducer;

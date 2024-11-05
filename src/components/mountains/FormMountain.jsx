@@ -4,12 +4,14 @@ import CustomButton from "../CustomButton";
 import {
   createMountain,
   fetchMountain,
-  fetchMountainById,
+  setIsMountainUpdating,
+  setSelectedMountain,
+  updateImageMountain,
   updateMountain,
 } from "../../redux/feature/mountainSlice";
 import { useDispatch, useSelector } from "react-redux";
 
-const FormMountain = ({ isEdit = false, id, onClose, disabled, onUpdate }) => {
+const FormMountain = ({ onClose, formInput = false }) => {
   const dispatch = useDispatch();
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
@@ -23,26 +25,13 @@ const FormMountain = ({ isEdit = false, id, onClose, disabled, onUpdate }) => {
   const [bestTime, setBestTime] = useState();
   const [isImageValid, setIsImageValid] = useState(true);
   const [isDescriptionValid, setIsDescriptionValid] = useState(true);
-
-  const selectedMountain = useSelector(
-    (state) => state.mountain.selectedMountain
+  const { selectedMountain, isMountainUpdating } = useSelector(
+    (state) => state.mountain
   );
 
   useEffect(() => {
-    if (isEdit && id) {
-      const fetchMountain = async () => {
-        try {
-          dispatch(fetchMountainById(id));
-        } catch (e) {
-          console.error("Failed to fetch mountain data:", e);
-        }
-      };
-      fetchMountain();
-    }
-  }, [isEdit, id, dispatch]);
-
-  useEffect(() => {
-    if (isEdit && selectedMountain) {
+    if (selectedMountain) {
+      console.log("apakah ini running");
       setName(selectedMountain.name || "");
       setLocation(selectedMountain.city || "");
       setDescription(selectedMountain.description || "");
@@ -53,9 +42,9 @@ const FormMountain = ({ isEdit = false, id, onClose, disabled, onUpdate }) => {
       setImage(selectedMountain.image || null);
       setTips(selectedMountain.tips || "");
       setBestTime(selectedMountain.bestTime || "");
+      fetchMountain();
     }
-  }, [selectedMountain, isEdit]);
-
+  }, [selectedMountain]);
   useEffect(() => {
     setIsDescriptionValid(description != null && description.length <= 900);
   }, [description]);
@@ -70,10 +59,17 @@ const FormMountain = ({ isEdit = false, id, onClose, disabled, onUpdate }) => {
     const formData = new FormData();
     const editedMountain = {};
 
-    if (isEdit && disabled) {
+    if (isMountainUpdating) {
       if (!selectedMountain) {
         console.error("No selected mountain provided");
         return;
+      }
+      if (image) {
+        const formData = new FormData();
+        formData.append("image", image);
+        dispatch(
+          updateImageMountain({ id: selectedMountain.id, data: formData })
+        );
       }
 
       if (selectedMountain.status !== status) {
@@ -111,8 +107,10 @@ const FormMountain = ({ isEdit = false, id, onClose, disabled, onUpdate }) => {
         })
       );
       resetForm();
-      onUpdate(false);
-      await dispatch(fetchMountain());
+      dispatch(setIsMountainUpdating(false));
+      dispatch(setSelectedMountain(null));
+      await dispatch(fetchMountain({ page: 1, limit: 20 }));
+      onClose();
       return;
     }
 
@@ -126,7 +124,7 @@ const FormMountain = ({ isEdit = false, id, onClose, disabled, onUpdate }) => {
       !tips ||
       !bestTime
     ) {
-      console.error("Form validation failed.");
+      alert("Form validation failed.");
       return;
     }
 
@@ -182,13 +180,13 @@ const FormMountain = ({ isEdit = false, id, onClose, disabled, onUpdate }) => {
         handleAddMountain();
       }}>
       <h3 className="text-3xl text-successfulHover">
-        {isEdit ? "Edit" : "Add New"} Mountain
+        {isMountainUpdating ? "Edit" : "Add New"} Mountain
       </h3>
       <Input
         type="text"
         label="Name"
         color="successSecondary"
-        isDisabled={disabled == false}
+        isDisabled={isMountainUpdating == false && formInput == false}
         variant="bordered"
         onChange={(e) => setName(e.target.value)}
         value={name}
@@ -197,7 +195,7 @@ const FormMountain = ({ isEdit = false, id, onClose, disabled, onUpdate }) => {
         type="text"
         label="Location"
         color="successSecondary"
-        isDisabled={disabled == false}
+        isDisabled={isMountainUpdating == false && formInput == false}
         variant="bordered"
         onChange={(e) => setLocation(e.target.value)}
         value={location}
@@ -206,7 +204,7 @@ const FormMountain = ({ isEdit = false, id, onClose, disabled, onUpdate }) => {
         type="text"
         label="Description"
         color="successSecondary"
-        isDisabled={disabled == false}
+        isDisabled={isMountainUpdating == false && formInput == false}
         variant="bordered"
         onChange={(e) => {
           setDescription(e.target.value);
@@ -223,7 +221,7 @@ const FormMountain = ({ isEdit = false, id, onClose, disabled, onUpdate }) => {
         type="file"
         label="Image"
         color="successSecondary"
-        isDisabled={disabled == false}
+        isDisabled={isMountainUpdating == false && formInput == false}
         variant="bordered"
         onChange={handleImageChange}
         accept="image/jpeg,image/png"
@@ -236,7 +234,7 @@ const FormMountain = ({ isEdit = false, id, onClose, disabled, onUpdate }) => {
         <Select
           label="Status"
           className="w-full"
-          isDisabled={disabled == false}
+          isDisabled={isMountainUpdating == false && formInput == false}
           onChange={(e) => setStatus(e.target.value)}
           value={status}>
           <SelectItem key="normal" value="NORMAL">
@@ -256,7 +254,7 @@ const FormMountain = ({ isEdit = false, id, onClose, disabled, onUpdate }) => {
           type="text"
           label="Message"
           color="successSecondary"
-          isDisabled={disabled == false}
+          isDisabled={isMountainUpdating == false && formInput == false}
           variant="bordered"
           onChange={(e) => setMessage(e.target.value)}
           value={message}
@@ -266,7 +264,7 @@ const FormMountain = ({ isEdit = false, id, onClose, disabled, onUpdate }) => {
         <Select
           label="Use Simaksi"
           className="w-full"
-          isDisabled={disabled == false}
+          isDisabled={isMountainUpdating == false && formInput == false}
           onChange={(e) => setUseSimaksi(e.target.value === "yes")}
           value={useSimaksi}>
           <SelectItem key={"yes"} value={true}>
@@ -281,7 +279,7 @@ const FormMountain = ({ isEdit = false, id, onClose, disabled, onUpdate }) => {
             type="number"
             label="Simaksi Price"
             color="successSecondary"
-            isDisabled={disabled == false}
+            isDisabled={isMountainUpdating == false && formInput == false}
             variant="bordered"
             onChange={(e) => setSimaksiPrice(e.target.value)}
             value={simaksiPrice}
@@ -292,7 +290,7 @@ const FormMountain = ({ isEdit = false, id, onClose, disabled, onUpdate }) => {
         type="text"
         label="Tips"
         color="successSecondary"
-        isDisabled={disabled == false}
+        isDisabled={isMountainUpdating == false && formInput == false}
         variant="bordered"
         onChange={(e) => setTips(e.target.value)}
         value={tips}
@@ -301,21 +299,42 @@ const FormMountain = ({ isEdit = false, id, onClose, disabled, onUpdate }) => {
         type="text"
         label="Best Time"
         color="successSecondary"
-        isDisabled={disabled == false}
+        isDisabled={isMountainUpdating == false && formInput == false}
         variant="bordered"
         onChange={(e) => setBestTime(e.target.value)}
         value={bestTime}
       />
-      <CustomButton
-        type="submit"
-        onPress={() => onUpdate(true)}
-        customStyles={
-          isDescriptionValid && (isImageValid || isEdit)
-            ? "w-full"
-            : "bg-successfulSecondary text-zinc-900"
-        }>
-        {isEdit ? (!disabled ? "Update" : "Submit") : "Add"} Mountain
-      </CustomButton>
+      {!isMountainUpdating && selectedMountain && (
+        <CustomButton
+          type="button"
+          onPress={() => dispatch(setIsMountainUpdating(true))}>
+          Update Mountain
+        </CustomButton>
+      )}
+      {isMountainUpdating && (
+        <section className="flex w-full gap-4">
+          <CustomButton
+            type="submit"
+            customStyles={
+              isDescriptionValid && (isImageValid || isMountainUpdating)
+                ? "w-full"
+                : "bg-successfulSecondary text-zinc-900"
+            }>
+            Submit Updating Mountain
+          </CustomButton>
+        </section>
+      )}
+      {formInput && (
+        <CustomButton
+          type="submit"
+          customStyles={
+            isDescriptionValid && (isImageValid || isMountainUpdating)
+              ? "w-full"
+              : "bg-successfulSecondary text-zinc-900"
+          }>
+          Add Mountain
+        </CustomButton>
+      )}
     </form>
   );
 };

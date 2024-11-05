@@ -3,6 +3,8 @@ import {
   deleteMountain,
   fetchMountain,
   fetchMountainById,
+  setIsMountainUpdating,
+  setSelectedMountain,
 } from "../../redux/feature/mountainSlice";
 import {
   Button,
@@ -23,36 +25,20 @@ import FormMountain from "./FormMountain";
 import {
   addMountainId,
   clearSeletedHikingPoint,
-  fetchHikingPoint,
-  setIsUpdate,
 } from "../../redux/feature/hikingPointSlice";
-import { useNavigate } from "react-router-dom";
 import FormHikingPoint from "../hikingPoint/FormHikingPoint";
 import HikingPointList from "../hikingPoint/HikingPointList";
 const MountainList = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
-  const [mountainsPerPage] = useState(5);
-  const [idForEditingMountain, setIdForEditingMountain] = useState(null);
+  const [mountainsPerPage] = useState(20);
   const selectedMountain = useSelector(
     (state) => state.mountain.selectedMountain
   );
   const mountains = useSelector((state) => state.mountain.mountains || []);
   const status = useSelector((state) => state.mountain.status);
-  const paging = useSelector(
-    (state) =>
-      state.mountain.paging || {
-        page: 1,
-        size: 0,
-        totalPages: 0,
-        totalElements: 0,
-      }
-  );
+  const paging = useSelector((state) => state.mountain.paging);
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure(false);
-  const mountainId = useSelector((state) => state.mountain.mountainId);
-  const [isMountainUpdate, setIsMountainUpdate] = useState(false);
-  const isHikingPointUpdating = useSelector((state) => state.hikingPoint.isUpdate);
 
   const handleDelete = (id) => {
     if (!id) {
@@ -75,28 +61,15 @@ const MountainList = () => {
     }
   };
 
-  useEffect(() => {
-    console.log(selectedMountain);
-  }, [selectedMountain, dispatch]);
-
-  const handleUpdate = () => {
-    try {
-      setIsMountainUpdate(true);
-      onOpen();
-    } catch (error) {
-      alert(error?.message);
-    }
-  };
-
-  const handleDetails = (id) => {
-    if (!id) {
+  const handleDetails = (mountain) => {
+    if (!mountain.id) {
       alert("Id is required for update");
       return;
     }
     try {
-      setIdForEditingMountain(id);
-      dispatch(addMountainId(id));
-      dispatch(fetchMountainById(mountainId));
+      dispatch(fetchMountainById(mountain.id));
+      dispatch(addMountainId(mountain.id));
+      setIsMountainUpdating(true);
       onOpen();
     } catch (error) {
       alert(error?.message);
@@ -130,16 +103,10 @@ const MountainList = () => {
                   <FormMountain
                     onClose={() => {
                       closeModal();
-                      setIsMountainUpdate(false);
-                      dispatch(clearSeletedHikingPoint());
                     }}
-                    isEdit={true}
-                    id={idForEditingMountain}
-                    disabled={isMountainUpdate}
-                    onUpdate={handleUpdate}
                   />
                   <section className="w-full">
-                    <FormHikingPoint onClose={closeModal}/>
+                    <FormHikingPoint onClose={closeModal} />
                     <HikingPointList id={selectedMountain?.id} />
                   </section>
                 </section>
@@ -148,18 +115,12 @@ const MountainList = () => {
                 <Button
                   color="danger"
                   variant="light"
-                  onPress={async () => {
-                    try {
-                      await dispatch(addMountainId(selectedMountain?.id));
-                      await dispatch(fetchHikingPoint(selectedMountain?.id));
-                      navigate("/hiking-point");
-                    } catch (error) {
-                      alert(error?.message);
-                    }
+                  onPress={() => {
+                    onClose();
+                    dispatch(clearSeletedHikingPoint());
+                    dispatch(setIsMountainUpdating(false));
+                    dispatch(setSelectedMountain(null));
                   }}>
-                  Manage Hiking Point
-                </Button>
-                <Button color="danger" variant="light" onPress={onClose}>
                   Close
                 </Button>
               </ModalFooter>
@@ -182,11 +143,7 @@ const MountainList = () => {
                   key={mountain?.id}
                   className="flex gap-4 justify-between mb-5">
                   <section className="flex flex-1 justify-between">
-                    <Card
-                      shadow="sm"
-                      key={mountain?.id}
-                      isPressable
-                      onPress={() => console.log("item pressed")}>
+                    <Card shadow="sm" key={mountain?.id} isPressable>
                       <CardBody className="overflow-visible p-0">
                         <Image
                           shadow="sm"
@@ -208,7 +165,7 @@ const MountainList = () => {
                           <Button
                             className="text-neutral-50 bg-successful hover:bg-successfulHover font-bold"
                             onClick={() => {
-                              handleDetails(mountain?.id);
+                              handleDetails(mountain);
                             }}>
                             Details
                           </Button>

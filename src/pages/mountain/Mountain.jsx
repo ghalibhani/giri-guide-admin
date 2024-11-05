@@ -30,7 +30,7 @@ const Mountain = () => {
                 Add New Mountain
               </ModalHeader>
               <ModalBody>
-                <FormMountain onClose={closeModal} />
+                <FormMountain onClose={closeModal} formInput={true} />
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="light" onPress={onClose}>
