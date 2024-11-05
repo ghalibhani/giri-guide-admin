@@ -1,10 +1,4 @@
-import {
-  Button,
-  Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
-} from "@nextui-org/react";
+import { Card, CardBody, CardFooter, CardHeader } from "@nextui-org/react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   deleteHikingPoint,
@@ -12,6 +6,7 @@ import {
   updateHikingPoint,
 } from "../../redux/feature/hikingPointSlice";
 import { useEffect } from "react";
+import CustomButton from "../CustomButton";
 
 const HikingPointList = () => {
   const dispatch = useDispatch();
@@ -21,9 +16,7 @@ const HikingPointList = () => {
     isError,
     error,
   } = useSelector((state) => state.hikingPoint);
-  // const { mountainId } = useSelector((state) => {
-  //   state.hikingPoint;
-  // });
+
   const mountainId = useSelector((state) => state.hikingPoint.mountainId);
   console.log("mountainId", mountainId);
   const handleUpdateHikingPoint = (idHikingPoint, data) => {
@@ -53,13 +46,13 @@ const HikingPointList = () => {
   }
 
   return (
-    <section className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <section className="flex flex-wrap gap-5 mt-5">
       {hikingPoints.map((hikingPoint) => (
         <Card
           key={hikingPoint?.id}
           variant="light"
-          css={{ h: "100%" }}
           isPressable
+          className="w-full"
           onPress={() => console.log("item pressed")}>
           <CardHeader>
             <p>{hikingPoint?.name || "Unnamed Hiking Point"}</p>
@@ -71,25 +64,18 @@ const HikingPointList = () => {
               Price: {hikingPoint?.price || "N/A"}
             </p>
           </CardBody>
-          <CardFooter className="flex items-center justify-between">
-            <Button
-              auto
-              rounded
-              color="primary"
-              size="sm"
+          <CardFooter className="flex items-center justify-between gap-4">
+            <CustomButton
               onPress={() =>
                 handleUpdateHikingPoint(hikingPointId, hikingPointUpdated)
               }>
               Edit
-            </Button>
-            <Button
-              auto
-              rounded
-              color="error"
-              size="sm"
+            </CustomButton>
+            <CustomButton
+              customStyles={"bg-error"}
               onPress={() => handleDeleteHikingPoint(hikingPoint?.id)}>
               Delete
-            </Button>
+            </CustomButton>
           </CardFooter>
         </Card>
       ))}

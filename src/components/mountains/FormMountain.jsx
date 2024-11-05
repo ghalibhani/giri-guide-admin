@@ -9,7 +9,7 @@ import {
 } from "../../redux/feature/mountainSlice";
 import { useDispatch, useSelector } from "react-redux";
 
-const FormMountain = ({ isEdit = false, id, onClose }) => {
+const FormMountain = ({ isEdit = false, id, onClose, disabled, onUpdate }) => {
   const dispatch = useDispatch();
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
@@ -70,7 +70,7 @@ const FormMountain = ({ isEdit = false, id, onClose }) => {
     const formData = new FormData();
     const editedMountain = {};
 
-    if (isEdit) {
+    if (isEdit && disabled) {
       if (!selectedMountain) {
         console.error("No selected mountain provided");
         return;
@@ -111,7 +111,7 @@ const FormMountain = ({ isEdit = false, id, onClose }) => {
         })
       );
       resetForm();
-      onClose();
+      onUpdate(false);
       await dispatch(fetchMountain());
       return;
     }
@@ -188,6 +188,7 @@ const FormMountain = ({ isEdit = false, id, onClose }) => {
         type="text"
         label="Name"
         color="successSecondary"
+        isDisabled={disabled == false}
         variant="bordered"
         onChange={(e) => setName(e.target.value)}
         value={name}
@@ -196,6 +197,7 @@ const FormMountain = ({ isEdit = false, id, onClose }) => {
         type="text"
         label="Location"
         color="successSecondary"
+        isDisabled={disabled == false}
         variant="bordered"
         onChange={(e) => setLocation(e.target.value)}
         value={location}
@@ -204,6 +206,7 @@ const FormMountain = ({ isEdit = false, id, onClose }) => {
         type="text"
         label="Description"
         color="successSecondary"
+        isDisabled={disabled == false}
         variant="bordered"
         onChange={(e) => {
           setDescription(e.target.value);
@@ -220,6 +223,7 @@ const FormMountain = ({ isEdit = false, id, onClose }) => {
         type="file"
         label="Image"
         color="successSecondary"
+        isDisabled={disabled == false}
         variant="bordered"
         onChange={handleImageChange}
         accept="image/jpeg,image/png"
@@ -232,6 +236,7 @@ const FormMountain = ({ isEdit = false, id, onClose }) => {
         <Select
           label="Status"
           className="w-full"
+          isDisabled={disabled == false}
           onChange={(e) => setStatus(e.target.value)}
           value={status}>
           <SelectItem key="normal" value="NORMAL">
@@ -251,6 +256,7 @@ const FormMountain = ({ isEdit = false, id, onClose }) => {
           type="text"
           label="Message"
           color="successSecondary"
+          isDisabled={disabled == false}
           variant="bordered"
           onChange={(e) => setMessage(e.target.value)}
           value={message}
@@ -260,6 +266,7 @@ const FormMountain = ({ isEdit = false, id, onClose }) => {
         <Select
           label="Use Simaksi"
           className="w-full"
+          isDisabled={disabled == false}
           onChange={(e) => setUseSimaksi(e.target.value === "yes")}
           value={useSimaksi}>
           <SelectItem key={"yes"} value={true}>
@@ -274,6 +281,7 @@ const FormMountain = ({ isEdit = false, id, onClose }) => {
             type="number"
             label="Simaksi Price"
             color="successSecondary"
+            isDisabled={disabled == false}
             variant="bordered"
             onChange={(e) => setSimaksiPrice(e.target.value)}
             value={simaksiPrice}
@@ -284,6 +292,7 @@ const FormMountain = ({ isEdit = false, id, onClose }) => {
         type="text"
         label="Tips"
         color="successSecondary"
+        isDisabled={disabled == false}
         variant="bordered"
         onChange={(e) => setTips(e.target.value)}
         value={tips}
@@ -292,18 +301,20 @@ const FormMountain = ({ isEdit = false, id, onClose }) => {
         type="text"
         label="Best Time"
         color="successSecondary"
+        isDisabled={disabled == false}
         variant="bordered"
         onChange={(e) => setBestTime(e.target.value)}
         value={bestTime}
       />
       <CustomButton
         type="submit"
+        onPress={() => onUpdate(true)}
         customStyles={
           isDescriptionValid && (isImageValid || isEdit)
-            ? ""
+            ? "w-full"
             : "bg-successfulSecondary text-zinc-900"
         }>
-        {isEdit ? "Update" : "Add"} Mountain
+        {isEdit ? (!disabled ? "Update" : "Submit") : "Add"} Mountain
       </CustomButton>
     </form>
   );

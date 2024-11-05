@@ -2,6 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   deleteMountain,
   fetchMountain,
+  fetchMountainById,
 } from "../../redux/feature/mountainSlice";
 import {
   Button,
@@ -24,6 +25,8 @@ import {
   fetchHikingPoint,
 } from "../../redux/feature/hikingPointSlice";
 import { useNavigate } from "react-router-dom";
+import FormHikingPoint from "../hikingPoint/FormHikingPoint";
+import HikingPointList from "../hikingPoint/HikingPointList";
 const MountainList = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -35,7 +38,6 @@ const MountainList = () => {
   );
   const mountains = useSelector((state) => state.mountain.mountains || []);
   const status = useSelector((state) => state.mountain.status);
-  // const mountainId = useSelector((state) => state.hikingPoint.mountainId);
   const paging = useSelector(
     (state) =>
       state.mountain.paging || {
@@ -46,30 +48,53 @@ const MountainList = () => {
       }
   );
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure(false);
+  const mountainId = useSelector((state) => state.mountain.mountainId);
+  const [isMountainUpdate, setIsMountainUpdate] = useState(false);
+  const [isHikingPointUpdate, setIsHikingPointUpdate] = useState(false);
 
   const handleDelete = (id) => {
+    if (!id) {
+      alert("Id is required for delete");
+      return;
+    }
+
     const isReadyForDelete = confirm(
-      "Yakin ingin mengedit gunung dengan id ini ?"
+      `Yakin ingin menghapus gunung dengan id ${id}?`
     );
     if (!isReadyForDelete) {
       return;
     }
 
-    dispatch(deleteMountain(id));
-    dispatch(fetchMountain({ page: currentPage, limit: mountainsPerPage }));
+    try {
+      dispatch(deleteMountain(id));
+      dispatch(fetchMountain({ page: currentPage, limit: mountainsPerPage }));
+    } catch (error) {
+      alert(error?.message);
+    }
   };
 
   useEffect(() => {
     console.log(selectedMountain);
   }, [selectedMountain, dispatch]);
 
-  const handleUpdate = (id) => {
+  const handleUpdate = () => {
+    try {
+      setIsMountainUpdate(true);
+      onOpen();
+    } catch (error) {
+      alert(error?.message);
+    }
+  };
+
+  const handleDetails = (id) => {
     if (!id) {
       alert("Id is required for update");
       return;
     }
     try {
       setIdForEditingMountain(id);
+      dispatch(addMountainId(id));
+      dispatch(fetchMountainById(mountainId));
       onOpen();
     } catch (error) {
       alert(error?.message);
@@ -89,7 +114,7 @@ const MountainList = () => {
     <section className="mt-5 flex flex-col gap-5">
       <Modal
         isOpen={isOpen}
-        size="xl"
+        size="5xl"
         onOpenChange={onOpenChange}
         className="h-4/5 overflow-scroll w-full">
         <ModalContent>
@@ -99,27 +124,32 @@ const MountainList = () => {
                 Add New Mountain
               </ModalHeader>
               <ModalBody>
-                {/* <section className="flex gap-5 w-full px-5 py-2"> */}
-                <FormMountain
-                  onClose={closeModal}
-                  isEdit={true}
-                  id={idForEditingMountain}
-                />
-                {/* <section className="w-full">
+                <section className="flex gap-5 w-full px-5 py-2">
+                  <FormMountain
+                    onClose={closeModal}
+                    isEdit={true}
+                    id={idForEditingMountain}
+                    disabled={isMountainUpdate}
+                    onUpdate={handleUpdate}
+                  />
+                  <section className="w-full">
                     <FormHikingPoint onClose={closeModal} />
-                    <HikingPointList id={selectedMountain.id} />
+                    <HikingPointList id={selectedMountain?.id} />
                   </section>
-                </section> */}
+                </section>
               </ModalBody>
               <ModalFooter>
                 <Button
                   color="danger"
                   variant="light"
                   onPress={async () => {
-                    await dispatch(addMountainId(selectedMountain?.id));
-                    await dispatch(fetchHikingPoint(selectedMountain?.id));
-                    await dispatch(addMountainId(selectedMountain?.id));
-                    navigate("/hiking-point");
+                    try {
+                      await dispatch(addMountainId(selectedMountain?.id));
+                      await dispatch(fetchHikingPoint(selectedMountain?.id));
+                      navigate("/hiking-point");
+                    } catch (error) {
+                      alert(error?.message);
+                    }
                   }}>
                   Manage Hiking Point
                 </Button>
@@ -136,7 +166,7 @@ const MountainList = () => {
           <div>Loading...</div>
         ) : (
           <>
-            {mountains.map((mountain) => {
+            {mountains?.map((mountain) => {
               if (!mountain || !mountain?.id) {
                 console.error("Invalid mountain data:", mountain);
                 return null;
@@ -172,9 +202,9 @@ const MountainList = () => {
                           <Button
                             className="text-neutral-50 bg-successful hover:bg-successfulHover font-bold"
                             onClick={() => {
-                              handleUpdate(mountain?.id);
+                              handleDetails(mountain?.id);
                             }}>
-                            Update
+                            Details
                           </Button>
                         </section>
                       </CardFooter>

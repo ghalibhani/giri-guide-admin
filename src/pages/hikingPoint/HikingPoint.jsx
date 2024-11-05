@@ -7,7 +7,6 @@ import {
   ModalHeader,
   useDisclosure,
 } from "@nextui-org/react";
-import CustomButton from "../../components/CustomButton";
 import FormHikingPoint from "../../components/hikingPoint/FormHikingPoint";
 import HikingPointList from "../../components/hikingPoint/HikingPointList";
 
@@ -15,10 +14,9 @@ const HikingPoint = () => {
   const { isOpen, onOpen, onClose } = useDisclosure(false);
 
   return (
-    <section className="flex flex-col">
-      <CustomButton onClick={onOpen} customStyles={"mb-5"}>
-        Add Hiking Point
-      </CustomButton>
+    <section className="flex flex-col gap-8">
+      <h1>Hiking Point</h1>
+      <FormHikingPoint isEdit={false} />
       <HikingPointList />
       <Modal
         isOpen={isOpen}
