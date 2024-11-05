@@ -28,10 +28,11 @@ const fetchMountainById = createAsyncThunk(
 );
 const updateMountain = createAsyncThunk(
   "mountain/updateMountain",
-  async (data) => {
+  async ({ id, data }) => {
     try {
-      const response = await axiosInstance.put(`/mountains`, data);
-      return response.data;
+      await axiosInstance.put(`/mountains/${id}`, data);
+      const res = await axiosInstance.get(`/mountains?page=1&limit=20`);
+      return res.data;
     } catch (e) {
       return e.response.data;
     }
@@ -42,7 +43,8 @@ const createMountain = createAsyncThunk(
   "mountain/createMountain",
   async (data) => {
     try {
-      const response = await axiosInstance.post(`/mountains`, data);
+      await axiosInstance.post(`/mountains`, data);
+      const response = await axiosInstance.get(`/mountains?page=1&limit=20`);
       return response.data;
     } catch (e) {
       return e.response.data;
@@ -110,11 +112,11 @@ const mountainSlice = createSlice({
       })
       .addCase(fetchMountainById.rejected, (state, action) => {
         console.log("fetch mountain by id is rejected", "current state", state);
-        return (state = {
+        return {
           ...state,
           status: "failed",
           error: action.error.message,
-        });
+        };
       })
       .addCase(updateMountain.pending, (state) => {
         console.log("update mountain is pending", "current state", state);
@@ -146,20 +148,20 @@ const mountainSlice = createSlice({
       .addCase(createMountain.fulfilled, (state, action) => {
         console.log("create mountain is fulfilled", "current state", state);
         console.log("payload", action.payload);
-        return (state = {
+        return {
           ...state,
           mountains: action.payload.data,
           status: "success",
-        });
+        };
       })
       .addCase(createMountain.rejected, (state, action) => {
         console.log("create mountain is rejected", "current state", state);
         console.log("error", action.error);
-        return (state = {
+        return {
           ...state,
           status: "failed",
           error: action.error.message,
-        });
+        };
       })
       .addCase(deleteMountain.pending, (state) => {
         console.log("delete mountain is pending", "current state", state);
@@ -185,5 +187,11 @@ const mountainSlice = createSlice({
       });
   },
 });
-export { fetchMountain, updateMountain, createMountain, deleteMountain };
+export {
+  fetchMountain,
+  updateMountain,
+  createMountain,
+  deleteMountain,
+  fetchMountainById,
+};
 export default mountainSlice.reducer;

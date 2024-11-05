@@ -1,6 +1,6 @@
 import { Button } from "@nextui-org/react";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../redux/feature/authSlice";
 const SideBar = ({ children }) => {
@@ -14,7 +14,6 @@ const SideBar = ({ children }) => {
   const [navbarActive, setNavbarActive] = useState("/mountain");
   const [searchMountain, setSearchMountain] = useState("");
   const dispatch = useDispatch();
-  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
   const handleLogout = () => {
     try {
@@ -28,11 +27,6 @@ const SideBar = ({ children }) => {
       console.error("Error during logout:", error);
     }
   };
-  useEffect(() => {
-    if (!isLoggedIn) {
-      navigate("/");
-    }
-  }, [isLoggedIn, navigate]);
 
   const handleSearch = (e) => {
     setSearchMountain(e.target.value);
