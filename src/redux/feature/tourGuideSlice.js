@@ -1,14 +1,29 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axiosInstance from "../../api/axiosInstance";
+import { setIsMountainUpdating } from "./mountainSlice";
 
 const fetchTourGuide = createAsyncThunk(
   "tourGuide/fetchTourGuide",
-  async () => {
+  async ({ page = 1, size = 20 }, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.get("/tour-guides");
+      const response = await axiosInstance.get(
+        `/tour-guide?page=${page}&size=${size}`
+      );
       return response.data;
     } catch (e) {
-      return e.response.data;
+      return rejectWithValue(e.response.data);
+    }
+  }
+);
+
+const fetchTourGuideById = createAsyncThunk(
+  "tourGuide/fetchTourGuideById",
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get(`/tour-guide/${id}`);
+      return response.data;
+    } catch (e) {
+      return rejectWithValue(e.response.data);
     }
   }
 );
@@ -16,7 +31,7 @@ const createTourGuide = createAsyncThunk(
   "tourGuide/createTourGuide",
   async (data) => {
     try {
-      const response = await axiosInstance.post(`/tour-guides`, data);
+      const response = await axiosInstance.post(`/tour-guide`, data);
       return response.data;
     } catch (e) {
       return e.response.data;
@@ -27,7 +42,7 @@ const updateTourGuide = createAsyncThunk(
   "tourGuide/updateTourGuide",
   async (data) => {
     try {
-      const response = await axiosInstance.put(`/tour-guides`, data);
+      const response = await axiosInstance.put(`/tour-guide`, data);
       return response.data;
     } catch (e) {
       return e.response.data;
@@ -38,7 +53,7 @@ const deleteTourGuide = createAsyncThunk(
   "tourGuide/deleteTourGuide",
   async (id) => {
     try {
-      const response = await axiosInstance.delete(`/tour-guides/${id}`);
+      const response = await axiosInstance.delete(`/tour-guide/${id}`);
       return response.data;
     } catch (e) {
       return e.response.data;
@@ -49,8 +64,22 @@ const tourGuideSlice = createSlice({
   name: "tourGuide",
   initialState: {
     tourGuides: [],
+    selectedTourGuide: null,
+    tourGuideId: null,
+    isTourGuideUpdating: false,
     status: null,
     error: null,
+  },
+  reducers: {
+    addSelectedTourGuide: (state, action) => {
+      state.selectedTourGuide = action.payload;
+    },
+    addTourGuideId: (state, action) => {
+      state.tourGuideId = action.payload;
+    },
+    setIsTourGuideUpdating: (state, action) => {
+      state.isTourGuideUpdating = action.payload;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -62,7 +91,7 @@ const tourGuideSlice = createSlice({
         console.log("fetch tour guide is fulfilled", "current state", state);
         console.log("action payload", action.payload);
         state.status = "succeeded";
-        state.tourGuides = action.payload;
+        state.tourGuides = action.payload.data;
       })
       .addCase(fetchTourGuide.rejected, (state, action) => {
         console.log("fetch tour guide is rejected", "current state", state);
@@ -95,7 +124,7 @@ const tourGuideSlice = createSlice({
         console.log("action payload", action.payload);
         state.status = "succeeded";
         state.tourGuides = state.tourGuides.map((tourGuide) => {
-          if (tourGuide._id === action.payload._id) {
+          if (tourGuide.id === action.payload.id) {
             return action.payload;
           }
           return tourGuide;
@@ -116,7 +145,7 @@ const tourGuideSlice = createSlice({
         console.log("action payload", action.payload);
         state.status = "succeeded";
         state.tourGuides = state.tourGuides.filter(
-          (tourGuide) => tourGuide._id !== action.payload._id
+          (tourGuide) => tourGuide.id !== action.payload.id
         );
       })
       .addCase(deleteTourGuide.rejected, (state, action) => {
@@ -128,5 +157,12 @@ const tourGuideSlice = createSlice({
   },
 });
 
-export { fetchTourGuide, createTourGuide, updateTourGuide, deleteTourGuide };
+export {
+  fetchTourGuide,
+  createTourGuide,
+  updateTourGuide,
+  deleteTourGuide,
+  fetchTourGuideById,
+};
+export const { addSelectedTourGuide, addTourGuideId, setIsTourGuideUpdating } = tourGuideSlice.actions;
 export default tourGuideSlice.reducer;

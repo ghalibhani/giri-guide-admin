@@ -31,7 +31,7 @@ import HikingPointList from "../hikingPoint/HikingPointList";
 const MountainList = () => {
   const dispatch = useDispatch();
   const [currentPage, setCurrentPage] = useState(1);
-  const [mountainsPerPage] = useState(20);
+  const [mountainsPerPage] = useState(5);
   const selectedMountain = useSelector(
     (state) => state.mountain.selectedMountain
   );
@@ -183,7 +183,9 @@ const MountainList = () => {
       <Pagination
         total={paging?.totalPages}
         initialPage={paging?.page}
-        onChange={(page) => paginate(page)}
+        onChange={(page) => {
+          paginate(page);
+        }}
       />
     </section>
   );

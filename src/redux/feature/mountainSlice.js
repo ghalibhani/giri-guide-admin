@@ -28,10 +28,10 @@ const fetchMountainById = createAsyncThunk(
 );
 const updateMountain = createAsyncThunk(
   "mountain/updateMountain",
-  async ({ id, data }) => {
+  async ({ id, data, page }) => {
     try {
       await axiosInstance.put(`/mountains/${id}`, data);
-      const res = await axiosInstance.get(`/mountains?page=1&limit=20`);
+      const res = await axiosInstance.get(`/mountains?page=1&size=5`);
       return res.data;
     } catch (e) {
       return e.response.data;
@@ -42,8 +42,8 @@ const updateImageMountain = createAsyncThunk(
   "mountain/updateImageMountain",
   async ({ id, data }) => {
     try {
-      await axiosInstance.patch(`/image/${id}`, data);
-      const res = await axiosInstance.get(`/mountains?page=1&limit=20`);
+      await axiosInstance.patch(`/mountains/${id}`, data);
+      const res = await axiosInstance.get(`/mountains?page=1&size=5`);
       return res.data;
     } catch (e) {
       return e.response.data;
@@ -56,7 +56,7 @@ const createMountain = createAsyncThunk(
   async (data) => {
     try {
       await axiosInstance.post(`/mountains`, data);
-      const response = await axiosInstance.get(`/mountains?page=1&size=20`);
+      const response = await axiosInstance.get(`/mountains?page=1&size=5`);
       return response.data;
     } catch (e) {
       return e.response.data;

@@ -6,7 +6,7 @@ import { logout } from "../redux/feature/authSlice";
 
 const SideBar = ({ children, active }) => {
   const links = [
-    { name: "Dashboard", link: "/mountain" },
+    { name: "Dashboard", link: "/dashboard" },
     { name: "Mountain", link: "/mountain" },
     { name: "Tour Guide", link: "/tour-guide" },
   ];

@@ -174,7 +174,7 @@ const FormMountain = ({ onClose, formInput = false }) => {
 
   return (
     <form
-      className="flex flex-col gap-4 justify-center items-center w-full"
+      className="flex flex-col gap-4 justify-center w-full"
       onSubmit={(e) => {
         e.preventDefault();
         handleAddMountain();
