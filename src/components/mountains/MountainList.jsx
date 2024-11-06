@@ -31,7 +31,7 @@ import HikingPointList from "../hikingPoint/HikingPointList";
 const MountainList = () => {
   const dispatch = useDispatch();
   const [currentPage, setCurrentPage] = useState(1);
-  const [mountainsPerPage] = useState(5);
+  const [mountainsPerPage] = useState(8);
   const selectedMountain = useSelector(
     (state) => state.mountain.selectedMountain
   );
@@ -86,100 +86,101 @@ const MountainList = () => {
   }, [dispatch, currentPage, mountainsPerPage]);
 
   return (
-    <section className="mt-5 flex flex-col gap-5">
-      <Modal
-        isOpen={isOpen}
-        size="5xl"
-        onOpenChange={onOpenChange}
-        className="h-4/5 overflow-scroll w-full">
-        <ModalContent>
-          {(closeModal) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">
-                Add New Mountain
-              </ModalHeader>
-              <ModalBody>
-                <section className="flex gap-5 w-full px-5 py-2">
-                  <FormMountain
-                    onClose={() => {
-                      closeModal();
-                    }}
-                  />
-                  <section className="w-full">
-                    <FormHikingPoint onClose={closeModal} />
-                    <HikingPointList id={selectedMountain?.id} />
+    <section>
+      <section className="mt-5 flex flex-col gap-5">
+        <Modal
+          isOpen={isOpen}
+          size="5xl"
+          onOpenChange={onOpenChange}
+          className="h-4/5 overflow-scroll w-full">
+          <ModalContent>
+            {(closeModal) => (
+              <>
+                <ModalHeader className="flex flex-col gap-1">
+                  Add New Mountain
+                </ModalHeader>
+                <ModalBody>
+                  <section className="flex gap-5 w-full px-5 py-2">
+                    <FormMountain
+                      onClose={() => {
+                        closeModal();
+                      }}
+                    />
+                    <section className="w-full">
+                      <FormHikingPoint onClose={closeModal} />
+                      <HikingPointList id={selectedMountain?.id} />
+                    </section>
                   </section>
-                </section>
-              </ModalBody>
-              <ModalFooter>
-                <Button
-                  color="danger"
-                  variant="light"
-                  onPress={() => {
-                    onClose();
-                    dispatch(clearSeletedHikingPoint());
-                    dispatch(setIsMountainUpdating(false));
-                    dispatch(setSelectedMountain(null));
-                  }}>
-                  Close
-                </Button>
-              </ModalFooter>
+                </ModalBody>
+                <ModalFooter>
+                  <Button
+                    color="danger"
+                    variant="light"
+                    onPress={() => {
+                      onClose();
+                      dispatch(clearSeletedHikingPoint());
+                      dispatch(setIsMountainUpdating(false));
+                      dispatch(setSelectedMountain(null));
+                    }}>
+                    Close
+                  </Button>
+                </ModalFooter>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
+        <section className="flex flex-wrap gap-5">
+          {status === "loading" ? (
+            <div>Loading...</div>
+          ) : (
+            <>
+              {mountains?.map((mountain) => {
+                if (!mountain || !mountain?.id) {
+                  console.error("Invalid mountain data:", mountain);
+                  return null;
+                }
+                return (
+                  <section
+                    key={mountain?.id}
+                    className="flex gap-4 justify-between mb-5">
+                    <section className="flex flex-1 justify-between">
+                      <Card shadow="sm" key={mountain?.id} isPressable>
+                        <CardBody className="overflow-visible p-0">
+                          <Image
+                            shadow="sm"
+                            radius="lg"
+                            width="100%"
+                            alt={mountain?.name || "Mountain Image"}
+                            className="w-full object-cover h-[140px]"
+                            src={mountain?.image}
+                          />
+                        </CardBody>
+                        <CardFooter className="text-small justify-between gap-5">
+                          <b>{mountain?.name}</b>
+                          <section className="buttonGroup flex gap-5">
+                            <Button
+                              onClick={() => handleDelete(mountain?.id)}
+                              className="text-neutral-50 bg-error hover:bg-successfulHover font-bold">
+                              Delete
+                            </Button>
+                            <Button
+                              className="text-neutral-50 bg-successful hover:bg-successfulHover font-bold"
+                              onClick={() => {
+                                handleDetails(mountain);
+                              }}>
+                              Details
+                            </Button>
+                          </section>
+                        </CardFooter>
+                      </Card>
+                    </section>
+                  </section>
+                );
+              })}
             </>
           )}
-        </ModalContent>
-      </Modal>
-      <section className="flex flex-wrap gap-5">
-        {status === "loading" ? (
-          <div>Loading...</div>
-        ) : (
-          <>
-            {mountains?.map((mountain) => {
-              if (!mountain || !mountain?.id) {
-                console.error("Invalid mountain data:", mountain);
-                return null;
-              }
-              return (
-                <section
-                  key={mountain?.id}
-                  className="flex gap-4 justify-between mb-5">
-                  <section className="flex flex-1 justify-between">
-                    <Card shadow="sm" key={mountain?.id} isPressable>
-                      <CardBody className="overflow-visible p-0">
-                        <Image
-                          shadow="sm"
-                          radius="lg"
-                          width="100%"
-                          alt={mountain?.name || "Mountain Image"}
-                          className="w-full object-cover h-[140px]"
-                          src={mountain?.image}
-                        />
-                      </CardBody>
-                      <CardFooter className="text-small justify-between gap-5">
-                        <b>{mountain?.name}</b>
-                        <section className="buttonGroup flex gap-5">
-                          <Button
-                            onClick={() => handleDelete(mountain?.id)}
-                            className="text-neutral-50 bg-error hover:bg-successfulHover font-bold">
-                            Delete
-                          </Button>
-                          <Button
-                            className="text-neutral-50 bg-successful hover:bg-successfulHover font-bold"
-                            onClick={() => {
-                              handleDetails(mountain);
-                            }}>
-                            Details
-                          </Button>
-                        </section>
-                      </CardFooter>
-                    </Card>
-                  </section>
-                </section>
-              );
-            })}
-          </>
-        )}
+        </section>
       </section>
-
       <Pagination
         total={paging?.totalPages}
         initialPage={paging?.page}

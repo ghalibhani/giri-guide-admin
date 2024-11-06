@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axiosInstance from "../../api/axiosInstance";
-import { setIsMountainUpdating } from "./mountainSlice";
 
 const fetchTourGuide = createAsyncThunk(
   "tourGuide/fetchTourGuide",
@@ -20,7 +19,7 @@ const fetchTourGuideById = createAsyncThunk(
   "tourGuide/fetchTourGuideById",
   async (id, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.get(`/tour-guide/${id}`);
+      const response = await axiosInstance.get(`/tour-guide/data/${id}`);
       return response.data;
     } catch (e) {
       return rejectWithValue(e.response.data);
@@ -34,21 +33,39 @@ const createTourGuide = createAsyncThunk(
       const response = await axiosInstance.post(`/tour-guide`, data);
       return response.data;
     } catch (e) {
+      console.log(e);
       return e.response.data;
     }
   }
 );
+
 const updateTourGuide = createAsyncThunk(
   "tourGuide/updateTourGuide",
-  async (data) => {
+  async ({ id, data }) => {
+    console.log(data);
     try {
-      const response = await axiosInstance.put(`/tour-guide`, data);
+      await axiosInstance.patch(`/tour-guide/data/${id}`, data);
+      return { id, data };
+    } catch (e) {
+      return e.response.data;
+    }
+  }
+);
+const updateTourGuideImage = createAsyncThunk(
+  "tourGuide/updateTourGuideImage",
+  async ({ id, data }) => {
+    try {
+      const response = await axiosInstance.patch(
+        `/tour-guide/data/${id}/update-image`,
+        data
+      );
       return response.data;
     } catch (e) {
       return e.response.data;
     }
   }
 );
+
 const deleteTourGuide = createAsyncThunk(
   "tourGuide/deleteTourGuide",
   async (id) => {
@@ -71,7 +88,7 @@ const tourGuideSlice = createSlice({
     error: null,
   },
   reducers: {
-    addSelectedTourGuide: (state, action) => {
+    setSelectedTourGuide: (state, action) => {
       state.selectedTourGuide = action.payload;
     },
     addTourGuideId: (state, action) => {
@@ -79,78 +96,70 @@ const tourGuideSlice = createSlice({
     },
     setIsTourGuideUpdating: (state, action) => {
       state.isTourGuideUpdating = action.payload;
-    }
+    },
   },
   extraReducers: (builder) => {
     builder
       .addCase(fetchTourGuide.pending, (state) => {
-        console.log("fetch tour guide is pending", "current state", state);
         state.status = "loading";
       })
       .addCase(fetchTourGuide.fulfilled, (state, action) => {
-        console.log("fetch tour guide is fulfilled", "current state", state);
-        console.log("action payload", action.payload);
         state.status = "succeeded";
         state.tourGuides = action.payload.data;
       })
       .addCase(fetchTourGuide.rejected, (state, action) => {
-        console.log("fetch tour guide is rejected", "current state", state);
-        console.log("action error", action.error);
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+      .addCase(fetchTourGuideById.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchTourGuideById.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.selectedTourGuide = action.payload;
+      })
+      .addCase(fetchTourGuideById.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
       })
       .addCase(createTourGuide.pending, (state) => {
-        console.log("create tour guide is pending", "current state", state);
         state.status = "loading";
       })
       .addCase(createTourGuide.fulfilled, (state, action) => {
-        console.log("create tour guide is fulfilled", "current state", state);
-        console.log("action payload", action.payload);
         state.status = "succeeded";
         state.tourGuides.push(action.payload);
       })
       .addCase(createTourGuide.rejected, (state, action) => {
-        console.log("create tour guide is rejected", "current state", state);
-        console.log("action error", action.error);
         state.status = "failed";
         state.error = action.error.message;
       })
       .addCase(updateTourGuide.pending, (state) => {
-        console.log("update tour guide is pending", "current state", state);
         state.status = "loading";
       })
       .addCase(updateTourGuide.fulfilled, (state, action) => {
-        console.log("update tour guide is fulfilled", "current state", state);
-        console.log("action payload", action.payload);
+        console.log(action);
         state.status = "succeeded";
         state.tourGuides = state.tourGuides.map((tourGuide) => {
           if (tourGuide.id === action.payload.id) {
-            return action.payload;
+            return { ...tourGuide, ...action.payload.data };
           }
           return tourGuide;
         });
       })
       .addCase(updateTourGuide.rejected, (state, action) => {
-        console.log("update tour guide is rejected", "current state", state);
-        console.log("action error", action.error);
         state.status = "failed";
         state.error = action.error.message;
       })
       .addCase(deleteTourGuide.pending, (state) => {
-        console.log("delete tour guide is pending", "current state", state);
         state.status = "loading";
       })
       .addCase(deleteTourGuide.fulfilled, (state, action) => {
-        console.log("delete tour guide is fulfilled", "current state", state);
-        console.log("action payload", action.payload);
         state.status = "succeeded";
         state.tourGuides = state.tourGuides.filter(
           (tourGuide) => tourGuide.id !== action.payload.id
         );
       })
       .addCase(deleteTourGuide.rejected, (state, action) => {
-        console.log("delete tour guide is rejected", "current state", state);
-        console.log("action error", action.error);
         state.status = "failed";
         state.error = action.error.message;
       });
@@ -163,6 +172,8 @@ export {
   updateTourGuide,
   deleteTourGuide,
   fetchTourGuideById,
+  updateTourGuideImage,
 };
-export const { addSelectedTourGuide, addTourGuideId, setIsTourGuideUpdating } = tourGuideSlice.actions;
+export const { setSelectedTourGuide, addTourGuideId, setIsTourGuideUpdating } =
+  tourGuideSlice.actions;
 export default tourGuideSlice.reducer;

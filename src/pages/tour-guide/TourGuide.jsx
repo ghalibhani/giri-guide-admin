@@ -28,9 +28,10 @@ const TourGuide = () => {
 
       <CustomButton onClick={handleOpenModal}>Add Tour Guide</CustomButton>
       <Modal
+        className="h-4/5 overflow-scroll"
+        size="5xl"
         isOpen={isOpenModal}
-        onOpenChange={(open) => setIsOpenModal(open)} // pastikan modal terbuka/tutup sesuai state
-      >
+        onOpenChange={(open) => setIsOpenModal(open)}>
         <ModalContent>
           {(closeModal) => (
             <>
@@ -38,20 +39,18 @@ const TourGuide = () => {
                 Add New Tour Guide
               </ModalHeader>
               <ModalBody>
-                <FormTourGuide onClose={handleCloseModal} />
+                <FormTourGuide onClose={handleCloseModal} formInput={true} />
               </ModalBody>
               <ModalFooter>
                 <Button
                   color="danger"
                   variant="light"
-                  onPress={handleCloseModal} // pastikan modal tertutup dengan benar
-                >
+                  onPress={handleCloseModal}>
                   Close
                 </Button>
                 <Button
                   color="primary"
                   onPress={() => {
-                    // Proses penambahan data jika diperlukan, kemudian tutup modal
                     closeModal();
                   }}>
                   Add

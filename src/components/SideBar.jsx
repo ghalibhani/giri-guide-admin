@@ -3,12 +3,16 @@ import { Button } from "@nextui-org/react";
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { logout } from "../redux/feature/authSlice";
+import { fetchMountain } from "../redux/feature/mountainSlice";
 
 const SideBar = ({ children, active }) => {
   const links = [
     { name: "Dashboard", link: "/dashboard" },
     { name: "Mountain", link: "/mountain" },
     { name: "Tour Guide", link: "/tour-guide" },
+    { name: "Rute", link: "/rute" },
+    { name: "Daftar transaction", link: "/transaction" },
+    { name: "Widraw", link: "/Widraw" },
   ];
 
   const navigate = useNavigate();
@@ -20,7 +24,7 @@ const SideBar = ({ children, active }) => {
     try {
       localStorage.clear();
       dispatch(logout());
-      navigate("/login"); // Redirect to login after logout
+      navigate("/login");
     } catch (error) {
       console.error("Error during logout:", error);
     }
@@ -32,7 +36,7 @@ const SideBar = ({ children, active }) => {
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    navigate(`/mountain?name=${searchMountain}`);
+    dispatch(fetchMountain({ search: searchMountain, page: 1, limit: 8 }));
   };
 
   useEffect(() => {
@@ -51,7 +55,7 @@ const SideBar = ({ children, active }) => {
           {links.map((link) => (
             <li
               key={link.name}
-              className={`p-4 hover:bg-mainGreen hover:text-white transition-colors ${
+              className={`p-4 hover:bg-mainGreen hover:text-white transition-colors w-full ${
                 navbarActive === link.link ? "bg-mainGreen text-white" : ""
               }`}
               onClick={() => setNavbarActive(link.link)}>
@@ -64,7 +68,7 @@ const SideBar = ({ children, active }) => {
             <form onSubmit={handleSearchSubmit}>
               <input
                 type="search"
-                className="w-full p-2 rounded-md"
+                className="w-full p-2 rounded-md text-zinc-950"
                 placeholder="Search Mountain Name"
                 value={searchMountain}
                 onChange={handleSearch}
