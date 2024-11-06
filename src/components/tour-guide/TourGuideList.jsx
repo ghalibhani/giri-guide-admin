@@ -17,12 +17,14 @@ import { useEffect, useState } from "react";
 import {
   addTourGuideId,
   deleteTourGuide,
+  fetchMasteredHikingPoint,
   fetchTourGuide,
   fetchTourGuideById,
   setIsTourGuideUpdating,
   setSelectedTourGuide,
 } from "../../redux/feature/tourGuideSlice";
 import FormTourGuide from "./FormTourGuide";
+import TourGuideHikingPointList from "./TourGuideHikingPointList";
 
 const TourGuideList = () => {
   const { tourGuides } = useSelector((state) => state.tourGuide);
@@ -32,7 +34,7 @@ const TourGuideList = () => {
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
   const dispatch = useDispatch();
   const paging = useSelector((state) => state.tourGuide.paging);
-
+  const mountains = useSelector((state) => state.tourGuide.mountains);
   useEffect(() => {
     try {
       dispatch(fetchTourGuide({ page: currentPage, limit: mountainsPerPage }));
@@ -43,7 +45,8 @@ const TourGuideList = () => {
 
   useEffect(() => {
     console.log(tourGuides);
-  }, [tourGuides]);
+    console.log(mountains);
+  }, [tourGuides, mountains]);
 
   const handleDelete = (id) => {
     if (!id) {
@@ -74,6 +77,7 @@ const TourGuideList = () => {
     try {
       dispatch(fetchTourGuideById(tourGuide.id));
       dispatch(addTourGuideId(tourGuide.id));
+      dispatch(fetchMasteredHikingPoint(tourGuide.id));
       dispatch(setIsTourGuideUpdating(false));
       onOpen();
     } catch (error) {
@@ -92,14 +96,12 @@ const TourGuideList = () => {
             return null;
           }
           return (
-            <section
-              key={tourGuide?.id}
-              className="flex gap-4 justify-between mb-5">
+            <section key={tourGuide?.id} className="mt-5 flex flex-col gap-5">
               <Modal
                 isOpen={isOpen}
                 size="5xl"
                 onOpenChange={onOpenChange}
-                className="h-4/5 overflow-scroll w-full">
+                className="h-4/5 overflow-scroll">
                 <ModalContent>
                   {(closeModal) => (
                     <>
@@ -113,7 +115,9 @@ const TourGuideList = () => {
                               closeModal();
                             }}
                           />
-                          <section className="w-full"></section>
+                          <section className="w-full">
+                            <TourGuideHikingPointList />
+                          </section>
                         </section>
                       </ModalBody>
                       <ModalFooter>

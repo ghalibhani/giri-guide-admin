@@ -26,6 +26,17 @@ const fetchTourGuideById = createAsyncThunk(
     }
   }
 );
+const fetchMasteredHikingPoint = createAsyncThunk(
+  "tourGuide/fetchMasteredHikingPoint",
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get(`/tour-guide/${id}`);
+      return response.data.data.mountains;
+    } catch (e) {
+      return rejectWithValue(e.response.data);
+    }
+  }
+);
 const createTourGuide = createAsyncThunk(
   "tourGuide/createTourGuide",
   async (data) => {
@@ -84,6 +95,7 @@ const tourGuideSlice = createSlice({
     selectedTourGuide: null,
     tourGuideId: null,
     isTourGuideUpdating: false,
+    mountains: [],
     status: null,
     error: null,
   },
@@ -122,6 +134,19 @@ const tourGuideSlice = createSlice({
         state.status = "failed";
         state.error = action.error.message;
       })
+      .addCase(fetchMasteredHikingPoint.pending, (state) => {
+        console.log("pending");
+        state.status = "loading";
+      })
+      .addCase(fetchMasteredHikingPoint.fulfilled, (state, action) => {
+        console.log(action.payload);
+        state.mountains = action.payload;
+      })
+      .addCase(fetchMasteredHikingPoint.rejected, (state, action) => {
+        console.log("rejected");
+        state.status = "failed";
+        state.error = action.error.message;
+      })
       .addCase(createTourGuide.pending, (state) => {
         state.status = "loading";
       })
@@ -137,7 +162,6 @@ const tourGuideSlice = createSlice({
         state.status = "loading";
       })
       .addCase(updateTourGuide.fulfilled, (state, action) => {
-        console.log(action);
         state.status = "succeeded";
         state.tourGuides = state.tourGuides.map((tourGuide) => {
           if (tourGuide.id === action.payload.id) {
@@ -173,6 +197,7 @@ export {
   deleteTourGuide,
   fetchTourGuideById,
   updateTourGuideImage,
+  fetchMasteredHikingPoint,
 };
 export const { setSelectedTourGuide, addTourGuideId, setIsTourGuideUpdating } =
   tourGuideSlice.actions;
