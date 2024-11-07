@@ -21,32 +21,37 @@ import {
   fetchTourGuide,
   fetchTourGuideById,
   setIsTourGuideUpdating,
+  setMountainIdForSelectingHikingPoint,
   setSelectedTourGuide,
 } from "../../redux/feature/tourGuideSlice";
 import FormTourGuide from "./FormTourGuide";
 import TourGuideHikingPointList from "./TourGuideHikingPointList";
+import AddMasteredHikingPoint from "./AddMasteredHikingPoint";
 
 const TourGuideList = () => {
-  const { tourGuides } = useSelector((state) => state.tourGuide);
+  const { tourGuides, paging } = useSelector((state) => state.tourGuide);
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [mountainsPerPage] = useState(8);
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
   const dispatch = useDispatch();
-  const paging = useSelector((state) => state.tourGuide.paging);
-  const mountains = useSelector((state) => state.tourGuide.mountains);
+
   useEffect(() => {
     try {
       dispatch(fetchTourGuide({ page: currentPage, limit: mountainsPerPage }));
     } catch (error) {
-      alert(error?.message);
+      if (error instanceof Error) {
+        alert(error.message);
+      } else {
+        console.error(error);
+      }
     }
   }, [dispatch, currentPage, mountainsPerPage]);
 
   useEffect(() => {
     console.log(tourGuides);
-    console.log(mountains);
-  }, [tourGuides, mountains]);
+    console.log(paging);
+  }, [tourGuides, paging]);
 
   const handleDelete = (id) => {
     if (!id) {
@@ -54,26 +59,31 @@ const TourGuideList = () => {
       return;
     }
 
-    const isReadyForDelete = confirm(
-      `Yakin ingin menghapus gunung dengan id ${id}?`
-    );
-    if (!isReadyForDelete) {
-      return;
-    }
-
     try {
+      const isReadyForDelete = confirm(
+        `Yakin ingin menghapus gunung dengan id ${id}?`
+      );
+      if (!isReadyForDelete) {
+        return;
+      }
+
       dispatch(deleteTourGuide(id));
       dispatch(fetchTourGuide({ page: currentPage, limit: mountainsPerPage }));
     } catch (error) {
-      alert(error?.message);
+      if (error instanceof Error) {
+        alert(error.message);
+      } else {
+        console.error(error);
+      }
     }
   };
 
   const handleDetails = (tourGuide) => {
-    if (!tourGuide.id) {
+    if (!tourGuide?.id) {
       alert("Id is required for update");
       return;
     }
+
     try {
       dispatch(fetchTourGuideById(tourGuide.id));
       dispatch(addTourGuideId(tourGuide.id));
@@ -81,7 +91,11 @@ const TourGuideList = () => {
       dispatch(setIsTourGuideUpdating(false));
       onOpen();
     } catch (error) {
-      alert(error?.message);
+      if (error instanceof Error) {
+        alert(error.message);
+      } else {
+        console.error(error);
+      }
     }
   };
 
@@ -91,51 +105,53 @@ const TourGuideList = () => {
   return (
     <>
       <section className="mt-5 flex flex-wrap gap-5">
+        <Modal
+          isOpen={isOpen}
+          size="5xl"
+          onOpenChange={onOpenChange}
+          className="h-4/5 overflow-scroll">
+          <ModalContent>
+            {(closeModal) => (
+              <>
+                <ModalHeader className="flex flex-col gap-1">
+                  Add New Mountain
+                </ModalHeader>
+                <ModalBody>
+                  <section className="flex gap-5 w-full px-5 py-2">
+                    <FormTourGuide
+                      onClose={() => {
+                        closeModal();
+                      }}
+                    />
+                    <section className="w-full">
+                      <AddMasteredHikingPoint />
+                      <TourGuideHikingPointList />
+                    </section>
+                  </section>
+                </ModalBody>
+                <ModalFooter>
+                  <Button
+                    color="danger"
+                    variant="light"
+                    onPress={() => {
+                      onClose();
+                      dispatch(setIsTourGuideUpdating(false));
+                      dispatch(setSelectedTourGuide(null));
+                      dispatch(setMountainIdForSelectingHikingPoint(null));
+                    }}>
+                    Close
+                  </Button>
+                </ModalFooter>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
         {tourGuides?.map((tourGuide) => {
           if (!tourGuide || !tourGuide?.id) {
             return null;
           }
           return (
             <section key={tourGuide?.id} className="mt-5 flex flex-col gap-5">
-              <Modal
-                isOpen={isOpen}
-                size="5xl"
-                onOpenChange={onOpenChange}
-                className="h-4/5 overflow-scroll">
-                <ModalContent>
-                  {(closeModal) => (
-                    <>
-                      <ModalHeader className="flex flex-col gap-1">
-                        Add New Mountain
-                      </ModalHeader>
-                      <ModalBody>
-                        <section className="flex gap-5 w-full px-5 py-2">
-                          <FormTourGuide
-                            onClose={() => {
-                              closeModal();
-                            }}
-                          />
-                          <section className="w-full">
-                            <TourGuideHikingPointList />
-                          </section>
-                        </section>
-                      </ModalBody>
-                      <ModalFooter>
-                        <Button
-                          color="danger"
-                          variant="light"
-                          onPress={() => {
-                            onClose();
-                            dispatch(setIsTourGuideUpdating(false));
-                            dispatch(setSelectedTourGuide(null));
-                          }}>
-                          Close
-                        </Button>
-                      </ModalFooter>
-                    </>
-                  )}
-                </ModalContent>
-              </Modal>
               <section className="flex flex-1 justify-between">
                 <Card
                   shadow="sm"
@@ -175,13 +191,15 @@ const TourGuideList = () => {
           );
         })}
       </section>
-      <Pagination
-        total={paging?.totalPages}
-        initialPage={paging?.page}
-        onChange={(page) => {
-          paginate(page);
-        }}
-      />
+      {paging?.totalPages > 1 && (
+        <Pagination
+          total={paging?.totalPages}
+          initialPage={paging?.page}
+          onChange={(page) => {
+            paginate(page);
+          }}
+        />
+      )}
     </>
   );
 };

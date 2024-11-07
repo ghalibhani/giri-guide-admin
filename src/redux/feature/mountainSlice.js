@@ -28,7 +28,7 @@ const fetchMountainById = createAsyncThunk(
 );
 const updateMountain = createAsyncThunk(
   "mountain/updateMountain",
-  async ({ id, data, page }) => {
+  async ({ id, data }) => {
     try {
       await axiosInstance.put(`/mountains/${id}`, data);
       const res = await axiosInstance.get(`/mountains?page=1&size=5`);

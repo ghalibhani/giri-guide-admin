@@ -143,7 +143,7 @@ const MountainList = () => {
                   <section
                     key={mountain?.id}
                     className="flex gap-4 justify-between mb-5">
-                    <section className="flex flex-1 justify-between">
+                    <section className="flex flex-1 justify-between w-[300px]">
                       <Card shadow="sm" key={mountain?.id} isPressable>
                         <CardBody className="overflow-visible p-0">
                           <Image

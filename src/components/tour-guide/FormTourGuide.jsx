@@ -1,4 +1,4 @@
-import { Input, Textarea } from "@nextui-org/react";
+import { Input, Select, SelectItem, Textarea } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import CustomButton from "../CustomButton";
 import {
@@ -76,7 +76,7 @@ const FormTourGuide = ({ formInput = false }) => {
   const handleAddTourGuide = (e) => {
     e.preventDefault();
     if (isTourGuideUpdating && selectedTourGuide) {
-      if (image.type !== "image/jpeg" && image.type !== "image/png") {
+      if (image) {
         const formData = new FormData();
         formData.append("image", image);
         dispatch(updateTourGuideImage({ id: tourGuideId, data: formData }));
@@ -340,15 +340,21 @@ const FormTourGuide = ({ formInput = false }) => {
           onChange={(e) => setBirthDate(e.target.value)}
           value={birthDate}
         />
-        <Input
+        <Select
           isDisabled={isTourGuideUpdating == false && formInput == false}
-          type="text"
           label="Gender"
           color="successSecondary"
           variant="bordered"
-          onChange={(e) => setGender(e.target.value)}
           value={gender}
-        />
+          onChange={(e) => setGender(e.target.value)}
+          defaultSelectedKeys={[gender]}>
+          <SelectItem value="MALE" key={"MALE"}>
+            MALE
+          </SelectItem>
+          <SelectItem value="FEMALE" key={"FEMALE"}>
+            FEMALE
+          </SelectItem>
+        </Select>
       </section>
       {!isTourGuideUpdating && selectedTourGuide && (
         <CustomButton

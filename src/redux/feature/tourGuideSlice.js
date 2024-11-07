@@ -26,6 +26,7 @@ const fetchTourGuideById = createAsyncThunk(
     }
   }
 );
+
 const fetchMasteredHikingPoint = createAsyncThunk(
   "tourGuide/fetchMasteredHikingPoint",
   async (id, { rejectWithValue }) => {
@@ -37,34 +38,61 @@ const fetchMasteredHikingPoint = createAsyncThunk(
     }
   }
 );
+
+const fetchHikingPointByMountainId = createAsyncThunk(
+  "tourGuide/fetchHikingPointByMountainId",
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get(`/mountains/${id}`);
+      return response.data.data.hikingPoints;
+    } catch (e) {
+      return rejectWithValue(e.response.data);
+    }
+  }
+);
+
 const createTourGuide = createAsyncThunk(
   "tourGuide/createTourGuide",
-  async (data) => {
+  async (data, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post(`/tour-guide`, data);
       return response.data;
     } catch (e) {
-      console.log(e);
-      return e.response.data;
+      return rejectWithValue(e.response.data);
+    }
+  }
+);
+
+const createMasteredHikingPoint = createAsyncThunk(
+  "tourGuide/createMasteredHikingPoint",
+  async ({ id, data }, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.post(
+        `/tour-guide/${id}/hiking-points`,
+        data
+      );
+      return response.data;
+    } catch (e) {
+      return rejectWithValue(e.response.data);
     }
   }
 );
 
 const updateTourGuide = createAsyncThunk(
   "tourGuide/updateTourGuide",
-  async ({ id, data }) => {
-    console.log(data);
+  async ({ id, data }, { rejectWithValue }) => {
     try {
       await axiosInstance.patch(`/tour-guide/data/${id}`, data);
       return { id, data };
     } catch (e) {
-      return e.response.data;
+      return rejectWithValue(e.response.data);
     }
   }
 );
+
 const updateTourGuideImage = createAsyncThunk(
   "tourGuide/updateTourGuideImage",
-  async ({ id, data }) => {
+  async ({ id, data }, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.patch(
         `/tour-guide/data/${id}/update-image`,
@@ -72,28 +100,32 @@ const updateTourGuideImage = createAsyncThunk(
       );
       return response.data;
     } catch (e) {
-      return e.response.data;
+      return rejectWithValue(e.response.data);
     }
   }
 );
 
 const deleteTourGuide = createAsyncThunk(
   "tourGuide/deleteTourGuide",
-  async (id) => {
+  async (id, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.delete(`/tour-guide/${id}`);
       return response.data;
     } catch (e) {
-      return e.response.data;
+      return rejectWithValue(e.response.data);
     }
   }
 );
+
 const tourGuideSlice = createSlice({
   name: "tourGuide",
   initialState: {
     tourGuides: [],
     selectedTourGuide: null,
     tourGuideId: null,
+    mountainIdForSelectingHikingPoint: null,
+    hikingPointIdSelected: [],
+    hikingPointFromMountainId: null,
     isTourGuideUpdating: false,
     mountains: [],
     status: null,
@@ -108,6 +140,28 @@ const tourGuideSlice = createSlice({
     },
     setIsTourGuideUpdating: (state, action) => {
       state.isTourGuideUpdating = action.payload;
+    },
+    setMountainIdForSelectingHikingPoint: (state, action) => {
+      return { ...state, mountainIdForSelectingHikingPoint: action.payload };
+    },
+    addHikingPointIdSelected: (state, action) => {
+      if (!state.hikingPointIdSelected.includes(action.payload)) {
+        state.hikingPointIdSelected.push(action.payload);
+      }
+    },
+    removeHikingPointIdSelected: (state, action) => {
+      state.hikingPointIdSelected = state.hikingPointIdSelected.filter(
+        (id) => id !== action.payload
+      );
+    },
+    clearHikingPointIdSelected: (state) => {
+      state.hikingPointIdSelected = [];
+    },
+    removeHikingPointFromMountainId: (state, action) => {
+      console.log(action.payload);
+      state.hikingPointFromMountainId = state.hikingPointFromMountainId.filter(
+        (hikingPoint) => !state.hikingPointIdSelected.includes(hikingPoint.id)
+      );
     },
   },
   extraReducers: (builder) => {
@@ -135,15 +189,27 @@ const tourGuideSlice = createSlice({
         state.error = action.error.message;
       })
       .addCase(fetchMasteredHikingPoint.pending, (state) => {
-        console.log("pending");
         state.status = "loading";
       })
       .addCase(fetchMasteredHikingPoint.fulfilled, (state, action) => {
-        console.log(action.payload);
+        console.log("payload", action.payload);
+        state.status = "succeeded";
         state.mountains = action.payload;
       })
       .addCase(fetchMasteredHikingPoint.rejected, (state, action) => {
-        console.log("rejected");
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+      .addCase(fetchHikingPointByMountainId.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchHikingPointByMountainId.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.hikingPointFromMountainId = action.payload.filter(
+          (hikingPoint) => !state.hikingPointIdSelected.includes(hikingPoint.id)
+        );
+      })
+      .addCase(fetchHikingPointByMountainId.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
       })
@@ -155,6 +221,16 @@ const tourGuideSlice = createSlice({
         state.tourGuides.push(action.payload);
       })
       .addCase(createTourGuide.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+      .addCase(createMasteredHikingPoint.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(createMasteredHikingPoint.fulfilled, (state, action) => {
+        state.status = "succeeded";
+      })
+      .addCase(createMasteredHikingPoint.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
       })
@@ -171,6 +247,16 @@ const tourGuideSlice = createSlice({
         });
       })
       .addCase(updateTourGuide.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+      .addCase(updateTourGuideImage.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(updateTourGuideImage.fulfilled, (state) => {
+        state.status = "succeeded";
+      })
+      .addCase(updateTourGuideImage.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
       })
@@ -198,7 +284,18 @@ export {
   fetchTourGuideById,
   updateTourGuideImage,
   fetchMasteredHikingPoint,
+  fetchHikingPointByMountainId,
+  createMasteredHikingPoint,
 };
-export const { setSelectedTourGuide, addTourGuideId, setIsTourGuideUpdating } =
-  tourGuideSlice.actions;
+export const {
+  setSelectedTourGuide,
+  addTourGuideId,
+  setIsTourGuideUpdating,
+  setMountainIdForSelectingHikingPoint,
+  setHikingPointSelected,
+  addHikingPointIdSelected,
+  removeHikingPointIdSelected,
+  clearHikingPointIdSelected,
+  removeHikingPointFromMountainId,
+} = tourGuideSlice.actions;
 export default tourGuideSlice.reducer;
