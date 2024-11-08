@@ -13,6 +13,7 @@ import SideBar from "./components/SideBar.jsx";
 import SecureLink from "./HOC/SecureLink.jsx";
 import HikingPoint from "./pages/hikingPoint/HikingPoint.jsx";
 import Transaction from "./pages/transaction/Transaction.jsx";
+import Widraw from "./pages/widraw/Widraw.jsx";
 
 const router = createBrowserRouter([
   { path: "/", element: <App /> },
@@ -53,6 +54,16 @@ const router = createBrowserRouter([
       <SecureLink>
         <SideBar active="/hiking-point">
           <Transaction />
+        </SideBar>
+      </SecureLink>
+    ),
+  },
+  {
+    path: "/widraw",
+    element: (
+      <SecureLink>
+        <SideBar active="/widraw">
+          <Widraw />
         </SideBar>
       </SecureLink>
     ),

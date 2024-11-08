@@ -12,7 +12,7 @@ const SideBar = ({ children, active }) => {
     { name: "Tour Guide", link: "/tour-guide" },
     { name: "Rute", link: "/rute" },
     { name: "Daftar transaction", link: "/transaction" },
-    { name: "Widraw", link: "/Widraw" },
+    { name: "Widraw", link: "/widraw" },
   ];
 
   const navigate = useNavigate();
