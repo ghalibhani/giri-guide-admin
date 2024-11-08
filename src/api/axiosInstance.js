@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "http://10.10.102.67:8080/api/v1",
+  baseURL: "https://active-gator-enabling.ngrok-free.app/api/v1",
 });
 
 axiosInstance.interceptors.request.use(
@@ -9,7 +9,7 @@ axiosInstance.interceptors.request.use(
     try {
       const token = localStorage.getItem("token");
       console.log("Token when request", token);
-      console.log("usrl when request", config.baseURL + config.url);
+      console.log("url when request", config.baseURL + config.url);
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }

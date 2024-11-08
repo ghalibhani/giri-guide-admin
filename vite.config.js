@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://10.10.102.67:8080",
+        target: "https://active-gator-enabling.ngrok-free.app",
         changeOrigin: true,
       },
     },

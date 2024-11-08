@@ -12,6 +12,7 @@ import TourGuide from "./pages/tour-guide/TourGuide.jsx";
 import SideBar from "./components/SideBar.jsx";
 import SecureLink from "./HOC/SecureLink.jsx";
 import HikingPoint from "./pages/hikingPoint/HikingPoint.jsx";
+import Transaction from "./pages/transaction/Transaction.jsx";
 
 const router = createBrowserRouter([
   { path: "/", element: <App /> },
@@ -42,6 +43,16 @@ const router = createBrowserRouter([
       <SecureLink>
         <SideBar active="/hiking-point">
           <HikingPoint />
+        </SideBar>
+      </SecureLink>
+    ),
+  },
+  {
+    path: "/transaction",
+    element: (
+      <SecureLink>
+        <SideBar active="/hiking-point">
+          <Transaction />
         </SideBar>
       </SecureLink>
     ),

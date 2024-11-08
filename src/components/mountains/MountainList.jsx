@@ -28,6 +28,7 @@ import {
 } from "../../redux/feature/hikingPointSlice";
 import FormHikingPoint from "../hikingPoint/FormHikingPoint";
 import HikingPointList from "../hikingPoint/HikingPointList";
+import HamsterLoading from "../HamsterLoading";
 const MountainList = () => {
   const dispatch = useDispatch();
   const [currentPage, setCurrentPage] = useState(1);
@@ -131,7 +132,7 @@ const MountainList = () => {
         </Modal>
         <section className="flex flex-wrap gap-5">
           {status === "loading" ? (
-            <div>Loading...</div>
+            <HamsterLoading></HamsterLoading>
           ) : (
             <>
               {mountains?.map((mountain) => {

@@ -55,7 +55,10 @@ const createTourGuide = createAsyncThunk(
   "tourGuide/createTourGuide",
   async (data, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.post(`/tour-guide`, data);
+      await axiosInstance.post(`/tour-guide`, data);
+      const response = await axiosInstance.get(
+        `/tour-guide?page=${1}&size=${20}`
+      );
       return response.data;
     } catch (e) {
       return rejectWithValue(e.response.data);
@@ -67,9 +70,9 @@ const createMasteredHikingPoint = createAsyncThunk(
   "tourGuide/createMasteredHikingPoint",
   async ({ id, data }, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.post(
-        `/tour-guide/${id}/hiking-points`,
-        data
+      await axiosInstance.post(`/tour-guide/${id}/hiking-points`, data);
+      const response = await axiosInstance.get(
+        `/tour-guide?page=${1}&size=${20}`
       );
       return response.data;
     } catch (e) {
@@ -94,9 +97,9 @@ const updateTourGuideImage = createAsyncThunk(
   "tourGuide/updateTourGuideImage",
   async ({ id, data }, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.patch(
-        `/tour-guide/data/${id}/update-image`,
-        data
+      await axiosInstance.patch(`/tour-guide/data/${id}/update-image`, data);
+      const response = await axiosInstance.get(
+        `/tour-guide?page=${1}&size=${20}`
       );
       return response.data;
     } catch (e) {
@@ -109,9 +112,24 @@ const deleteTourGuide = createAsyncThunk(
   "tourGuide/deleteTourGuide",
   async (id, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.delete(`/tour-guide/${id}`);
-      return response.data;
+      await axiosInstance.delete(`/tour-guide/${id}`);
+      return id;
     } catch (e) {
+      return rejectWithValue(e.response.data);
+    }
+  }
+);
+
+const deleteMasteredHikingPoint = createAsyncThunk(
+  "tourGuide/deleteMasteredHikingPoint",
+  async ({ idHikingPoint, idTourGuide }, { rejectWithValue }) => {
+    try {
+      await axiosInstance.delete(
+        `/tour-guide/${idTourGuide}/hiking-points/${idHikingPoint}`
+      );
+      return idHikingPoint;
+    } catch (e) {
+      console.log(e.response);
       return rejectWithValue(e.response.data);
     }
   }
@@ -206,7 +224,11 @@ const tourGuideSlice = createSlice({
       .addCase(fetchHikingPointByMountainId.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.hikingPointFromMountainId = action.payload.filter(
-          (hikingPoint) => !state.hikingPointIdSelected.includes(hikingPoint.id)
+          (hikingPoint) =>
+            !state.hikingPointIdSelected.includes(hikingPoint.id) &&
+            !state.mountains.some(
+              (masteredHikingPoint) => masteredHikingPoint.id === hikingPoint.id
+            )
         );
       })
       .addCase(fetchHikingPointByMountainId.rejected, (state, action) => {
@@ -286,6 +308,7 @@ export {
   fetchMasteredHikingPoint,
   fetchHikingPointByMountainId,
   createMasteredHikingPoint,
+  deleteMasteredHikingPoint,
 };
 export const {
   setSelectedTourGuide,

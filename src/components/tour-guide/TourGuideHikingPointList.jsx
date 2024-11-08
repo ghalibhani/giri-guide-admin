@@ -1,10 +1,10 @@
 import { Card, CardBody, CardHeader } from "@nextui-org/react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../CustomButton";
-
+import { deleteMasteredHikingPoint } from "../../redux/feature/tourGuideSlice"; //deleteMasteredHikingPoint
 const TourGuideHikingPointList = () => {
-  const mountains = useSelector((state) => state.tourGuide.mountains);
-  //   const dispatch = useDispatch();
+  const { mountains, tourGuideId } = useSelector((state) => state.tourGuide);
+  const dispatch = useDispatch();
   return (
     <section className="flex flex-wrap gap-4">
       {mountains.map((mountain) => (
@@ -27,7 +27,12 @@ const TourGuideHikingPointList = () => {
                 <CustomButton
                   customStyles={"bg-error"}
                   onPress={() => {
-                    // dispatch(handleDeleteHikingPoint(hikingPoint?.id)
+                    dispatch(
+                      deleteMasteredHikingPoint({
+                        idHikingPoint: hikingPoint.id,
+                        idTourGuide: tourGuideId,
+                      })
+                    );
                   }}>
                   Delete
                 </CustomButton>
