@@ -70,11 +70,11 @@ const createMasteredHikingPoint = createAsyncThunk(
   "tourGuide/createMasteredHikingPoint",
   async ({ id, data }, { rejectWithValue }) => {
     try {
-      await axiosInstance.post(`/tour-guide/${id}/hiking-points`, data);
-      const response = await axiosInstance.get(
-        `/tour-guide?page=${1}&size=${20}`
+      const response = await axiosInstance.post(
+        `/tour-guide/${id}/hiking-points`,
+        data
       );
-      return response.data;
+      return response.data.data.mountains;
     } catch (e) {
       return rejectWithValue(e.response.data);
     }
@@ -127,9 +127,8 @@ const deleteMasteredHikingPoint = createAsyncThunk(
       await axiosInstance.delete(
         `/tour-guide/${idTourGuide}/hiking-points/${idHikingPoint}`
       );
-      return idHikingPoint;
+      return { idHikingPoint };
     } catch (e) {
-      console.log(e.response);
       return rejectWithValue(e.response.data);
     }
   }
@@ -251,6 +250,7 @@ const tourGuideSlice = createSlice({
       })
       .addCase(createMasteredHikingPoint.fulfilled, (state, action) => {
         state.status = "succeeded";
+        state.mountains = action.payload;
       })
       .addCase(createMasteredHikingPoint.rejected, (state, action) => {
         state.status = "failed";
@@ -292,6 +292,25 @@ const tourGuideSlice = createSlice({
         );
       })
       .addCase(deleteTourGuide.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+      .addCase(deleteMasteredHikingPoint.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(deleteMasteredHikingPoint.fulfilled, (state, action) => {
+        console.log("payload", action.payload);
+        state.status = "succeeded";
+        state.mountains = state.mountains.map((mountain) => {
+          return {
+            ...mountain,
+            hikingPoints: mountain.hikingPoints.filter(
+              (hikingPoint) => hikingPoint.id !== action.payload.idHikingPoint
+            ),
+          };
+        });
+      })
+      .addCase(deleteMasteredHikingPoint.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
       });
