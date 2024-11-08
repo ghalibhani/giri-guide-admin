@@ -22,9 +22,8 @@ export const aproveOrRejectWidraw = createAsyncThunk(
     try {
       const response = await axiosInstance.patch(
         `/tour-guide/deposits/${id}?approved=${approved}` +
-          (message && `&message=${message}`)
+          (message ? `&message=${message} ` : "")
       );
-      console.log(response.data);
       return response.data;
     } catch (e) {
       return rejectWithValue(e.response.data);
@@ -66,7 +65,6 @@ export const widrawSlice = createSlice({
         );
       })
       .addCase(aproveOrRejectWidraw.rejected, (state, action) => {
-        console.log(action);
         state.status = "failed";
         state.error = action.error.message;
       });

@@ -1,6 +1,6 @@
 const HamsterLoading = () => {
   return (
-    <section className="flex justify-center items-center h-screen w-screen">
+    <section className="flex justify-center items-center h-screen w-screen absolute top-0 left-0 z-40">
       <div
         aria-label="Orange and tan hamster running in a metal wheel"
         role="img"

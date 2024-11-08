@@ -11,11 +11,9 @@ const SecureLink = ({ children }) => {
 
   useEffect(() => {
     try {
-      console.log("SecureLink", isLoggedIn, token, role);
       if (!isLoggedIn) {
         navigate("/");
       }
-      console.log(isLoggedIn, token, role);
       setIsLoading(false);
     } catch (error) {
       console.error("SecureLink error", error);

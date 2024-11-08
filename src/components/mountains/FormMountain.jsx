@@ -61,7 +61,7 @@ const FormMountain = ({ onClose, formInput = false }) => {
 
     if (isMountainUpdating) {
       if (!selectedMountain) {
-        console.error("No selected mountain provided");
+        alert("No selected mountain provided");
         return;
       }
       if (image) {

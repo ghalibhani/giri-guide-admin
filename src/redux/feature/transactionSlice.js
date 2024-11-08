@@ -44,7 +44,6 @@ const transactionSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchTransaction.fulfilled, (state, action) => {
-        console.log(action.payload);
         state.loading = false;
         state.transactions = action.payload.data;
         state.paging = action.payload.paging;

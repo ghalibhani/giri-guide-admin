@@ -174,8 +174,7 @@ const tourGuideSlice = createSlice({
     clearHikingPointIdSelected: (state) => {
       state.hikingPointIdSelected = [];
     },
-    removeHikingPointFromMountainId: (state, action) => {
-      console.log(action.payload);
+    removeHikingPointFromMountainId: (state) => {
       state.hikingPointFromMountainId = state.hikingPointFromMountainId.filter(
         (hikingPoint) => !state.hikingPointIdSelected.includes(hikingPoint.id)
       );
@@ -299,7 +298,6 @@ const tourGuideSlice = createSlice({
         state.status = "loading";
       })
       .addCase(deleteMasteredHikingPoint.fulfilled, (state, action) => {
-        console.log("payload", action.payload);
         state.status = "succeeded";
         state.mountains = state.mountains.map((mountain) => {
           return {

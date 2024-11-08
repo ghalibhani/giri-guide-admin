@@ -25,6 +25,7 @@ const FormTourGuide = ({ formInput = false }) => {
   const [address, setAddress] = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState(null);
+  const [bankAccount, setBankAccount] = useState("");
 
   const [isDescriptionValid, setIsDescriptionValid] = useState(true);
   const [isImageValid, setIsImageValid] = useState(true);
@@ -50,6 +51,7 @@ const FormTourGuide = ({ formInput = false }) => {
       setPricePorter(selectedTourGuide.pricePorter);
       setBirthDate(selectedTourGuide.birthDate);
       setGender(selectedTourGuide.gender);
+      setBankAccount(selectedTourGuide.bankAccount);
     }
   }, [selectedTourGuide]);
 
@@ -122,6 +124,9 @@ const FormTourGuide = ({ formInput = false }) => {
       if (selectedTourGuide.gender != gender) {
         tourGuideUpdate.gender = gender;
       }
+      if (selectedTourGuide.bankAccount != bankAccount) {
+        tourGuideUpdate.bankAccount = bankAccount;
+      }
       dispatch(updateTourGuide({ id: tourGuideId, data: tourGuideUpdate }));
       return;
     }
@@ -142,7 +147,8 @@ const FormTourGuide = ({ formInput = false }) => {
       !pricePorter ||
       !birthDate ||
       !gender ||
-      !address
+      !address ||
+      !bankAccount
     ) {
       alert("Please fill in all the required fields.");
       return;
@@ -162,6 +168,7 @@ const FormTourGuide = ({ formInput = false }) => {
     formData.append("pricePorter", pricePorter);
     formData.append("birthDate", birthDate);
     formData.append("gender", gender);
+    formData.append("bankAccount", bankAccount);
 
     dispatch(createTourGuide(formData));
     setName("");
@@ -178,6 +185,7 @@ const FormTourGuide = ({ formInput = false }) => {
     setPricePorter("");
     setBirthDate("");
     setGender("");
+    setBankAccount("");
 
     setIsDescriptionValid(true);
     setIsImageValid(true);
@@ -356,6 +364,15 @@ const FormTourGuide = ({ formInput = false }) => {
           </SelectItem>
         </Select>
       </section>
+      <Input
+        isDisabled={isTourGuideUpdating == false && formInput == false}
+        type="number"
+        label="Bank Account"
+        color="successSecondary"
+        variant="bordered"
+        onChange={(e) => setBankAccount(e.target.value)}
+        value={bankAccount}
+      />
       {!isTourGuideUpdating && selectedTourGuide && (
         <CustomButton
           type="button"

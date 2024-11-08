@@ -7,7 +7,6 @@ import { fetchMountain } from "../redux/feature/mountainSlice";
 
 const SideBar = ({ children, active }) => {
   const links = [
-    { name: "Dashboard", link: "/dashboard" },
     { name: "Mountain", link: "/mountain" },
     { name: "Tour Guide", link: "/tour-guide" },
     { name: "Rute", link: "/rute" },

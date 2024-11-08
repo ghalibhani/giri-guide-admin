@@ -4,9 +4,7 @@ export const login = createAsyncThunk(
   "userCredential/login",
   async (userCredential, { rejectedWithValue }) => {
     try {
-      console.log("login user", userCredential);
       const response = await axiosInstance.post(`/auth/login`, userCredential);
-      console.log("login response", response);
       return response.data;
     } catch (e) {
       return rejectedWithValue(e.response.data);
@@ -18,7 +16,6 @@ export const register = createAsyncThunk(
   "userCredential/register",
   async (userData, { rejectedWithValue }) => {
     try {
-      console.log(userData);
       const response = await axiosInstance.post(`/auth/register`, userData);
       if (response.statusCode === 201) {
         return response.data;
@@ -68,13 +65,9 @@ const authSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(login.pending, (state) => {
-        console.log("loading is pending", "current state", state);
         return (state = { ...state, status: "loading" });
       })
       .addCase(login.fulfilled, (state, action) => {
-        console.log("login is fulfilled", action.payload);
-        console.log("payload", action.payload.data.token);
-        console.log(action.payload.data.role);
         return (state = {
           ...state,
           token: action.payload.data.token,
@@ -86,10 +79,6 @@ const authSlice = createSlice({
         });
       })
       .addCase(login.rejected, (state, action) => {
-        console.log("login is rejected", action.payload);
-        console.log("current state", state);
-        console.log("payload", action.payload);
-        console.log("error", action.error);
         return {
           ...state,
           status: "failed",
@@ -97,17 +86,12 @@ const authSlice = createSlice({
         };
       })
       .addCase(register.pending, (state) => {
-        console.log("register is pending", "current state", state);
         return (state = { ...state, status: "loading" });
       })
-      .addCase(register.fulfilled, (state, action) => {
-        console.log("register is fulfilled", action.payload);
-        console.log("current state", state);
+      .addCase(register.fulfilled, (state) => {
         return (state = { ...state, status: "success" });
       })
       .addCase(register.rejected, (state, action) => {
-        console.log("register is rejected", action.payload);
-        console.log("current state", state);
         return (state = { ...state, status: "failed", error: action.payload });
       })
       .addMatcher(

@@ -41,7 +41,6 @@ const Login = () => {
   useEffect(() => {
     const getKeepLogin = async () => {
       const token = localStorage.getItem("token");
-      console.log(token);
       if (token) {
         dispatch(keepLogin(token));
       }
@@ -49,9 +48,7 @@ const Login = () => {
     getKeepLogin();
   }, []);
 
-  useEffect(() => {
-    console.log(userId, email, role, emailUser, status);
-  }, [userId, email, role, emailUser, status]);
+  useEffect(() => {}, [userId, email, role, emailUser, status]);
   useEffect(() => {
     if (isLoggedIn) {
       localStorage.setItem("token", token);

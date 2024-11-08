@@ -48,10 +48,7 @@ const TourGuideList = () => {
     }
   }, [dispatch, currentPage, mountainsPerPage]);
 
-  useEffect(() => {
-    console.log(tourGuides);
-    console.log(paging);
-  }, [tourGuides, paging]);
+  useEffect(() => {}, [tourGuides, paging]);
 
   const handleDelete = (id) => {
     if (!id) {

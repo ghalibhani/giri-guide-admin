@@ -22,9 +22,7 @@ const HikingPointListForAddingMasteredHikingPoint = () => {
     dispatch(removeHikingPointFromMountainId(id));
   };
 
-  useEffect(() => {
-    console.log("Hiking point selected", hikingPointIdSelected);
-  }, [hikingPointIdSelected]);
+  useEffect(() => {}, [hikingPointIdSelected]);
 
   useEffect(() => {
     dispatch(fetchHikingPointByMountainId(mountainIdForSelectingHikingPoint));
