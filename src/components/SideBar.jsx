@@ -9,7 +9,7 @@ const SideBar = ({ children, active }) => {
   const links = [
     { name: "Mountain", link: "/mountain" },
     { name: "Tour Guide", link: "/tour-guide" },
-    { name: "Rute", link: "/rute" },
+    { name: "Rute", link: "/route" },
     { name: "Daftar transaction", link: "/transaction" },
     { name: "Widraw", link: "/widraw" },
   ];
@@ -45,8 +45,8 @@ const SideBar = ({ children, active }) => {
   }, [active]);
 
   return (
-    <div className="flex h-screen">
-      <nav className="w-64 bg-gray-100 h-screen flex flex-col shadow-lg">
+    <div className="flex min-h-screen">
+      <nav className="bg-gray-100 h-screen flex flex-col shadow-lg w-[250px]">
         <header className="p-6 bg-white flex-shrink-0 shadow-md">
           <h1 className="text-2xl font-bold text-mainGreen">GiriGuide</h1>
         </header>
@@ -55,7 +55,7 @@ const SideBar = ({ children, active }) => {
             <li
               key={link.name}
               className={`p-4 hover:bg-mainGreen hover:text-white transition-colors w-full ${
-                navbarActive === link.link ? "bg-mainGreen text-white" : ""
+                navbarActive === link.link ? "bg-mainSoil text-white" : ""
               }`}
               onClick={() => setNavbarActive(link.link)}>
               <Link to={link.link} className="block">
@@ -74,9 +74,9 @@ const SideBar = ({ children, active }) => {
               />
             </form>
           </li>
-          <li className="p-4 hover:bg-red-600 hover:text-white transition-colors">
+          <li className="p-4 hover:bg-error hover:text-white transition-colors">
             <Button
-              className="w-full bg-red-500 text-white hover:bg-red-600"
+              className="w-full bg-error text-white "
               onClick={handleLogout}>
               Logout
             </Button>

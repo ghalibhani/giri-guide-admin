@@ -11,8 +11,8 @@ const Login = () => {
   let isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const token = useSelector((state) => state.auth.token);
   let status = useSelector((state) => state.auth.status);
-  const [email, setEmail] = useState("solehuddin@gmail.com");
-  const [password, setPassword] = useState("1Soleh@6");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isEmailValid, setIsEmailValid] = useState(false);
   const [isPasswordValid, setIsPasswordValid] = useState(false);
   const role = useSelector((state) => state.auth.role);

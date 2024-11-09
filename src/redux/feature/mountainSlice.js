@@ -95,9 +95,11 @@ const mountainSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchMountain.pending, (state) => {
+        console.log("Loading...");
         return (state = { ...state, status: "loading" });
       })
       .addCase(fetchMountain.fulfilled, (state, action) => {
+        console.log("fetched mountains", action.payload);
         return (state = {
           ...state,
           mountains: action.payload.data,
@@ -106,6 +108,7 @@ const mountainSlice = createSlice({
         });
       })
       .addCase(fetchMountain.rejected, (state, action) => {
+        console.log("failed", action.payload);
         return (state = {
           ...state,
           status: "failed",
@@ -123,6 +126,7 @@ const mountainSlice = createSlice({
         });
       })
       .addCase(fetchMountainById.rejected, (state, action) => {
+        console.log(action.payload);
         return {
           ...state,
           status: "failed",

@@ -2,14 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchTransaction } from "../../redux/feature/transactionSlice";
 
-import {
-  Card,
-  CardBody,
-  CardHeader,
-  Divider,
-  Select,
-  SelectItem,
-} from "@nextui-org/react";
+import { Card, CardBody, Select, SelectItem } from "@nextui-org/react";
 import CustomButton from "../CustomButton";
 
 const TransactionList = () => {
@@ -56,27 +49,40 @@ const TransactionList = () => {
           </SelectItem>
         ))}
       </Select>
+      <Card className="mb-3">
+        <CardBody className="flex bg-mainSoil text-white flex-row justify-between">
+          <section className="flex gap-4 px-6">
+            <p className="w-[150px] font-bold text-md">Tour Guide Name</p>
+            <p className="w-[150px] font-bold text-md">Customer Name</p>
+            <p className="w-[200px] font-bold text-md">Status</p>
+            <p className="w-[150px] font-bold text-md">nominal</p>
+            <p className="w-[150px] font-bold text-md">description</p>
+          </section>
+          <p className="w-[150px] font-bold text-md">Action</p>
+        </CardBody>
+      </Card>
       {transactions.map((transaction) => (
         <Card key={transaction.id} className="mb-4">
-          <CardHeader className="font-bold">
-            {transaction.tourGuideName}
-          </CardHeader>
-          <Divider />
           <CardBody>
             <section className="flex justify-between gap-4 px-6">
-              <p className="w-[100px]">{transaction.customerName}</p>
+              <p className="w-[150px] font-bold text-md">
+                {transaction.tourGuideName}
+              </p>
+              <p className="w-[150px] font-bold text-md">
+                {transaction.customerName}
+              </p>
               <p
                 className={
                   {
                     WAITING_APPROVE:
-                      "bg-warning text-white font-bold px-6 py-2 rounded-lg",
-                    DONE: "bg-successful text-white font-bold px-6 py-2 rounded-lg",
+                      "bg-warning text-white font-bold px-6 py-2 rounded-lg [200px] flex justify-center items-center h-10",
+                    DONE: "bg-successful text-white font-bold px-6 py-2 rounded-lg [200px] flex justify-center items-center h-10",
                     REJECTED:
-                      "bg-error text-white font-bold px-6 py-2 rounded-lg",
+                      "bg-error text-white font-bold px-6 py-2 rounded-lg [200px] flex justify-center items-center h-10",
                     WAITING_PAY:
-                      "bg-purple-600 text-white font-bold px-6 py-2 rounded-lg",
+                      "bg-purple-600 text-white font-bold px-6 py-2 rounded-lg [200px] flex justify-center items-center h-10",
                     UPCOMING:
-                      "bg-blue-600 text-white font-bold px-6 py-2 rounded-lg",
+                      "bg-blue-600 text-white font-bold px-6 py-2 rounded-lg [200px] flex justify-center items-center h-10",
                   }[transaction.transactionStatus]
                 }>
                 {transaction.transactionStatus}

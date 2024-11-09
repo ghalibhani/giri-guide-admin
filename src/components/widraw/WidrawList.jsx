@@ -1,5 +1,7 @@
 import {
   Button,
+  Card,
+  CardBody,
   Input,
   Modal,
   ModalBody,
@@ -69,6 +71,7 @@ const WidrawList = () => {
         label="Status Widraw"
         placeholder="Pilih status widraw"
         size="sm"
+        color="#503a3a"
         bordered
         value={status}
         onChange={(e) => setStatus(e.target.value)}>
@@ -88,6 +91,67 @@ const WidrawList = () => {
           Rejected
         </SelectItem>
       </Select>
+      <Card className="mb-3">
+        <CardBody className="flex bg-mainSoil text-white flex-row justify-between">
+          <section className="flex gap-4 px-6">
+            <p className="w-[150px] font-bold text-md">Tour Guide Name</p>
+            <p className="w-[200px] font-bold text-md">Status</p>
+            <p className="w-[150px] font-bold text-md">nominal</p>
+            <p className="w-[150px] font-bold text-md">description</p>
+          </section>
+          <p className="w-[150px] font-bold text-md">Action</p>
+        </CardBody>
+      </Card>
+      {widraws.map((widraw) => (
+        <Card key={widraw.id} className="mb-3">
+          <CardBody className="flex flex-row justify-between">
+            <section className="flex gap-4 px-6">
+              <p className="w-[150px]">{widraw.tourGuideName}</p>
+              <p
+                className={
+                  {
+                    OUT: "bg-successful text-white font-bold px-6 py-2 rounded-lg w-[200px] flex justify-center items-center h-10",
+                    REJECTED:
+                      "bg-error text-white font-bold px-6 py-2 rounded-lg w-[200px] flex justify-center items-center h-10",
+                    PENDING:
+                      "bg-purple-600 text-white font-bold px-6 py-2 rounded-lg w-[200px] flex justify-center items-center h-10",
+                    IN: "bg-blue-600 text-white font-bold px-6 py-2 rounded-lg w-[200px] flex justify-center items-center h-10",
+                  }[widraw.status]
+                }>
+                {widraw.status}
+              </p>
+              <p className="w-[150px]">
+                Rp. {widraw.nominal.toLocaleString("id-ID")}
+              </p>
+              <p className="w-auto">{widraw.description}</p>
+            </section>
+            <section className="flex gap-4 px-6">
+              {widraw.status === "PENDING" && (
+                <section className="flex gap-4">
+                  <CustomButton
+                    customStyles={"bg-error"}
+                    onPress={() => {
+                      onOpen();
+                      openModalForRejectedWidraw(widraw.id);
+                    }}
+                    text="Reject">
+                    Reject
+                  </CustomButton>
+                  <CustomButton
+                    customStyles={"bg-success"}
+                    onPress={() => {
+                      handleApproveWidraw(widraw.id);
+                    }}
+                    text="Approve">
+                    Approve
+                  </CustomButton>
+                </section>
+              )}
+            </section>
+          </CardBody>
+        </Card>
+      ))}
+      {/* 
       <ul>
         {widraws.map((widraw) => (
           <li
@@ -97,34 +161,19 @@ const WidrawList = () => {
               {widraw.tourGuideName} - {widraw.nominal} - {widraw.status} -{" "}
               {widraw.description}
             </p>
-            {widraw.status === "PENDING" && (
-              <section className="flex gap-4">
-                <CustomButton
-                  customStyles={"bg-error"}
-                  onPress={() => {
-                    onOpen();
-                    openModalForRejectedWidraw(widraw.id);
-                  }}
-                  text="Reject">
-                  Reject
-                </CustomButton>
-                <CustomButton
-                  customStyles={"bg-success"}
-                  onPress={() => {
-                    handleApproveWidraw(widraw.id);
-                  }}
-                  text="Approve">
-                  Approve
-                </CustomButton>
-              </section>
-            )}
           </li>
         ))}
-      </ul>
+      </ul> */}
       <Pagination
         total={paging?.totalPages}
         page={page}
         onChange={handleChangePagination}
+        classNames={{
+          wrapper: "gap-0 overflow-visible h-8 rounded border border-divider",
+          item: "w-8 h-8 text-small rounded-none bg-transparent",
+          cursor:
+            "bg-gradient-to-b shadow-lg from-mainSoil to-default-800 text-white font-bold",
+        }}
         rowsPerPage={size}
         rounded
       />

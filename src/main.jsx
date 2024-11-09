@@ -14,6 +14,7 @@ import SecureLink from "./HOC/SecureLink.jsx";
 import HikingPoint from "./pages/hikingPoint/HikingPoint.jsx";
 import Transaction from "./pages/transaction/Transaction.jsx";
 import Widraw from "./pages/widraw/Widraw.jsx";
+import Route from "./pages/rute/Route.jsx";
 
 const router = createBrowserRouter([
   { path: "/", element: <App /> },
@@ -64,6 +65,16 @@ const router = createBrowserRouter([
       <SecureLink>
         <SideBar active="/widraw">
           <Widraw />
+        </SideBar>
+      </SecureLink>
+    ),
+  },
+  {
+    path: "/route",
+    element: (
+      <SecureLink>
+        <SideBar active="/route">
+          <Route />
         </SideBar>
       </SecureLink>
     ),

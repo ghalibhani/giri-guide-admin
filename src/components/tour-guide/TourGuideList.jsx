@@ -27,9 +27,12 @@ import {
 import FormTourGuide from "./FormTourGuide";
 import TourGuideHikingPointList from "./TourGuideHikingPointList";
 import AddMasteredHikingPoint from "./AddMasteredHikingPoint";
+import HamsterLoading from "../HamsterLoading";
 
 const TourGuideList = () => {
-  const { tourGuides, paging } = useSelector((state) => state.tourGuide);
+  const { tourGuides, paging, status } = useSelector(
+    (state) => state.tourGuide
+  );
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [mountainsPerPage] = useState(8);
@@ -101,6 +104,7 @@ const TourGuideList = () => {
   }, []);
   return (
     <>
+      {status == "loading" && <HamsterLoading />}
       <section className="mt-5 flex flex-wrap gap-5">
         <Modal
           isOpen={isOpen}
