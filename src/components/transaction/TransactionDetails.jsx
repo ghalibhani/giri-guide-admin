@@ -1,6 +1,5 @@
 import { useSelector } from "react-redux";
-
-import { Card, CardBody, Image } from "@nextui-org/react";
+import { Card, CardBody, Image, Divider, Spacer } from "@nextui-org/react";
 
 const TransactionDetails = () => {
   const transaction = useSelector(
@@ -12,27 +11,114 @@ const TransactionDetails = () => {
   }
 
   return (
-    <Card>
-      <CardBody>
-        <h2>Transaction Details</h2>
-        <Image
-          src={transaction.tourGuideImage}
-          alt={transaction.tourGuideName}
-          width={50}
-          height={50}
-        />
-        <p>ID: {transaction.id}</p>
-        <p>Status: {transaction.transactionStatus}</p>
-        <p>Mountain: {transaction.mountainName}</p>
-        <p>Hiking Point: {transaction.hikingPointName}</p>
-        <p>Start Date: {new Date(transaction.startDate).toLocaleString()}</p>
-        <p>End Date: {new Date(transaction.endDate).toLocaleString()}</p>
-        <p>Days: {transaction.days}</p>
-        <p>Customer: {transaction.customerName}</p>
-        <p>Tour Guide: {transaction.tourGuideName}</p>
-        <p>Porter: {transaction.porter}</p>
-        <p>Total Price: {transaction.totalPrice}</p>
-        <p>Customer Note: {transaction.customerNote}</p>
+    <Card css={{ maxWidth: "400px", padding: "20px" }}>
+      <CardBody css={{ padding: "20px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+          <Image
+            src={transaction.tourGuideImage}
+            alt={transaction.tourGuideName}
+            width={80}
+            height={80}
+            css={{ borderRadius: "50%" }}
+          />
+          <div>
+            <h3 style={{ margin: 0 }}>{transaction.tourGuideName}</h3>
+            <p style={{ color: "#6B7280" }}>
+              Status: {transaction.transactionStatus}
+            </p>
+          </div>
+        </div>
+
+        <Spacer y={1} />
+        <Divider />
+        <Spacer y={1} />
+
+        <section>
+          <p style={{ color: "#6B7280", marginBottom: "0.25rem" }}>Mountain</p>
+          <h4 style={{ margin: 0 }}>{transaction.mountainName}</h4>
+        </section>
+
+        <Spacer y={0.5} />
+        <Divider />
+        <Spacer y={0.5} />
+
+        <section>
+          <p style={{ color: "#6B7280", marginBottom: "0.25rem" }}>
+            Hiking Point
+          </p>
+          <h4 style={{ margin: 0 }}>{transaction.hikingPointName}</h4>
+        </section>
+
+        <Spacer y={0.5} />
+        <Divider />
+        <Spacer y={0.5} />
+
+        <section>
+          <p style={{ color: "#6B7280", marginBottom: "0.25rem" }}>
+            Start Date
+          </p>
+          <p>{new Date(transaction.startDate).toLocaleString()}</p>
+        </section>
+
+        <Spacer y={0.5} />
+        <Divider />
+        <Spacer y={0.5} />
+
+        <section>
+          <p style={{ color: "#6B7280", marginBottom: "0.25rem" }}>End Date</p>
+          <p>{new Date(transaction.endDate).toLocaleString()}</p>
+        </section>
+
+        <Spacer y={0.5} />
+        <Divider />
+        <Spacer y={0.5} />
+
+        <section>
+          <p style={{ color: "#6B7280", marginBottom: "0.25rem" }}>Days</p>
+          <p>{transaction.days}</p>
+        </section>
+
+        <Spacer y={0.5} />
+        <Divider />
+        <Spacer y={0.5} />
+
+        <section>
+          <p style={{ color: "#6B7280", marginBottom: "0.25rem" }}>Customer</p>
+          <p>{transaction.customerName}</p>
+        </section>
+
+        <Spacer y={0.5} />
+        <Divider />
+        <Spacer y={0.5} />
+
+        <section>
+          <p style={{ color: "#6B7280", marginBottom: "0.25rem" }}>Porter</p>
+          <p>{transaction.porter}</p>
+        </section>
+
+        <Spacer y={0.5} />
+        <Divider />
+        <Spacer y={0.5} />
+
+        <section>
+          <p style={{ color: "#6B7280", marginBottom: "0.25rem" }}>
+            Total Price
+          </p>
+          <p style={{ fontWeight: "bold", color: "#0070f3" }}>
+            {transaction.totalPrice}
+          </p>
+        </section>
+
+        <Spacer y={0.5} />
+        <Divider />
+        <Spacer y={0.5} />
+
+        <section>
+          <p style={{ color: "#6B7280", marginBottom: "0.25rem" }}>
+            Customer Note
+          </p>
+          <p>{transaction.customerNote || "No notes"}</p>
+        </section>
       </CardBody>
     </Card>
   );

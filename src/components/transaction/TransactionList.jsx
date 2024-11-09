@@ -1,13 +1,25 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchTransaction } from "../../redux/feature/transactionSlice";
+import {
+  fetchTransaction,
+  fetchTransactionById,
+} from "../../redux/feature/transactionSlice";
 
-import { Card, CardBody, Select, SelectItem } from "@nextui-org/react";
+import {
+  Card,
+  CardBody,
+  Select,
+  SelectItem,
+  useDisclosure,
+} from "@nextui-org/react";
 import CustomButton from "../CustomButton";
+import CustomModal from "../CustomModal";
+import TransactionDetails from "./TransactionDetails";
 
 const TransactionList = () => {
   const { transactions } = useSelector((state) => state.transaction);
   const [transactionStatus, setTransactionStatus] = useState("");
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -36,6 +48,18 @@ const TransactionList = () => {
 
   return (
     <section className="flex flex-col gap-5 px-6">
+      <CustomModal
+        isOpen={isOpen}
+        onClose={onClose}
+        content={
+          <>
+            <TransactionDetails />
+          </>
+        }
+        title="Transaction Details"
+        primaryActionText={"Close"}
+        onPrimaryAction={onClose}
+      />
       <h1 className="text-xl font-bold">Daftar Transaksi</h1>
       <Select
         value={transactionStatus}
@@ -90,14 +114,8 @@ const TransactionList = () => {
               <p>{transaction.mountainName}</p>
               <CustomButton
                 onClick={() => {
-                  dispatch(
-                    fetchTransaction({
-                      page: 1,
-                      size: 20,
-                      status: transactionStatus,
-                      tourGuideId: transaction.tourGuideId,
-                    })
-                  );
+                  dispatch(fetchTransactionById(transaction.id));
+                  onOpen();
                 }}
                 autoFocus
                 className="text-neutral-50 bg-successful">

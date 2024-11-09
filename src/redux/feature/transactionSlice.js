@@ -58,7 +58,6 @@ const transactionSlice = createSlice({
       .addCase(fetchTransactionById.fulfilled, (state, action) => {
         state.loading = false;
         state.transactionDetails = action.payload.data;
-        state.paging = action.payload.paging;
       })
       .addCase(fetchTransactionById.rejected, (state, action) => {
         state.loading = false;
