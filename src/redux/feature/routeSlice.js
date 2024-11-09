@@ -5,7 +5,7 @@ export const fetchRoute = createAsyncThunk(
   "route/fetchRoute",
   async (id, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.get(`/routes/${id}`);
+      const response = await axiosInstance.get(`/location-routes`);
       return response.data;
     } catch (e) {
       return rejectWithValue(e.response.data);
@@ -17,19 +17,50 @@ export const createRoute = createAsyncThunk(
   "route/createRoute",
   async (data, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.post(`/routes`, data);
+      const response = await axiosInstance.post(`/location-routes`, data);
       return response.data;
     } catch (e) {
       return rejectWithValue(e.response.data);
     }
   }
 );
-
+export const fetchRouteDetailById = createAsyncThunk(
+  "route/fetchRouteDetailById",
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get(`/location-routes/${id}`);
+      return response.data;
+    } catch (e) {
+      return rejectWithValue(e.response.data);
+    }
+  }
+);
+export const updateRoute = createAsyncThunk(
+  "route/updateRoute",
+  async ({ id, data }, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.patch(
+        `/location-routes/${id}`,
+        data
+      );
+      return response.data;
+    } catch (e) {
+      return rejectWithValue(e.response.data);
+    }
+  }
+);
 const routeSlice = createSlice({
   name: "route",
   initialState: {
-    route: [],
+    routes: [],
+    routesDetail: {
+      title: "",
+      description: "",
+      routes: [],
+    },
+    paging: null,
     fragmentRoute: [],
+    idRouteForUpdate: null,
     isRouteUpdating: false,
     status: "",
     error: null,
@@ -62,30 +93,68 @@ const routeSlice = createSlice({
     clearFragmentRoute: (state) => {
       state.fragmentRoute = [];
     },
+    setIdRouteForUpdate: (state, action) => {
+      state.idRouteForUpdate = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
       .addCase(fetchRoute.pending, (state) => {
+        console.log("Fetching route...");
         state.status = "loading";
       })
       .addCase(fetchRoute.fulfilled, (state, action) => {
+        console.log("Route fetched", action.payload);
         state.status = "success";
-        state.route = action.payload;
+        state.routes = action.payload.data;
+        state.paging = action.payload.paging;
       })
       .addCase(fetchRoute.rejected, (state, action) => {
+        console.log("Failed to fetch route", action.error.message);
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+      .addCase(fetchRouteDetailById.pending, (state) => {
+        console.log("Fetching route detail...");
+        state.status = "loading";
+      })
+      .addCase(fetchRouteDetailById.fulfilled, (state, action) => {
+        console.log("Route detail fetched", action.payload);
+        state.status = "success";
+        state.routesDetail = action.payload.data;
+      })
+      .addCase(fetchRouteDetailById.rejected, (state, action) => {
+        console.log("Failed to fetch route detail", action.error.message);
         state.status = "failed";
         state.error = action.error.message;
       })
       .addCase(createRoute.pending, (state) => {
+        console.log("Creating route...");
         state.status = "loading";
       })
       .addCase(createRoute.fulfilled, (state, action) => {
+        console.log("Route created", action.payload);
         state.status = "success";
-        state.route = action.payload;
+        state.routes.push(action.payload.data);
       })
       .addCase(createRoute.rejected, (state, action) => {
+        console.log("Failed to create route", action.error.message);
         state.status = "failed";
         state.error = action.error.message;
+      })
+      .addCase(updateRoute.pending, (state) => {
+        console.log("Updating route...");
+        state.status = "loading";
+      })
+      .addCase(updateRoute.fulfilled, (state, action) => {
+        console.log("Route updated", action.payload);
+        state.status = "success";
+        state.routes = state.routes.map((route) => {
+          if (route.id === action.payload.data.id) {
+            return action.payload.data;
+          }
+          return route;
+        });
       });
   },
 });
@@ -95,5 +164,6 @@ export const {
   removeFragmentRoute,
   clearFragmentRoute,
   updateFragmentRoute,
+  setIdRouteForUpdate,
 } = routeSlice.actions;
 export default routeSlice.reducer;
