@@ -78,7 +78,7 @@ const FormHikingPoint = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap- w-full">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full">
       <h1 className="text-3xl text-successfulHover">
         {isUpdate && selectedHikingPoint ? "Update" : "Add"} Hiking Point
       </h1>

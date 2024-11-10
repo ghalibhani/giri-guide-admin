@@ -3,11 +3,11 @@ import axiosInstance from "../../api/axiosInstance";
 
 const fetchMountain = createAsyncThunk(
   "mountain/fetchMountain",
-  async ({ page, size, search = "", city = "" }) => {
+  async ({ page, size, search, city = "" }) => {
     try {
       const response = await axiosInstance.get(
         `/mountains?page=${page}&size=${size}` +
-          (search ? `&search=${search}` : "") +
+          (search ? `&name=${search}` : "") +
           (city ? `&city=${city}` : "")
       );
       return response.data;
