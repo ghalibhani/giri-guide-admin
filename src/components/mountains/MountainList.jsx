@@ -32,7 +32,7 @@ import HamsterLoading from "../HamsterLoading";
 const MountainList = () => {
   const dispatch = useDispatch();
   const [currentPage, setCurrentPage] = useState(1);
-  const [mountainsPerPage] = useState(5);
+  const [mountainsPerPage, setMountainsPerPage] = useState(5);
   const selectedMountain = useSelector(
     (state) => state.mountain.selectedMountain
   );
@@ -65,14 +65,14 @@ const MountainList = () => {
     }
   };
 
-  const handleDetails = (mountain) => {
+  const handleDetails = async (mountain) => {
     if (!mountain.id) {
       alert("Id is required for update");
       return;
     }
     try {
-      dispatch(fetchMountainById(mountain.id));
-      dispatch(addMountainId(mountain.id));
+      await dispatch(fetchMountainById(mountain.id));
+      await dispatch(addMountainId(mountain.id));
       setIsMountainUpdating(true);
       onOpen();
     } catch (error) {
@@ -100,7 +100,7 @@ const MountainList = () => {
             {(closeModal) => (
               <>
                 <ModalHeader className="flex flex-col gap-1">
-                  Add New Mountain
+                  Mountain
                 </ModalHeader>
                 <ModalBody>
                   <section className="flex gap-5 w-full px-5 py-2">

@@ -239,10 +239,13 @@ const tourGuideSlice = createSlice({
         state.status = "loading";
       })
       .addCase(createTourGuide.fulfilled, (state, action) => {
+        console.log("payload", action.payload);
         state.status = "succeeded";
         state.tourGuides.push(action.payload);
       })
       .addCase(createTourGuide.rejected, (state, action) => {
+        console.log("payload", action.payload);
+        console.log("error", action.error);
         state.status = "failed";
         state.error = action.error.message;
       })

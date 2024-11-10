@@ -109,7 +109,7 @@ const FormMountain = ({ onClose, formInput = false }) => {
       resetForm();
       dispatch(setIsMountainUpdating(false));
       dispatch(setSelectedMountain(null));
-      await dispatch(fetchMountain({ page: 1, limit: 20 }));
+      await dispatch(fetchMountain({ page: 1, size: 5 }));
       onClose();
       return;
     }

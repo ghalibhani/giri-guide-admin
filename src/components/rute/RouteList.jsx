@@ -95,7 +95,7 @@ const RouteList = () => {
               <p className="w-[200px] font-bold text-md">{route.title}</p>
               <p className="w-auto">{route.description}</p>
             </section>
-            <section>
+            <section className="flex gap-3">
               <CustomButton
                 customStyles={"bg-error"}
                 onPress={() => {

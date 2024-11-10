@@ -107,7 +107,7 @@ const TourGuideList = () => {
             {(closeModal) => (
               <>
                 <ModalHeader className="flex flex-col gap-1">
-                  Add New Mountain
+                  Tour Guide
                 </ModalHeader>
                 <ModalBody>
                   <section className="flex gap-5 w-full px-5 py-2">
