@@ -44,6 +44,12 @@ const MountainList = () => {
   const handleChangePagination = (page) => {
     setCurrentPage(page);
   };
+  const handleOnMountainDetailsClose = () => {
+    onClose();
+    dispatch(clearSeletedHikingPoint());
+    dispatch(setIsMountainUpdating(false));
+    dispatch(setSelectedMountain(null));
+  };
   const handleDelete = (id) => {
     if (!id) {
       alert("Id is required for delete");
@@ -94,6 +100,7 @@ const MountainList = () => {
         <Modal
           isOpen={isOpen}
           size="5xl"
+          onClose={handleOnMountainDetailsClose}
           onOpenChange={onOpenChange}
           className="h-4/5 overflow-scroll w-full">
           <ModalContent>
@@ -119,12 +126,7 @@ const MountainList = () => {
                   <Button
                     color="danger"
                     variant="light"
-                    onPress={() => {
-                      onClose();
-                      dispatch(clearSeletedHikingPoint());
-                      dispatch(setIsMountainUpdating(false));
-                      dispatch(setSelectedMountain(null));
-                    }}>
+                    onPress={handleOnMountainDetailsClose}>
                     Close
                   </Button>
                 </ModalFooter>

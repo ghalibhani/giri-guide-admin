@@ -37,7 +37,7 @@ const MountainListForSelectingHikingPoint = () => {
 
   useEffect(() => {
     try {
-      dispatch(fetchMountain({ page: currentPage, limit: mountainsPerPage }));
+      dispatch(fetchMountain({ page: currentPage, size: mountainsPerPage }));
     } catch (error) {
       alert(error?.message);
     }

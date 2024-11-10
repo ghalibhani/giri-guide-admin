@@ -37,10 +37,15 @@ const TourGuideList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const tourGuidesPerPage = 5;
   const dispatch = useDispatch();
-  console.log("Pagination", paging);
 
   const handleChangePagination = (page) => {
     setCurrentPage(page);
+  };
+  const handleTourGuideDetailsClose = () => {
+    onClose();
+    dispatch(setIsTourGuideUpdating(false));
+    dispatch(setSelectedTourGuide(null));
+    dispatch(setMountainIdForSelectingHikingPoint(null));
   };
 
   useEffect(() => {
@@ -101,6 +106,7 @@ const TourGuideList = () => {
         <Modal
           isOpen={isOpen}
           size="5xl"
+          onClose={handleTourGuideDetailsClose}
           onOpenChange={onOpenChange}
           className="h-4/5 overflow-scroll">
           <ModalContent>
@@ -122,12 +128,7 @@ const TourGuideList = () => {
                   <Button
                     color="danger"
                     variant="light"
-                    onPress={() => {
-                      onClose();
-                      dispatch(setIsTourGuideUpdating(false));
-                      dispatch(setSelectedTourGuide(null));
-                      dispatch(setMountainIdForSelectingHikingPoint(null));
-                    }}>
+                    onPress={handleTourGuideDetailsClose}>
                     Close
                   </Button>
                 </ModalFooter>
