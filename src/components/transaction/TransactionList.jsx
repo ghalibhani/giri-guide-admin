@@ -8,6 +8,7 @@ import {
 import {
   Card,
   CardBody,
+  Pagination,
   Select,
   SelectItem,
   useDisclosure,
@@ -17,22 +18,24 @@ import CustomModal from "../CustomModal";
 import TransactionDetails from "./TransactionDetails";
 
 const TransactionList = () => {
-  const { transactions } = useSelector((state) => state.transaction);
+  const { transactions, paging } = useSelector((state) => state.transaction);
   const [transactionStatus, setTransactionStatus] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [page, setPage] = useState(1);
+  const [size, setSize] = useState(5);
 
   const dispatch = useDispatch();
+
+  const handleChangePagination = (page) => {
+    setPage(page);
+  };
   useEffect(() => {
-    dispatch(
-      fetchTransaction({ page: 1, size: 20, status: transactionStatus })
-    );
+    dispatch(fetchTransaction({ page, size, status: transactionStatus }));
   }, []);
 
   useEffect(() => {
-    dispatch(
-      fetchTransaction({ page: 1, size: 20, status: transactionStatus })
-    );
-  }, [transactionStatus]);
+    dispatch(fetchTransaction({ page, size, status: transactionStatus }));
+  }, [transactionStatus, page, size, dispatch]);
 
   const statusOptions = [
     { value: "", label: "All" },
@@ -47,7 +50,7 @@ const TransactionList = () => {
   ];
 
   return (
-    <section className="flex flex-col gap-5 px-6">
+    <section className="flex flex-col gap-4">
       <CustomModal
         isOpen={isOpen}
         onClose={onClose}
@@ -73,7 +76,7 @@ const TransactionList = () => {
           </SelectItem>
         ))}
       </Select>
-      <Card className="mb-3">
+      <Card className="">
         <CardBody className="flex bg-mainSoil text-white flex-row justify-between">
           <section className="flex gap-4 px-6">
             <p className="w-[150px] font-bold text-md">Tour Guide Name</p>
@@ -86,9 +89,9 @@ const TransactionList = () => {
         </CardBody>
       </Card>
       {transactions.map((transaction) => (
-        <Card key={transaction.id} className="mb-4">
+        <Card key={transaction.id}>
           <CardBody>
-            <section className="flex justify-between gap-4 px-6">
+            <section className="flex justify-between gap-4 px-6 items-center">
               <p className="w-[150px] font-bold text-md">
                 {transaction.tourGuideName}
               </p>
@@ -125,6 +128,19 @@ const TransactionList = () => {
           </CardBody>
         </Card>
       ))}
+      <Pagination
+        total={paging?.totalPages}
+        page={page}
+        onChange={handleChangePagination}
+        classNames={{
+          wrapper: "gap-0 overflow-visible h-8 rounded border border-divider",
+          item: "w-8 h-8 text-small rounded-none bg-transparent",
+          cursor:
+            "bg-gradient-to-b shadow-lg from-mainSoil to-default-800 text-white font-bold",
+        }}
+        rowsPerPage={size}
+        rounded
+      />
     </section>
   );
 };

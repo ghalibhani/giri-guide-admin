@@ -3,11 +3,12 @@ import axiosInstance from "../../api/axiosInstance";
 
 const fetchTourGuide = createAsyncThunk(
   "tourGuide/fetchTourGuide",
-  async ({ page = 1, size = 20 }, { rejectWithValue }) => {
+  async ({ page, size }, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get(
-        `/tour-guide?page=${page}&size=${size}`
+        `/tour-guide?page=${page}` + `&size=${size}`
       );
+      console.log(response.data);
       return response.data;
     } catch (e) {
       return rejectWithValue(e.response.data);
@@ -188,6 +189,7 @@ const tourGuideSlice = createSlice({
       .addCase(fetchTourGuide.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.tourGuides = action.payload.data;
+        state.paging = action.payload.paging;
       })
       .addCase(fetchTourGuide.rejected, (state, action) => {
         state.status = "failed";

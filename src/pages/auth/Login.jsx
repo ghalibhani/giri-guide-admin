@@ -29,7 +29,6 @@ const Login = () => {
   }, [email, password]);
 
   const handleLogin = async () => {
-    console.log(email, password);
     if (!email || !password) {
       alert("Email dan Password harus di isi");
       return;
@@ -50,14 +49,13 @@ const Login = () => {
     getKeepLogin();
   }, []);
 
-  useEffect(() => {}, [userId, email, role, emailUser, status]);
   useEffect(() => {
     if (isLoggedIn) {
       localStorage.setItem("token", token);
       localStorage.setItem("isLoggedIn", "true");
-      localStorage.setItem("userId", "admin");
-      localStorage.setItem("email", "admin");
-      localStorage.setItem("role", "admin");
+      localStorage.setItem("userId", userId);
+      localStorage.setItem("email", emailUser);
+      localStorage.setItem("role", role);
       console.log(
         "token",
         token,
@@ -74,7 +72,7 @@ const Login = () => {
         "status",
         status
       );
-      navigate("/mountain");
+      navigate("/dashboard");
     }
   }, [isLoggedIn, navigate, token]);
 

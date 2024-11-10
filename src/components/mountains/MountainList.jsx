@@ -32,7 +32,7 @@ import HamsterLoading from "../HamsterLoading";
 const MountainList = () => {
   const dispatch = useDispatch();
   const [currentPage, setCurrentPage] = useState(1);
-  const [mountainsPerPage] = useState(8);
+  const [mountainsPerPage] = useState(5);
   const selectedMountain = useSelector(
     (state) => state.mountain.selectedMountain
   );
@@ -41,6 +41,9 @@ const MountainList = () => {
   const paging = useSelector((state) => state.mountain.paging);
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure(false);
 
+  const handleChangePagination = (page) => {
+    setCurrentPage(page);
+  };
   const handleDelete = (id) => {
     if (!id) {
       alert("Id is required for delete");
@@ -56,7 +59,7 @@ const MountainList = () => {
 
     try {
       dispatch(deleteMountain(id));
-      dispatch(fetchMountain({ page: currentPage, limit: mountainsPerPage }));
+      dispatch(fetchMountain({ page: currentPage, size: mountainsPerPage }));
     } catch (error) {
       alert(error?.message);
     }
@@ -76,11 +79,10 @@ const MountainList = () => {
       alert(error?.message);
     }
   };
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   useEffect(() => {
     try {
-      dispatch(fetchMountain({ page: currentPage, limit: mountainsPerPage }));
+      dispatch(fetchMountain({ page: currentPage, size: mountainsPerPage }));
     } catch (error) {
       alert(error?.message);
     }
@@ -184,11 +186,17 @@ const MountainList = () => {
       </section>
       <Pagination
         total={paging?.totalPages}
-        initialPage={paging?.page}
-        onChange={(page) => {
-          paginate(page);
+        page={currentPage}
+        onChange={handleChangePagination}
+        classNames={{
+          wrapper: "gap-0 overflow-visible h-8 rounded border border-divider",
+          item: "w-8 h-8 text-small rounded-none bg-transparent",
+          cursor:
+            "bg-gradient-to-b shadow-lg from-mainSoil to-default-800 text-white font-bold",
         }}
-      />
+        rowsPerPage={mountainsPerPage}
+        rounded
+      />{" "}
     </section>
   );
 };

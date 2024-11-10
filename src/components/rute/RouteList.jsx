@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  deleteRoute,
   fetchRoute,
   fetchRouteDetailById,
   setIdRouteForUpdate,
@@ -26,6 +27,15 @@ const RouteList = () => {
   const handleDetails = (id) => {
     dispatch(fetchRouteDetailById(id));
     onOpen();
+  };
+  const handleDelete = (id) => {
+    if (!id) {
+      alert("Id is required for delete");
+      return;
+    }
+    if (confirm("Are you sure you want to delete this route?")) {
+      dispatch(deleteRoute(id));
+    }
   };
 
   useEffect(() => {
@@ -87,7 +97,15 @@ const RouteList = () => {
             </section>
             <section>
               <CustomButton
-                customStyles={"bg-success"}
+                customStyles={"bg-error"}
+                onPress={() => {
+                  handleDelete(route.id);
+                }}
+                text="Approve">
+                delete
+              </CustomButton>
+              <CustomButton
+                customStyles={"bg-successful"}
                 onPress={() => {
                   handleDetails(route.id);
                 }}

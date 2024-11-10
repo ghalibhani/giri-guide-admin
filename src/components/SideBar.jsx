@@ -16,7 +16,7 @@ const SideBar = ({ children, active }) => {
   ];
 
   const navigate = useNavigate();
-  const [navbarActive, setNavbarActive] = useState(active || "/mountain");
+  const [navbarActive, setNavbarActive] = useState(active || "/dashboard");
   const [searchMountain, setSearchMountain] = useState("");
   const dispatch = useDispatch();
 
@@ -46,7 +46,7 @@ const SideBar = ({ children, active }) => {
   }, [active]);
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex h-screen overflow-y-scroll">
       <nav className="bg-gray-100 h-screen flex flex-col shadow-lg w-[250px]">
         <header className="p-6 bg-white flex-shrink-0 shadow-md">
           <h1 className="text-2xl font-bold text-mainGreen">GiriGuide</h1>
@@ -84,7 +84,9 @@ const SideBar = ({ children, active }) => {
           </li>
         </ul>
       </nav>
-      <section className="flex-grow p-6">{children}</section>
+      <section className="flex-grow p-6 h-screen overflow-y-scroll">
+        {children}
+      </section>
     </div>
   );
 };

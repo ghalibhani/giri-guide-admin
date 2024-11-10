@@ -100,7 +100,7 @@ const WidrawList = () => {
 
   return (
     <section>
-      <section>
+      <section className="flex gap-3 mb-3">
         <Input
           className="mb-3"
           label="Search by Tour Guide Name"
@@ -136,7 +136,7 @@ const WidrawList = () => {
           </SelectItem>
         </Select>
       </section>
-      <Card className="mb-3">
+      <Card className="flex flex-row justify-between items-center mb-3">
         <CardBody className="flex bg-mainSoil text-white flex-row justify-between">
           <section className="flex gap-4 px-6">
             <p className="w-[150px] font-bold text-md">Tour Guide Name</p>
@@ -150,7 +150,7 @@ const WidrawList = () => {
       {widraws.map((widraw) => (
         <Card key={widraw.id} className="mb-3">
           <CardBody className="flex flex-row justify-between">
-            <section className="flex gap-4 px-6">
+            <section className="flex gap-4 px-6 justify-center items-center">
               <p className="w-[150px]">{widraw.tourGuideName}</p>
               <p
                 className={

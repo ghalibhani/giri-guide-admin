@@ -35,76 +35,68 @@ const TourGuideList = () => {
   );
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [mountainsPerPage] = useState(8);
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const tourGuidesPerPage = 5;
   const dispatch = useDispatch();
+  console.log("Pagination", paging);
+
+  const handleChangePagination = (page) => {
+    setCurrentPage(page);
+  };
 
   useEffect(() => {
-    try {
-      dispatch(fetchTourGuide({ page: currentPage, limit: mountainsPerPage }));
-    } catch (error) {
-      if (error instanceof Error) {
-        alert(error.message);
-      } else {
-        console.error(error);
+    const fetchData = async () => {
+      try {
+        await dispatch(
+          fetchTourGuide({ page: currentPage, size: tourGuidesPerPage })
+        );
+      } catch (error) {
+        alert(error.message || "An error occurred");
       }
-    }
-  }, [dispatch, currentPage, mountainsPerPage]);
+    };
+    fetchData();
+  }, [dispatch, currentPage, tourGuidesPerPage]);
 
-  useEffect(() => {}, [tourGuides, paging]);
-
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (!id) {
       alert("Id is required for delete");
       return;
     }
 
-    try {
-      const isReadyForDelete = confirm(
-        `Yakin ingin menghapus gunung dengan id ${id}?`
-      );
-      if (!isReadyForDelete) {
-        return;
-      }
+    const isReadyForDelete = confirm(
+      `Yakin ingin menghapus gunung dengan id ${id}?`
+    );
+    if (!isReadyForDelete) return;
 
-      dispatch(deleteTourGuide(id));
-      dispatch(fetchTourGuide({ page: currentPage, limit: mountainsPerPage }));
+    try {
+      await dispatch(deleteTourGuide(id));
+      await dispatch(
+        fetchTourGuide({ page: currentPage, size: tourGuidesPerPage })
+      );
     } catch (error) {
-      if (error instanceof Error) {
-        alert(error.message);
-      } else {
-        console.error(error);
-      }
+      alert(error.message || "An error occurred");
     }
   };
 
-  const handleDetails = (tourGuide) => {
+  const handleDetails = async (tourGuide) => {
     if (!tourGuide?.id) {
       alert("Id is required for update");
       return;
     }
 
     try {
-      dispatch(fetchTourGuideById(tourGuide.id));
-      dispatch(addTourGuideId(tourGuide.id));
-      dispatch(fetchMasteredHikingPoint(tourGuide.id));
+      await dispatch(fetchTourGuideById(tourGuide.id));
+      await dispatch(addTourGuideId(tourGuide.id));
+      await dispatch(fetchMasteredHikingPoint(tourGuide.id));
       dispatch(setIsTourGuideUpdating(false));
       onOpen();
     } catch (error) {
-      if (error instanceof Error) {
-        alert(error.message);
-      } else {
-        console.error(error);
-      }
+      alert(error.message || "An error occurred");
     }
   };
 
-  useEffect(() => {
-    dispatch(fetchTourGuide({ page: 1, limit: 20 }));
-  }, []);
   return (
     <>
-      {status == "loading" && <HamsterLoading />}
+      {status === "loading" && <HamsterLoading />}
       <section className="mt-5 flex flex-wrap gap-5">
         <Modal
           isOpen={isOpen}
@@ -119,11 +111,7 @@ const TourGuideList = () => {
                 </ModalHeader>
                 <ModalBody>
                   <section className="flex gap-5 w-full px-5 py-2">
-                    <FormTourGuide
-                      onClose={() => {
-                        closeModal();
-                      }}
-                    />
+                    <FormTourGuide onClose={closeModal} />
                     <section className="w-full">
                       <AddMasteredHikingPoint />
                       <TourGuideHikingPointList />
@@ -147,16 +135,14 @@ const TourGuideList = () => {
             )}
           </ModalContent>
         </Modal>
+
         {tourGuides?.map((tourGuide) => {
-          if (!tourGuide || !tourGuide?.id) {
-            return null;
-          }
+          if (!tourGuide?.id) return null;
           return (
-            <section key={tourGuide?.id} className="mt-5 flex flex-col gap-5">
+            <section key={tourGuide.id} className="mt-5 flex flex-col gap-5">
               <section className="flex flex-1 justify-between">
                 <Card
                   shadow="sm"
-                  key={tourGuide?.id}
                   isPressable
                   onPress={() => console.log("item pressed")}>
                   <CardBody className="overflow-visible p-0">
@@ -164,24 +150,22 @@ const TourGuideList = () => {
                       shadow="sm"
                       radius="lg"
                       width="100%"
-                      alt={tourGuide?.name}
+                      alt={tourGuide.name}
                       className="w-full object-cover h-[140px]"
-                      src={tourGuide?.image}
+                      src={tourGuide.image}
                     />
                   </CardBody>
                   <CardFooter className="text-small justify-between gap-5">
-                    <b>{tourGuide?.name}</b>
+                    <b>{tourGuide.name}</b>
                     <section className="buttonGroup flex gap-5">
                       <Button
-                        onClick={() => handleDelete(tourGuide?.id)}
+                        onClick={() => handleDelete(tourGuide.id)}
                         className="text-neutral-50 bg-error hover:bg-successfulHover font-bold">
                         Delete
                       </Button>
                       <Button
                         className="text-neutral-50 bg-successful hover:bg-successfulHover font-bold"
-                        onClick={() => {
-                          handleDetails(tourGuide);
-                        }}>
+                        onClick={() => handleDetails(tourGuide)}>
                         Details
                       </Button>
                     </section>
@@ -192,16 +176,21 @@ const TourGuideList = () => {
           );
         })}
       </section>
-      {paging?.totalPages > 1 && (
-        <Pagination
-          total={paging?.totalPages}
-          initialPage={paging?.page}
-          onChange={(page) => {
-            paginate(page);
-          }}
-        />
-      )}
+
+      <Pagination
+        total={paging?.totalPages}
+        page={currentPage}
+        onChange={handleChangePagination}
+        classNames={{
+          wrapper: "gap-0 overflow-visible h-8 rounded border border-divider",
+          item: "w-8 h-8 text-small rounded-none bg-transparent",
+          cursor:
+            "bg-gradient-to-b shadow-lg from-mainSoil to-default-800 text-white font-bold",
+        }}
+        rounded
+      />
     </>
   );
 };
+
 export default TourGuideList;

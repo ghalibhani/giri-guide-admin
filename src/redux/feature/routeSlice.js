@@ -51,6 +51,18 @@ export const updateRoute = createAsyncThunk(
     }
   }
 );
+
+export const deleteRoute = createAsyncThunk(
+  "route/deleteRoute",
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.delete(`/location-routes/${id}`);
+      return response.data;
+    } catch (e) {
+      return rejectWithValue(e.response.data);
+    }
+  }
+);
 const routeSlice = createSlice({
   name: "route",
   initialState: {
@@ -157,6 +169,27 @@ const routeSlice = createSlice({
           }
           return route;
         });
+      })
+      .addCase(updateRoute.rejected, (state, action) => {
+        console.log("Failed to update route", action.error.message);
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+      .addCase(deleteRoute.pending, (state) => {
+        console.log("Deleting route...");
+        state.status = "loading";
+      })
+      .addCase(deleteRoute.fulfilled, (state, action) => {
+        console.log("Route deleted", action.payload);
+        state.status = "success";
+        state.routes = state.routes.filter(
+          (route) => route.id !== action.payload.data.id
+        );
+      })
+      .addCase(deleteRoute.rejected, (state, action) => {
+        console.log("Failed to delete route", action.error.message);
+        state.status = "failed";
+        state.error = action.error.message;
       });
   },
 });
