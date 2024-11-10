@@ -3,8 +3,7 @@ import RouteList from "../../components/rute/RouteList";
 
 const Route = () => {
   return (
-    <section className="flex flex-col">
-      <h1>Route</h1>
+    <section className="flex flex-col gap-12">
       <RouteForm />
       <RouteList />
     </section>

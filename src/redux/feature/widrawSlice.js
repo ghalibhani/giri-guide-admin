@@ -4,7 +4,7 @@ import axiosInstance from "../../api/axiosInstance";
 export const fetchWidraw = createAsyncThunk(
   "widraw/fetchWidraw",
   async (
-    { page = 1, size = 20, status, searchByName },
+    { page = 1, size = 10, status, searchByName },
     { rejectWithValue }
   ) => {
     try {
@@ -24,9 +24,12 @@ export const aproveOrRejectWidraw = createAsyncThunk(
   "widraw/aproveOrRejectWidraw",
   async ({ id, approved, message }, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.patch(
+      await axiosInstance.patch(
         `/tour-guide/deposits/${id}?approved=${approved}` +
           (message ? `&message=${message} ` : "")
+      );
+      const response = await axiosInstance.get(
+        `/tour-guide/deposits?page=${1}&size=${10}`
       );
       return response.data;
     } catch (e) {
@@ -64,9 +67,7 @@ export const widrawSlice = createSlice({
       })
       .addCase(aproveOrRejectWidraw.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.widraws = state.widraws.filter(
-          (widraw) => widraw.id !== action.payload
-        );
+        state.widraws = action.payload.data;
       })
       .addCase(aproveOrRejectWidraw.rejected, (state, action) => {
         state.status = "failed";

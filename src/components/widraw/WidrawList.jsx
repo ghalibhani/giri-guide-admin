@@ -10,6 +10,7 @@ import {
   ModalHeader,
   Select,
   SelectItem,
+  Textarea,
   useDisclosure,
 } from "@nextui-org/react";
 import { useEffect, useState } from "react";
@@ -32,20 +33,47 @@ const WidrawList = () => {
   const [selectedWidrawId, setSelectedWidrawId] = useState(null);
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure(false);
   const [message, setMessage] = useState("");
-
+  const [isApproved, setIsApproved] = useState(false);
   const handleChangePagination = (page) => {
     setPage(page);
   };
 
-  const handleApproveWidraw = (id) => {
-    const isApproved = confirm("Yakin ingin menyetujui penarikan?");
-    if (!isApproved) {
-      return;
+  const handleApproveWidraw = () => {
+    if (selectedWidrawId) {
+      dispatch(aproveOrRejectWidraw({ id: selectedWidrawId, approved: true }));
+      setSelectedWidrawId(null);
+      setIsApproved(false);
+      dispatch(fetchWidraw({ status, page, size }));
+      onClose();
     }
-    dispatch(aproveOrRejectWidraw({ id, approved: true }));
   };
 
-  const openModalForRejectedWidraw = (id) => {
+  const openModalForRejectedWidraw = ({ id, nominal, currentDeposit }) => {
+    if (nominal > currentDeposit) {
+      setMessage(
+        `Nominal penarikan Rp. ${nominal.toLocaleString(
+          "id-ID"
+        )}  melebihi saldo saat ini Rp. ${currentDeposit.toLocaleString(
+          "id-ID"
+        )}`
+      );
+    } else if (nominal === currentDeposit) {
+      setMessage("");
+    } else {
+      setMessage("");
+    }
+    setSelectedWidrawId(id);
+    onOpen();
+  };
+  const openModalForApprovedWidraw = ({ id, nominal, currentDeposit }) => {
+    setMessage(
+      `Nominal penarikan Rp. ${nominal.toLocaleString(
+        "id-ID"
+      )}, Sisa setelah penarikan Rp. ${(
+        currentDeposit - nominal
+      ).toLocaleString("id-ID")}`
+    );
+    setIsApproved(true);
     setSelectedWidrawId(id);
     onOpen();
   };
@@ -55,6 +83,10 @@ const WidrawList = () => {
       dispatch(
         aproveOrRejectWidraw({ id: selectedWidrawId, approved: false, message })
       );
+      setIsApproved(false);
+      setSelectedWidrawId(null);
+      dispatch(fetchWidraw({ status, page, size }));
+      onClose();
     }
   };
 
@@ -68,40 +100,42 @@ const WidrawList = () => {
 
   return (
     <section>
-      <Input
-        className="mb-3"
-        label="Search by Tour Guide Name"
-        placeholder="Search by Tour Guide Name"
-        size="sm"
-        color="#503a3a"
-        bordered
-        value={searchByName}
-        onChange={(e) => setSearchByName(e.target.value)}
-      />
-      <Select
-        label="Status Widraw"
-        placeholder="Pilih status widraw"
-        size="sm"
-        color="#503a3a"
-        bordered
-        value={status}
-        onChange={(e) => setStatus(e.target.value)}>
-        <SelectItem value="" key={"all"}>
-          All
-        </SelectItem>
-        <SelectItem value="PENDING" key={"pending"}>
-          Pending
-        </SelectItem>
-        <SelectItem value="IN" key={"in"}>
-          In
-        </SelectItem>
-        <SelectItem value="OUT" key={"out"}>
-          Out
-        </SelectItem>
-        <SelectItem value="REJECTED" key={"rejected"}>
-          Rejected
-        </SelectItem>
-      </Select>
+      <section>
+        <Input
+          className="mb-3"
+          label="Search by Tour Guide Name"
+          placeholder="Search by Tour Guide Name"
+          size="sm"
+          color="#503a3a"
+          bordered
+          value={searchByName}
+          onChange={(e) => setSearchByName(e.target.value)}
+        />
+        <Select
+          label="Status Widraw"
+          placeholder="Pilih status widraw"
+          size="sm"
+          color="#503a3a"
+          bordered
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}>
+          <SelectItem value="" key={"all"}>
+            All
+          </SelectItem>
+          <SelectItem value="PENDING" key={"pending"}>
+            Pending
+          </SelectItem>
+          <SelectItem value="IN" key={"in"}>
+            In
+          </SelectItem>
+          <SelectItem value="OUT" key={"out"}>
+            Out
+          </SelectItem>
+          <SelectItem value="REJECTED" key={"rejected"}>
+            Rejected
+          </SelectItem>
+        </Select>
+      </section>
       <Card className="mb-3">
         <CardBody className="flex bg-mainSoil text-white flex-row justify-between">
           <section className="flex gap-4 px-6">
@@ -142,39 +176,27 @@ const WidrawList = () => {
                   <CustomButton
                     customStyles={"bg-error"}
                     onPress={() => {
-                      onOpen();
-                      openModalForRejectedWidraw(widraw.id);
+                      openModalForRejectedWidraw(widraw);
                     }}
                     text="Reject">
                     Reject
                   </CustomButton>
-                  <CustomButton
-                    customStyles={"bg-success"}
-                    onPress={() => {
-                      handleApproveWidraw(widraw.id);
-                    }}
-                    text="Approve">
-                    Approve
-                  </CustomButton>
+                  {widraw.nominal <= widraw.currentDeposit && (
+                    <CustomButton
+                      customStyles={"bg-success"}
+                      onPress={() => {
+                        openModalForApprovedWidraw(widraw);
+                      }}
+                      text="Approve">
+                      Approve
+                    </CustomButton>
+                  )}
                 </section>
               )}
             </section>
           </CardBody>
         </Card>
       ))}
-      {/* 
-      <ul>
-        {widraws.map((widraw) => (
-          <li
-            key={widraw.id}
-            className="flex gap-2 w-full justify-between mb-2">
-            <p>
-              {widraw.tourGuideName} - {widraw.nominal} - {widraw.status} -{" "}
-              {widraw.description}
-            </p>
-          </li>
-        ))}
-      </ul> */}
       <Pagination
         total={paging?.totalPages}
         page={page}
@@ -190,32 +212,62 @@ const WidrawList = () => {
       />
       <Modal
         isOpen={isOpen}
-        // size="5xl"
         onOpenChange={onOpenChange}
-        className="h-4/5 overflow-scroll">
+        onClose={() => {
+          setIsApproved(false);
+          setMessage("");
+          onClose();
+        }}
+        className="verflow-scroll">
         <ModalContent>
           {() => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                Rejecting Widraw
+                {isApproved ? "Approve" : "Reject"} Widraw
               </ModalHeader>
               <ModalBody>
-                <p>Yakin ingin menolak penarikan ini?</p>
-                <Input
-                  label="Alasan penolakan"
-                  type="text"
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                />
+                {isApproved ? (
+                  <>
+                    <p>Yakin ingin menyetujui penarikan ini?</p>
+                    <p>{message}</p>
+                  </>
+                ) : (
+                  <>
+                    <p>Yakin ingin menolak penarikan ini?</p>
+                    <Textarea
+                      label="Alasan penolakan"
+                      type="text"
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                    />
+                  </>
+                )}
               </ModalBody>
               <ModalFooter>
+                {isApproved ? (
+                  <Button
+                    color="success"
+                    variant="light"
+                    onPress={handleApproveWidraw}>
+                    Approve
+                  </Button>
+                ) : (
+                  <Button
+                    color="danger"
+                    variant="light"
+                    onPress={handleRejectWidraw}>
+                    Reject
+                  </Button>
+                )}
                 <Button
                   color="danger"
                   variant="light"
-                  onPress={handleRejectWidraw}>
-                  Reject
-                </Button>
-                <Button color="danger" variant="light" onPress={onClose}>
+                  onPress={() => {
+                    onClose();
+                    setIsApproved(false);
+                    setSelectedWidrawId(null);
+                    setMessage("");
+                  }}>
                   Close
                 </Button>
               </ModalFooter>
