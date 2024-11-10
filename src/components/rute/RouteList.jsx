@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchRoute,
@@ -6,24 +6,31 @@ import {
   setIdRouteForUpdate,
   setIsRouteUpdating,
 } from "../../redux/feature/routeSlice";
-import { Card, CardBody, useDisclosure } from "@nextui-org/react";
+import { Card, CardBody, Pagination, useDisclosure } from "@nextui-org/react";
 import CustomButton from "../CustomButton";
 import CustomModal from "../CustomModal";
 
 const RouteList = () => {
   const dispatch = useDispatch();
-  const { routes, isRouteUpdating } = useSelector((state) => state.route);
+  const { routes, isRouteUpdating, paging } = useSelector(
+    (state) => state.route
+  );
   const routesDetail = useSelector((state) => state.route.routesDetail);
   const { isOpen, onOpen, onClose } = useDisclosure(false);
+  const [page, setPage] = useState(1);
+  const [size, setSize] = useState(5);
 
+  const handleChangePagination = (page) => {
+    setPage(page);
+  };
   const handleDetails = (id) => {
     dispatch(fetchRouteDetailById(id));
     onOpen();
   };
 
   useEffect(() => {
-    dispatch(fetchRoute());
-  }, []);
+    dispatch(fetchRoute({ page, size }));
+  }, [page, size]);
 
   useEffect(() => {
     console.log(routes);
@@ -91,6 +98,19 @@ const RouteList = () => {
           </CardBody>
         </Card>
       ))}
+      <Pagination
+        total={paging?.totalPages}
+        page={page}
+        onChange={handleChangePagination}
+        classNames={{
+          wrapper: "gap-0 overflow-visible h-8 rounded border border-divider",
+          item: "w-8 h-8 text-small rounded-none bg-transparent",
+          cursor:
+            "bg-gradient-to-b shadow-lg from-mainSoil to-default-800 text-white font-bold",
+        }}
+        rowsPerPage={size}
+        rounded
+      />
     </section>
   );
 };

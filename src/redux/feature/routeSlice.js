@@ -3,9 +3,11 @@ import axiosInstance from "../../api/axiosInstance";
 
 export const fetchRoute = createAsyncThunk(
   "route/fetchRoute",
-  async (id, { rejectWithValue }) => {
+  async ({ page = 1, size = 5 }, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.get(`/location-routes`);
+      const response = await axiosInstance.get(
+        `/location-routes?page=${page}&size=${size}`
+      );
       return response.data;
     } catch (e) {
       return rejectWithValue(e.response.data);
