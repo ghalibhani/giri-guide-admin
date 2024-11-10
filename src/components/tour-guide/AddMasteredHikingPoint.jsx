@@ -44,7 +44,7 @@ const AddMasteredHikingPoint = () => {
             placeholder="Search"
             onChange={(e) =>
               dispatch(
-                fetchMountain({ page: 1, limit: 4, search: e.target.value })
+                fetchMountain({ page: 1, size: 4, search: e.target.value })
               )
             }
           />

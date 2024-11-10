@@ -9,10 +9,14 @@ import {
 import CustomButton from "../../components/CustomButton";
 import FormTourGuide from "../../components/tour-guide/FormTourGuide";
 import TourGuideList from "../../components/tour-guide/TourGuideList";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import CustomModal from "../../components/CustomModal";
+import { useSelector } from "react-redux";
 
 const TourGuide = () => {
   const [isOpenModal, setIsOpenModal] = useState(false);
+  const [isModalErrorMessage, setIsModalErrorMessage] = useState(false);
+  const { status, error } = useSelector((state) => state.tourGuide);
 
   const handleOpenModal = () => {
     setIsOpenModal(true);
@@ -21,10 +25,26 @@ const TourGuide = () => {
   const handleCloseModal = () => {
     setIsOpenModal(false);
   };
+  const handleModalErrorClose = () => {
+    setIsModalErrorMessage(false);
+  };
+
+  useEffect(() => {
+    if (status === "failed") {
+      setIsModalErrorMessage(true);
+    } else {
+      setIsModalErrorMessage(false);
+    }
+  }, [status]);
 
   return (
     <section className="font-inter h-full overflow-y-scroll">
       <h1 className="mb-5 text-3xl">Tour Guide Management</h1>
+      <CustomModal
+        isOpen={isModalErrorMessage}
+        onClose={handleModalErrorClose}
+        content={error}
+      />
 
       <CustomButton onClick={handleOpenModal}>Add Tour Guide</CustomButton>
       <Modal

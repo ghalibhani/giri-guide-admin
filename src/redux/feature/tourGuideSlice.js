@@ -8,7 +8,6 @@ const fetchTourGuide = createAsyncThunk(
       const response = await axiosInstance.get(
         `/tour-guide?page=${page}` + `&size=${size}`
       );
-      console.log(response.data);
       return response.data;
     } catch (e) {
       return rejectWithValue(e.response.data);
@@ -58,7 +57,7 @@ const createTourGuide = createAsyncThunk(
     try {
       await axiosInstance.post(`/tour-guide`, data);
       const response = await axiosInstance.get(
-        `/tour-guide?page=${1}&size=${20}`
+        `/tour-guide?page=${1}&size=${5}`
       );
       return response.data;
     } catch (e) {
@@ -193,7 +192,7 @@ const tourGuideSlice = createSlice({
       })
       .addCase(fetchTourGuide.rejected, (state, action) => {
         state.status = "failed";
-        state.error = action.error.message;
+        state.error = action.payload.message;
       })
       .addCase(fetchTourGuideById.pending, (state) => {
         state.status = "loading";
@@ -204,7 +203,7 @@ const tourGuideSlice = createSlice({
       })
       .addCase(fetchTourGuideById.rejected, (state, action) => {
         state.status = "failed";
-        state.error = action.error.message;
+        state.error = action.payload.message;
       })
       .addCase(fetchMasteredHikingPoint.pending, (state) => {
         state.status = "loading";
@@ -216,7 +215,7 @@ const tourGuideSlice = createSlice({
       })
       .addCase(fetchMasteredHikingPoint.rejected, (state, action) => {
         state.status = "failed";
-        state.error = action.error.message;
+        state.error = action.payload.message;
       })
       .addCase(fetchHikingPointByMountainId.pending, (state) => {
         state.status = "loading";
@@ -233,7 +232,7 @@ const tourGuideSlice = createSlice({
       })
       .addCase(fetchHikingPointByMountainId.rejected, (state, action) => {
         state.status = "failed";
-        state.error = action.error.message;
+        state.error = action.payload.message;
       })
       .addCase(createTourGuide.pending, (state) => {
         state.status = "loading";
@@ -244,10 +243,8 @@ const tourGuideSlice = createSlice({
         state.tourGuides.push(action.payload);
       })
       .addCase(createTourGuide.rejected, (state, action) => {
-        console.log("payload", action.payload);
-        console.log("error", action.error);
         state.status = "failed";
-        state.error = action.error.message;
+        state.error = action.payload.message;
       })
       .addCase(createMasteredHikingPoint.pending, (state) => {
         state.status = "loading";
@@ -258,7 +255,7 @@ const tourGuideSlice = createSlice({
       })
       .addCase(createMasteredHikingPoint.rejected, (state, action) => {
         state.status = "failed";
-        state.error = action.error.message;
+        state.error = action.payload.message;
       })
       .addCase(updateTourGuide.pending, (state) => {
         state.status = "loading";
@@ -274,7 +271,7 @@ const tourGuideSlice = createSlice({
       })
       .addCase(updateTourGuide.rejected, (state, action) => {
         state.status = "failed";
-        state.error = action.error.message;
+        state.error = action.payload.message;
       })
       .addCase(updateTourGuideImage.pending, (state) => {
         state.status = "loading";
@@ -284,7 +281,7 @@ const tourGuideSlice = createSlice({
       })
       .addCase(updateTourGuideImage.rejected, (state, action) => {
         state.status = "failed";
-        state.error = action.error.message;
+        state.error = action.payload.message;
       })
       .addCase(deleteTourGuide.pending, (state) => {
         state.status = "loading";
@@ -297,7 +294,7 @@ const tourGuideSlice = createSlice({
       })
       .addCase(deleteTourGuide.rejected, (state, action) => {
         state.status = "failed";
-        state.error = action.error.message;
+        state.error = action.payload.message;
       })
       .addCase(deleteMasteredHikingPoint.pending, (state) => {
         state.status = "loading";
@@ -315,7 +312,7 @@ const tourGuideSlice = createSlice({
       })
       .addCase(deleteMasteredHikingPoint.rejected, (state, action) => {
         state.status = "failed";
-        state.error = action.error.message;
+        state.error = action.payload.message;
       });
   },
 });
