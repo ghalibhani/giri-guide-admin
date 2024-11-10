@@ -28,6 +28,7 @@ const WidrawList = () => {
   const [status, setStatus] = useState("");
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(10);
+  const [searchByName, setSearchByName] = useState("");
   const [selectedWidrawId, setSelectedWidrawId] = useState(null);
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure(false);
   const [message, setMessage] = useState("");
@@ -62,11 +63,21 @@ const WidrawList = () => {
   }, []);
 
   useEffect(() => {
-    dispatch(fetchWidraw({ status, page, size }));
-  }, [status, page, size]);
+    dispatch(fetchWidraw({ status, page, size, searchByName }));
+  }, [status, page, size, searchByName]);
 
   return (
     <section>
+      <Input
+        className="mb-3"
+        label="Search by Tour Guide Name"
+        placeholder="Search by Tour Guide Name"
+        size="sm"
+        color="#503a3a"
+        bordered
+        value={searchByName}
+        onChange={(e) => setSearchByName(e.target.value)}
+      />
       <Select
         label="Status Widraw"
         placeholder="Pilih status widraw"

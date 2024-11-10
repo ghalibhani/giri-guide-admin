@@ -3,11 +3,15 @@ import axiosInstance from "../../api/axiosInstance";
 
 export const fetchWidraw = createAsyncThunk(
   "widraw/fetchWidraw",
-  async ({ page = 1, size = 20, status }, { rejectWithValue }) => {
+  async (
+    { page = 1, size = 20, status, searchByName },
+    { rejectWithValue }
+  ) => {
     try {
       const response = await axiosInstance.get(
         `/tour-guide/deposits?page=${page}&size=${size}` +
-          (status ? `&status=${status}` : "")
+          (status ? `&status=${status}` : "") +
+          (searchByName ? `&name=${searchByName}` : "")
       );
       return response.data;
     } catch (e) {

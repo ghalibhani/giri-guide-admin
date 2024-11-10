@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { keepLogin, login } from "../../redux/feature/authSlice";
 import { useNavigate } from "react-router";
+import InputPassword from "../../components/InputPassword";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -28,6 +29,7 @@ const Login = () => {
   }, [email, password]);
 
   const handleLogin = async () => {
+    console.log(email, password);
     if (!email || !password) {
       alert("Email dan Password harus di isi");
       return;
@@ -98,13 +100,9 @@ const Login = () => {
           {isEmailValid ? "" : <p className="text-error">Email Invalid</p>}
         </section>
         <section className="w-full">
-          <Input
-            key="bordered"
-            type="password"
-            label="Password"
-            color="successSecondary"
-            variant="bordered"
+          <InputPassword
             onChange={(e) => setPassword(e.target.value)}
+            className="w-full"
           />
           {isPasswordValid ? (
             ""
