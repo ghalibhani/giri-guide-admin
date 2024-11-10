@@ -15,10 +15,21 @@ import HikingPoint from "./pages/hikingPoint/HikingPoint.jsx";
 import Transaction from "./pages/transaction/Transaction.jsx";
 import Widraw from "./pages/widraw/Widraw.jsx";
 import Route from "./pages/rute/Route.jsx";
+import AdminDashboard from "./pages/Dashboard.jsx";
 
 const router = createBrowserRouter([
   { path: "/", element: <App /> },
   { path: "/login", element: <Login /> },
+  {
+    path: "/dashboard",
+    element: (
+      <SecureLink>
+        <SideBar active="/dashboard">
+          <AdminDashboard />
+        </SideBar>
+      </SecureLink>
+    ),
+  },
   {
     path: "/mountain",
     element: (
