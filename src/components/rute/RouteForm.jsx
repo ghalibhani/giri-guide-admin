@@ -1,4 +1,13 @@
-import { Button, Input, useDisclosure } from "@nextui-org/react";
+import {
+  Button,
+  Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  useDisclosure,
+} from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import CustomButton from "../CustomButton";
@@ -13,6 +22,7 @@ import {
 import CustomModal from "../CustomModal";
 import { IoArrowBackCircle } from "react-icons/io5";
 import { IoArrowForwardCircle } from "react-icons/io5";
+import { MdDelete } from "react-icons/md";
 
 const RouteForm = () => {
   const dispatch = useDispatch();
@@ -29,11 +39,25 @@ const RouteForm = () => {
   const [indexEditStep, setIndexEditStep] = useState(
     fragmentRoute?.length || 0
   );
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [customAlertMessage, setCustomAlertMessage] = useState("");
+  const [isCustomAlertOpen, setIsCustomAlertOpen] = useState(false);
+  const [isDelete, setIsDelete] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+  const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure(false);
 
-  const handleAddRoute = (e) => {
-    e.preventDefault();
+  const handleCloseCustomAlert = () => {
+    setIsCustomAlertOpen(false);
+    setCustomAlertMessage("");
+  };
 
+  const handleOpenCustomAlert = (message) => {
+    setCustomAlertMessage(message);
+    setIsCustomAlertOpen(true);
+  };
+  const confirmAddFragmentRoute = () => {
+    handleOpenCustomAlert(`Yakin ingin menambahkan rute?`);
+  };
+  const handleAddRoute = () => {
     if (
       (!from && indexEditStep === 0) ||
       !to ||
@@ -41,31 +65,27 @@ const RouteForm = () => {
       !estimate ||
       !distance
     ) {
-      alert("Isi semua data");
+      handleOpenCustomAlert("Isi semua data");
       return;
     }
+    try {
+      const previousTo = fragmentRoute?.[fragmentRoute.length - 1]?.to || from;
 
-    if (confirm("Are you sure you want to add this route?")) {
-      try {
-        const previousTo =
-          fragmentRoute?.[fragmentRoute.length - 1]?.to || from;
-
-        dispatch(
-          addFragmentRoute({
-            from: previousTo,
-            to,
-            transportation,
-            estimate,
-            distance,
-          })
-        );
-        clearForm();
-        setFrom(to);
-        setIndexEditStep(fragmentRoute.length + 1);
-      } catch (error) {
-        console.error(error);
-        alert("Error when adding route");
-      }
+      dispatch(
+        addFragmentRoute({
+          from: previousTo,
+          to,
+          transportation,
+          estimate,
+          distance,
+        })
+      );
+      handleCloseCustomAlert();
+      clearForm();
+      setFrom(to);
+      setIndexEditStep(fragmentRoute.length + 1);
+    } catch (error) {
+      handleOpenCustomAlert("Error when adding route", error);
     }
   };
 
@@ -85,8 +105,7 @@ const RouteForm = () => {
         clearForm();
         setIndexEditStep(fragmentRoute.length);
       } catch (error) {
-        console.error(error);
-        alert("Error when editing route");
+        handleOpenCustomAlert("Error when editing route", error);
       }
     }
   };
@@ -208,6 +227,43 @@ const RouteForm = () => {
         onPrimaryAction={handleSubmit}
       />
 
+      <Modal
+        isOpen={isCustomAlertOpen}
+        onClose={handleCloseCustomAlert}
+        classNames={{
+          backdrop:
+            "bg-gradient-to-t from-zinc-900 to-zinc-900/10 backdrop-opacity-20",
+        }}>
+        <ModalContent>
+          {() => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                {isDelete ? "Delete" : "Error"}
+              </ModalHeader>
+              <ModalBody>
+                <p className="text-error">{customAlertMessage}</p>
+              </ModalBody>
+              <ModalFooter className="flex gap-2 items-center">
+                {isDelete && (
+                  <MdDelete className="text-error text-3xl cursor-pointer">
+                    Delete
+                  </MdDelete>
+                )}
+                <Button
+                  color="danger"
+                  variant="light"
+                  onPress={handleCloseCustomAlert}>
+                  Close
+                </Button>
+                <Button color="danger" variant="light" onPress={handleAddRoute}>
+                  OK
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+
       <section className="flex gap-4 items-center">
         <p>Tahapan</p>
         {Array.from({ length: fragmentRoute?.length + 1 || 1 }).map(
@@ -289,7 +345,7 @@ const RouteForm = () => {
         <CustomButton
           onClick={
             fragmentRoute?.length <= indexEditStep
-              ? handleAddRoute
+              ? confirmAddFragmentRoute
               : () => handleEditRoute(indexEditStep)
           }
           customStyles="bg-successfulHover">
@@ -302,13 +358,14 @@ const RouteForm = () => {
             Clear
           </CustomButton>
         )}
-        {indexEditStep === fragmentRoute?.length && (
-          <CustomButton
-            customStyles="bg-mainSoil"
-            onClick={handleConfirmSubmit}>
-            {isRouteUpdating ? "Submit updated data" : "Submit"}
-          </CustomButton>
-        )}
+        {indexEditStep === fragmentRoute?.length &&
+          fragmentRoute?.length > 0 && (
+            <CustomButton
+              customStyles="bg-mainSoil"
+              onClick={handleConfirmSubmit}>
+              {isRouteUpdating ? "Submit updated data" : "Submit"}
+            </CustomButton>
+          )}
       </section>
     </section>
   );

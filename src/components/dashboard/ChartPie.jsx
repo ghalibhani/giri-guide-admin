@@ -1,11 +1,14 @@
 import { useEffect } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
-import { fetchDashboard } from "../../redux/feature/dashboardSlice";
+import {
+  fetchDashboard,
+  fetchDashboardStatus,
+} from "../../redux/feature/dashboardSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 const StatusPieChart = () => {
   const dispatch = useDispatch();
-  const dashboardData = useSelector((state) => state.dashboard.dashboardData);
+  const { dashboardStatus } = useSelector((state) => state.dashboard);
 
   const COLORS = {
     UPCOMING: "#0088FE",
@@ -36,19 +39,10 @@ const StatusPieChart = () => {
         fill="white"
         textAnchor={x > cx ? "start" : "end"}
         dominantBaseline="central">
-        {/* {dashboardData[index].value} */}
         {`${(percent * 100).toFixed(0)}%`}
       </text>
     );
   };
-
-  useEffect(() => {
-    const current = new Date();
-    const month = current.getMonth() + 1;
-    const year = current.getFullYear();
-    console.log(month, year);
-    dispatch(fetchDashboard({ month, year }));
-  }, []);
   return (
     <div className="flex flex-col items-center w-full relative -top-6 h-[500px]">
       <section>
@@ -60,7 +54,7 @@ const StatusPieChart = () => {
         <ResponsiveContainer width="100%" height="100%">
           <PieChart width={700} height={700}>
             <Pie
-              data={dashboardData}
+              data={dashboardStatus}
               cx="50%"
               cy="50%"
               labelLine={false}
@@ -68,7 +62,7 @@ const StatusPieChart = () => {
               outerRadius={150}
               fill="#8884d8"
               dataKey="value">
-              {dashboardData.map((entry, index) => (
+              {dashboardStatus.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={COLORS[entry.name]} />
               ))}
             </Pie>

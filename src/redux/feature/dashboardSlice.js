@@ -13,6 +13,22 @@ export const fetchRevenue = createAsyncThunk(
   }
 );
 
+export const fetchDashboardStatus = createAsyncThunk(
+  "dashboard/fetchDashboardStatus",
+  async ({ month, year }, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get(
+        `/transactions/dashboard/info-status` +
+          (month ? `?month=${month}` : "") +
+          (year ? `&year=${year}` : "")
+      );
+      return response.data;
+    } catch (e) {
+      return rejectWithValue(e.response.data);
+    }
+  }
+);
+
 export const fetchDashboard = createAsyncThunk(
   "dashboard/fetchDashboard",
   async ({ month, year }, { rejectWithValue }) => {
@@ -38,6 +54,10 @@ const dashboardSlice = createSlice({
     message: "",
     revenueData: [],
     dashboardData: [],
+    totalIncome: 0,
+    totalIncomeMonth: 0,
+    registerCount: 0,
+    dashboardStatus: [],
   },
   reducers: {
     setIsLoading: (state, action) => {
@@ -85,6 +105,25 @@ const dashboardSlice = createSlice({
         state.isError = true;
         state.message = action.payload;
       })
+      .addCase(fetchDashboardStatus.pending, (state) => {
+        state.isLoading = true;
+        state.isError = false;
+      })
+      .addCase(fetchDashboardStatus.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.dashboardStatus = Object.entries(
+          action.payload.data.countTransaction
+        ).map(([name, value]) => ({
+          name,
+          value,
+        }));
+        state.message = action.payload.message;
+      })
+      .addCase(fetchDashboardStatus.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
       .addCase(fetchDashboard.pending, (state) => {
         console.log("Fetching dashboard...");
         state.isLoading = true;
@@ -94,18 +133,12 @@ const dashboardSlice = createSlice({
         console.log("Dashboard fetched");
         console.log(action.payload);
         state.isLoading = false;
-        state.dashboardData = Object.entries(
-          action.payload.data.countTransaction
-        ).map(([name, value]) => ({
-          name,
-          value,
-        }));
+        state.totalIncome = action.payload.data.totalIncome;
+        state.totalIncomeMonth = action.payload.data.totalIncomeMonth.income;
+        state.registerCount = action.payload.data.registerCount.registerCount;
         state.message = action.payload.message;
-        console.log(state.dashboardData);
       })
       .addCase(fetchDashboard.rejected, (state, action) => {
-        console.log("Failed to fetch dashboard");
-        // console.log(action.error);
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;

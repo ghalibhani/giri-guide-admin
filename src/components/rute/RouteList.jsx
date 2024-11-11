@@ -7,7 +7,18 @@ import {
   setIdRouteForUpdate,
   setIsRouteUpdating,
 } from "../../redux/feature/routeSlice";
-import { Card, CardBody, Pagination, useDisclosure } from "@nextui-org/react";
+import {
+  Button,
+  Card,
+  CardBody,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  Pagination,
+  useDisclosure,
+} from "@nextui-org/react";
 import CustomButton from "../CustomButton";
 import CustomModal from "../CustomModal";
 import { MdDelete } from "react-icons/md";
@@ -18,9 +29,30 @@ const RouteList = () => {
     (state) => state.route
   );
   const routesDetail = useSelector((state) => state.route.routesDetail);
-  const { isOpen, onOpen, onClose } = useDisclosure(false);
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(5);
+  const [customAlertMessage, setCustomAlertMessage] = useState("");
+  const [isCustomAlertOpen, setIsCustomAlertOpen] = useState(false);
+  const [isDelete, setIsDelete] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+  const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure(false);
+
+  const handleCloseCustomAlert = () => {
+    setIsCustomAlertOpen(false);
+    setIsDelete(false);
+    setDeleteId(null);
+    setCustomAlertMessage("");
+  };
+
+  const handleOpenCustomAlert = (message) => {
+    setIsCustomAlertOpen(true);
+    setCustomAlertMessage(message);
+  };
+  const confirmDelete = (id, name) => {
+    setIsDelete(true);
+    setDeleteId(id);
+    handleOpenCustomAlert(`Yakin ingin menghapus route ${name}?`);
+  };
 
   const handleChangePagination = (page) => {
     setPage(page);
@@ -31,7 +63,7 @@ const RouteList = () => {
   };
   const handleDelete = (id) => {
     if (!id) {
-      alert("Id is required for delete");
+      handleOpenCustomAlert("Id is required for delete");
       return;
     }
     if (confirm("Are you sure you want to delete this route?")) {
@@ -42,13 +74,6 @@ const RouteList = () => {
   useEffect(() => {
     dispatch(fetchRoute({ page, size }));
   }, [page, size]);
-
-  useEffect(() => {
-    console.log(routes);
-  }, [routes]);
-  useEffect(() => {
-    console.log(routesDetail);
-  }, [routesDetail]);
 
   return (
     <section className="flex flex-col">
@@ -80,6 +105,41 @@ const RouteList = () => {
         }}
         onSecondaryAction={onClose}
       />
+      <Modal
+        isOpen={isCustomAlertOpen}
+        onClose={handleCloseCustomAlert}
+        classNames={{
+          backdrop:
+            "bg-gradient-to-t from-zinc-900 to-zinc-900/10 backdrop-opacity-20",
+        }}>
+        <ModalContent>
+          {() => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                {isDelete ? "Delete" : "Error"}
+              </ModalHeader>
+              <ModalBody>
+                <p className="text-error">{customAlertMessage}</p>
+              </ModalBody>
+              <ModalFooter className="flex gap-2 items-center">
+                {isDelete && (
+                  <MdDelete
+                    className="text-error text-3xl cursor-pointer"
+                    onClick={() => handleDelete(deleteId)}>
+                    Delete
+                  </MdDelete>
+                )}
+                <Button
+                  color="danger"
+                  variant="light"
+                  onPress={handleCloseCustomAlert}>
+                  Close
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
       <Card className="mb-3">
         <CardBody className="flex bg-mainSoil text-white flex-row justify-between">
           <section className="flex gap-4 px-6">
@@ -99,7 +159,7 @@ const RouteList = () => {
             <section className="flex gap-3 items-center">
               <MdDelete
                 className="text-error text-3xl"
-                onClick={() => handleDelete(route.id)}
+                onClick={() => confirmDelete(route.id, route.title)}
               />
               <CustomButton
                 customStyles={"bg-successful"}

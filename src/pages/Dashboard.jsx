@@ -1,15 +1,60 @@
-import { Card } from "@nextui-org/react";
+import { Card, Select, SelectItem } from "@nextui-org/react";
 import ChartCompose from "../components/dashboard/ChartCompose";
 import ChartPie from "../components/dashboard/ChartPie";
-// import Chart from "../components/dashboard/Chart";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import {
+  fetchDashboard,
+  fetchDashboardStatus,
+} from "../redux/feature/dashboardSlice";
 
 const AdminDashboard = () => {
-  const totalCompanyIncome = 1000000;
-  const monthlyIncome = 500000;
-  const newCustomers = 10;
+  const dispatch = useDispatch();
+  const { totalIncome, totalIncomeMonth, registerCount } = useSelector(
+    (state) => state.dashboard
+  );
+  const [filterYear, setFilterYear] = useState(new Date().getFullYear());
+  const [filterMonth, setFilterMonth] = useState(new Date().getMonth() + 1);
+
+  useEffect(() => {
+    dispatch(fetchDashboardStatus({ month: filterMonth, year: filterYear }));
+    dispatch(fetchDashboard({ month: filterMonth, year: filterYear }));
+  }, []);
+
+  useEffect(() => {
+    dispatch(fetchDashboardStatus({ month: filterMonth, year: filterYear }));
+    dispatch(fetchDashboard({ month: filterMonth, year: filterYear }));
+  }, [filterMonth, filterYear]);
 
   return (
     <section className="flex flex-col gap-6">
+      <section className="absolute top-2 right-10 flex gap-6 w-1/4">
+        <Select
+          label="Year"
+          value={filterYear}
+          variant="bordered"
+          onChange={(e) => setFilterYear(e.target.value)}>
+          {Array.from({ length: 10 }, (_, index) => (
+            <SelectItem
+              key={new Date().getFullYear() - index}
+              value={new Date().getFullYear() - index}>
+              {new Date().getFullYear() - index}
+            </SelectItem>
+          ))}
+        </Select>
+
+        <Select
+          label="Month"
+          value={filterMonth}
+          variant="bordered"
+          onChange={(e) => setFilterMonth(e.target.value)}>
+          {Array.from({ length: 12 }, (_, index) => (
+            <SelectItem key={index + 1} value={index + 1}>
+              {index + 1}
+            </SelectItem>
+          ))}
+        </Select>
+      </section>
       <h2 className="text-4xl text-mainSoil text-center mb-6 font-extrabold">
         Admin Dashboard
       </h2>
@@ -17,11 +62,11 @@ const AdminDashboard = () => {
         <Card className="w-[31%] min-h-[200px]" isPressable isHoverable>
           <section className="w-full h-[200px] bg-green-100 flex justify-center items-center flex-col">
             <section>
-              <h3 className="text-start font-bold text-2xl text-mainSoil">
+              <h3 className="text-start font-semibold text-mainSoil">
                 Total Company Income
               </h3>
-              <p className="text-start font-semibold text-mainGreen text-xl">
-                Rp {totalCompanyIncome.toLocaleString("id-ID")}
+              <p className="text-start font-extrabold text-mainGreen text-5xl">
+                Rp {totalIncome.toLocaleString("id-ID")}
               </p>
             </section>
           </section>
@@ -29,11 +74,11 @@ const AdminDashboard = () => {
         <Card className="w-[31%] min-h-[200px]" isPressable isHoverable>
           <section className="w-full h-[200px] bg-blue-100 flex justify-center items-center flex-col">
             <section>
-              <h3 className="text-start font-bold text-2xl text-mainSoil">
-                Total Income (Last Month)
+              <h3 className="text-start font-semibold text-mainSoil">
+                Total Income ({filterMonth}/{filterYear})
               </h3>
-              <p className="text-start font-semibold text-xl text-mainGreen">
-                Rp {monthlyIncome.toLocaleString("id-ID")}
+              <p className="text-start font-extrabold text-mainGreen text-5xl">
+                Rp {totalIncomeMonth.toLocaleString("id-ID")}
               </p>
             </section>
           </section>
@@ -41,11 +86,11 @@ const AdminDashboard = () => {
         <Card className="w-[31%] min-h-[200px]" isPressable isHoverable>
           <section className="w-full h-[200px] bg-yellow-100 flex justify-center items-center flex-col">
             <section>
-              <h3 className="text-start font-bold text-2xl text-mainSoil">
-                New Customers (Last Month)
+              <h3 className="text-start font-semibold text-mainSoil">
+                New Customers ({filterMonth}/{filterYear})
               </h3>
-              <p className="text-start font-semibold text-xl text-mainGreen">
-                {newCustomers.toLocaleString("id-ID")} customers
+              <p className="text-start font-extrabold text-mainGreen text-5xl">
+                {registerCount.toLocaleString("id-ID")} customers
               </p>
             </section>
           </section>
