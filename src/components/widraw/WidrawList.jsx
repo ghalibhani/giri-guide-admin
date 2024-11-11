@@ -28,7 +28,7 @@ const WidrawList = () => {
   const { widraws, paging } = useSelector((state) => state.widraw);
   const [status, setStatus] = useState("");
   const [page, setPage] = useState(1);
-  const [size, setSize] = useState(10);
+  const [size, setSize] = useState(8);
   const [searchByName, setSearchByName] = useState("");
   const [selectedWidrawId, setSelectedWidrawId] = useState(null);
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure(false);

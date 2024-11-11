@@ -39,7 +39,9 @@ const TourGuide = () => {
 
   return (
     <section className="font-inter h-full overflow-y-scroll">
-      <h1 className="mb-5 text-3xl">Tour Guide Management</h1>
+      <h1 className="mb-5 text-3xl font-bold text-mainSoil">
+        Tour Guide Management
+      </h1>
       <CustomModal
         isOpen={isModalErrorMessage}
         onClose={handleModalErrorClose}
@@ -67,13 +69,6 @@ const TourGuide = () => {
                   variant="light"
                   onPress={handleCloseModal}>
                   Close
-                </Button>
-                <Button
-                  color="primary"
-                  onPress={() => {
-                    closeModal();
-                  }}>
-                  Add
                 </Button>
               </ModalFooter>
             </>

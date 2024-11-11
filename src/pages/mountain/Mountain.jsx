@@ -15,12 +15,13 @@ const Mountain = () => {
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure(false);
   return (
     <section className="font-inter h-full overflow-y-scroll">
-      <h1 className="mb-5 text-3xl">Mountain Management</h1>
+      <h1 className="mb-5 text-3xl font-bold text-mainSoil">
+        Mountain Management
+      </h1>
 
       <CustomButton onClick={onOpen}>Add Mountain</CustomButton>
       <Modal
         isOpen={isOpen}
-        // size="5xl"
         onOpenChange={onOpenChange}
         className="h-4/5 overflow-scroll">
         <ModalContent>

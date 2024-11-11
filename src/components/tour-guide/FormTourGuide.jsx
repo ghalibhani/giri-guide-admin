@@ -203,7 +203,13 @@ const FormTourGuide = ({ formInput = false }) => {
     <form
       className="flex flex-col gap-4 justify-center"
       onSubmit={handleAddTourGuide}>
-      <h3 className="text-3xl text-successfulHover">Add New TourGuide</h3>
+      <h3 className="text-3xl text-successfulHover">
+        {!formInput
+          ? isTourGuideUpdating
+            ? "Update Tour Guide"
+            : "Tour Guide Details"
+          : "Add Tour Guide"}
+      </h3>
       <section className="flex gap-4 w-full">
         <Input
           type="text"
@@ -377,7 +383,7 @@ const FormTourGuide = ({ formInput = false }) => {
         <CustomButton
           type="button"
           onPress={() => dispatch(setIsTourGuideUpdating(true))}>
-          Update Mountain
+          Update Tour Guide
         </CustomButton>
       )}
       {isTourGuideUpdating && (
@@ -389,7 +395,7 @@ const FormTourGuide = ({ formInput = false }) => {
                 ? "w-full"
                 : "bg-successfulSecondary text-zinc-900"
             }>
-            Submit Updating Mountain
+            Submit Updating Tour Guide
           </CustomButton>
         </section>
       )}

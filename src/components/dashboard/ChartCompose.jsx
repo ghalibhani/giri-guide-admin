@@ -21,10 +21,13 @@ const ChartCompose = () => {
     dispatch(fetchRevenue());
   }, []);
 
-  console.log(revenueData);
-
   return (
-    <div style={{ width: "100%", height: 300 }}>
+    <div className="flex flex-col items-center w-full relative -top-6 h-[500px]">
+      <section>
+        <h2 className="text-4xl text-mainSoil text-center mb-6 font-extrabold">
+          Revenue
+        </h2>
+      </section>
       <ResponsiveContainer>
         <ComposedChart
           width={500}

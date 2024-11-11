@@ -32,7 +32,7 @@ import HamsterLoading from "../HamsterLoading";
 const MountainList = () => {
   const dispatch = useDispatch();
   const [currentPage, setCurrentPage] = useState(1);
-  const [mountainsPerPage, setMountainsPerPage] = useState(5);
+  const [mountainsPerPage, setMountainsPerPage] = useState(12);
   const selectedMountain = useSelector(
     (state) => state.mountain.selectedMountain
   );
@@ -134,7 +134,7 @@ const MountainList = () => {
             )}
           </ModalContent>
         </Modal>
-        <section className="flex flex-wrap gap-5">
+        <section className="flex flex-wrap justify-center gap-5">
           {status === "loading" ? (
             <HamsterLoading></HamsterLoading>
           ) : (

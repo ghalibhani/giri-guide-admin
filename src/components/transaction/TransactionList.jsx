@@ -22,7 +22,7 @@ const TransactionList = () => {
   const [transactionStatus, setTransactionStatus] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [page, setPage] = useState(1);
-  const [size, setSize] = useState(5);
+  const [size, setSize] = useState(8);
 
   const dispatch = useDispatch();
 

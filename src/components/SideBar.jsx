@@ -11,7 +11,7 @@ const SideBar = ({ children, active }) => {
     { name: "Mountain", link: "/mountain" },
     { name: "Tour Guide", link: "/tour-guide" },
     { name: "Rute", link: "/route" },
-    { name: "Daftar transaction", link: "/transaction" },
+    { name: "Daftar Transaction", link: "/transaction" },
     { name: "Widraw", link: "/widraw" },
   ];
 
@@ -36,7 +36,7 @@ const SideBar = ({ children, active }) => {
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    dispatch(fetchMountain({ search: searchMountain, page: 1, limit: 8 }));
+    dispatch(fetchMountain({ search: searchMountain, page: 1, limit: 12 }));
   };
 
   useEffect(() => {
@@ -46,45 +46,49 @@ const SideBar = ({ children, active }) => {
   }, [active]);
 
   return (
-    <div className="flex h-screen overflow-y-scroll">
-      <nav className="bg-gray-100 h-screen flex flex-col shadow-lg w-[250px]">
+    <div className="flex h-screen">
+      {/* Sidebar */}
+      <nav className="bg-gray-100 h-screen flex flex-col shadow-lg w-[300px] fixed">
         <header className="p-6 bg-white flex-shrink-0 shadow-md">
           <h1 className="text-2xl font-bold text-mainGreen">GiriGuide</h1>
         </header>
-        <ul className="list-none flex-grow overflow-y-auto">
+        <section className="flex flex-col flex-grow mt-4">
           {links.map((link) => (
-            <li
+            <button
               key={link.name}
-              className={`p-4 hover:bg-mainGreen hover:text-white transition-colors w-full ${
+              className={`hover:bg-mainGreen hover:text-white transition-colors w-full px-4 ${
                 navbarActive === link.link ? "bg-mainSoil text-white" : ""
               }`}
               onClick={() => setNavbarActive(link.link)}>
-              <Link to={link.link} className="block">
+              <Link to={link.link} className="block py-4 text-start">
                 {link.name}
               </Link>
-            </li>
+            </button>
           ))}
-          <li className="p-4 hover:bg-red-600 hover:text-white transition-colors">
+          <li className="p-4 hover:text-white transition-colors">
             <form onSubmit={handleSearchSubmit}>
-              <input
-                type="search"
-                className="w-full p-2 rounded-md text-zinc-950"
-                placeholder="Search Mountain Name"
-                value={searchMountain}
-                onChange={handleSearch}
-              />
+              {navbarActive === "/mountain" && (
+                <input
+                  type="search"
+                  className="w-full p-2 rounded-md text-zinc-950"
+                  placeholder="Search Mountain Name"
+                  value={searchMountain}
+                  onChange={handleSearch}
+                />
+              )}
             </form>
           </li>
-          <li className="p-4 hover:bg-error hover:text-white transition-colors">
+          <li className="p-4 hover:text-white transition-colors">
             <Button
-              className="w-full bg-error text-white "
+              className="w-full bg-error text-white"
               onClick={handleLogout}>
               Logout
             </Button>
           </li>
-        </ul>
+        </section>
       </nav>
-      <section className="flex-grow p-6 h-screen overflow-y-scroll">
+      {/* Main Content */}
+      <section className="ml-[300px] flex-grow p-6 h-screen overflow-y-scroll">
         {children}
       </section>
     </div>

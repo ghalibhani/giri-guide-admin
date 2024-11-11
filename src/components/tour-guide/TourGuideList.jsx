@@ -102,7 +102,7 @@ const TourGuideList = () => {
   return (
     <>
       {status === "loading" && <HamsterLoading />}
-      <section className="mt-5 flex flex-wrap gap-5">
+      <section className="mt-5 flex flex-wrap gap-5 justify-center">
         <Modal
           isOpen={isOpen}
           size="5xl"
@@ -144,6 +144,7 @@ const TourGuideList = () => {
               <section className="flex flex-1 justify-between">
                 <Card
                   shadow="sm"
+                  className="w-[300px]"
                   isPressable
                   onPress={() => console.log("item pressed")}>
                   <CardBody className="overflow-visible p-0">

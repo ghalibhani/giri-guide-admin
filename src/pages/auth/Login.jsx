@@ -1,4 +1,12 @@
-import { Button } from "@nextui-org/react";
+import {
+  Button,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  useDisclosure,
+} from "@nextui-org/react";
 import { Input } from "@nextui-org/react";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,6 +27,8 @@ const Login = () => {
   const role = useSelector((state) => state.auth.role);
   const userId = useSelector((state) => state.auth.userId);
   const emailUser = useSelector((state) => state.auth.email);
+  const [errorMessage, setErrorMessage] = useState("");
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
   useEffect(() => {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -30,7 +40,8 @@ const Login = () => {
 
   const handleLogin = async () => {
     if (!email || !password) {
-      alert("Email dan Password harus di isi");
+      setErrorMessage("Email dan Password harus di isi");
+      onOpen();
       return;
     }
     if (!isEmailValid || !isPasswordValid) {
@@ -78,12 +89,38 @@ const Login = () => {
 
   useEffect(() => {
     if (status === "failed") {
-      alert("Email atau Password anda salah");
+      console.log("status", status);
+      setErrorMessage("Email atau Password anda salah");
+      onOpen();
     }
   }, [status]);
 
   return (
     <div className="flex flex-col justify-center items-center h-screen w-screen">
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        onClose={onClose}
+        classNames={{
+          backdrop:
+            "bg-gradient-to-t from-zinc-900 to-zinc-900/10 backdrop-opacity-20",
+        }}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">Error</ModalHeader>
+              <ModalBody>
+                <p className="text-error">{errorMessage}</p>
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="light" onPress={onClose}>
+                  Close
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
       <div className="flex flex-col gap-4 justify-center items-center h-[400px] px-4 py-2 rounded-2xl bg-[#fefefe] w-96">
         <h3 className="text-3xl font-bold">Login as a admin</h3>
         <section className="w-full">
@@ -91,25 +128,22 @@ const Login = () => {
             key="bordered"
             type="email"
             label="Email"
-            color="successSecondary"
             variant="bordered"
-            onChange={(e) => setEmail(e.target.value)}
+            isInvalid={!isEmailValid}
+            color={!isEmailValid ? "danger" : "success"}
+            errorMessage="Email Invalid"
+            onValueChange={setEmail}
           />
-          {isEmailValid ? "" : <p className="text-error">Email Invalid</p>}
         </section>
         <section className="w-full">
           <InputPassword
             onChange={(e) => setPassword(e.target.value)}
             className="w-full"
+            isInvalid={!isPasswordValid}
+            color={!isPasswordValid ? "danger" : "success"}
+            errorMessage="Password Invalid ( minimal 8 character , uppercase , lowercase ,
+              number , special character)"
           />
-          {isPasswordValid ? (
-            ""
-          ) : (
-            <p className="text-error">
-              Password Invalid ( minimal 8 character , uppercase , lowercase ,
-              number , special character)
-            </p>
-          )}
         </section>
         <Button
           className={` px-5 py-2 rounded-md text-bgLight font-bold w-full ${

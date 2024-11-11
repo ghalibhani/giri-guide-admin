@@ -180,7 +180,11 @@ const FormMountain = ({ onClose, formInput = false }) => {
         handleAddMountain();
       }}>
       <h3 className="text-3xl text-successfulHover">
-        {isMountainUpdating ? "Edit" : "Add New"} Mountain
+        {!formInput
+          ? "Mountain Details"
+          : isMountainUpdating
+          ? "Edit Mountain"
+          : "Add Mountain"}
       </h3>
       <Input
         type="text"
