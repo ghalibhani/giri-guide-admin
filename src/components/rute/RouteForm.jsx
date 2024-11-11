@@ -11,6 +11,8 @@ import {
   updateRoute,
 } from "../../redux/feature/routeSlice";
 import CustomModal from "../CustomModal";
+import { IoArrowBackCircle } from "react-icons/io5";
+import { IoArrowForwardCircle } from "react-icons/io5";
 
 const RouteForm = () => {
   const dispatch = useDispatch();
@@ -258,29 +260,31 @@ const RouteForm = () => {
           label="Estimasi waktu"
           placeholder="Masukkan berapa lama waktu"
           value={estimate}
-          type="number"
-          onChange={(e) => setEstimate(Number(e.target.value))}
+          type="text"
+          onChange={(e) => setEstimate(e.target.value)}
           clearable
         />
         <Input
           label="Jarak"
           placeholder="Masukan Jarak"
           value={distance}
-          type="number"
-          onChange={(e) => setDistance(Number(e.target.value))}
+          type="text"
+          onChange={(e) => setDistance(e.target.value)}
           clearable
         />
       </section>
-      <section className="flex gap-4">
+      <section className="flex gap-4 justify-center items-center">
         {indexEditStep > 0 && (
-          <CustomButton customStyles="bg-error" onClick={handleBack}>
-            Back
-          </CustomButton>
+          <IoArrowBackCircle
+            className="text-5xl rounded-full text-errorHover"
+            onClick={handleBack}
+          />
         )}
         {indexEditStep < (fragmentRoute?.length || 0) && (
-          <CustomButton customStyles="bg-successful" onClick={handleNext}>
-            Next
-          </CustomButton>
+          <IoArrowForwardCircle
+            className="text-5xl rounded-full text-successful"
+            onClick={handleNext}
+          />
         )}
         <CustomButton
           onClick={
@@ -300,7 +304,7 @@ const RouteForm = () => {
         )}
         {indexEditStep === fragmentRoute?.length && (
           <CustomButton
-            customStyles="bg-successful"
+            customStyles="bg-mainSoil"
             onClick={handleConfirmSubmit}>
             {isRouteUpdating ? "Submit updated data" : "Submit"}
           </CustomButton>

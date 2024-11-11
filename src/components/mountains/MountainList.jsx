@@ -29,6 +29,7 @@ import {
 import FormHikingPoint from "../hikingPoint/FormHikingPoint";
 import HikingPointList from "../hikingPoint/HikingPointList";
 import HamsterLoading from "../HamsterLoading";
+import { MdDelete } from "react-icons/md";
 const MountainList = () => {
   const dispatch = useDispatch();
   const [currentPage, setCurrentPage] = useState(1);
@@ -149,7 +150,11 @@ const MountainList = () => {
                     key={mountain?.id}
                     className="flex gap-4 justify-between mb-5">
                     <section className="flex flex-1 justify-between w-[300px]">
-                      <Card shadow="sm" key={mountain?.id} isPressable>
+                      <Card
+                        shadow="sm"
+                        key={mountain?.id}
+                        isPressable
+                        className="w-[300px]">
                         <CardBody className="overflow-visible p-0">
                           <Image
                             shadow="sm"
@@ -162,12 +167,11 @@ const MountainList = () => {
                         </CardBody>
                         <CardFooter className="text-small justify-between gap-5">
                           <b>{mountain?.name}</b>
-                          <section className="buttonGroup flex gap-5">
-                            <Button
+                          <section className="buttonGroup flex gap-4 items-center">
+                            <MdDelete
+                              className="text-3xl text-error font-bold"
                               onClick={() => handleDelete(mountain?.id)}
-                              className="text-neutral-50 bg-error hover:bg-successfulHover font-bold">
-                              Delete
-                            </Button>
+                            />
                             <Button
                               className="text-neutral-50 bg-successful hover:bg-successfulHover font-bold"
                               onClick={() => {

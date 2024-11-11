@@ -71,10 +71,10 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/widraw",
+    path: "/withdraw",
     element: (
       <SecureLink>
-        <SideBar active="/widraw">
+        <SideBar active="/withdraw">
           <Widraw />
         </SideBar>
       </SecureLink>

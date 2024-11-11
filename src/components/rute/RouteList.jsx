@@ -10,6 +10,7 @@ import {
 import { Card, CardBody, Pagination, useDisclosure } from "@nextui-org/react";
 import CustomButton from "../CustomButton";
 import CustomModal from "../CustomModal";
+import { MdDelete } from "react-icons/md";
 
 const RouteList = () => {
   const dispatch = useDispatch();
@@ -95,15 +96,11 @@ const RouteList = () => {
               <p className="w-[200px] font-bold text-md">{route.title}</p>
               <p className="w-auto">{route.description}</p>
             </section>
-            <section className="flex gap-3">
-              <CustomButton
-                customStyles={"bg-error"}
-                onPress={() => {
-                  handleDelete(route.id);
-                }}
-                text="Approve">
-                delete
-              </CustomButton>
+            <section className="flex gap-3 items-center">
+              <MdDelete
+                className="text-error text-3xl"
+                onClick={() => handleDelete(route.id)}
+              />
               <CustomButton
                 customStyles={"bg-successful"}
                 onPress={() => {

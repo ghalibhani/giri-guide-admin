@@ -6,9 +6,9 @@ const Widraw = () => {
   const status = useSelector((state) => state.tourGuide.status);
   console.log(status);
   return (
-    <div>
+    <div className="flex flex-col gap-5">
       {status === "loading" && <HamsterLoading />}
-      <h1>Widraw</h1>
+      <h1 className="text-3xl font-bold text-mainSoil">Withdraw</h1>
       <WidrawList />
     </div>
   );

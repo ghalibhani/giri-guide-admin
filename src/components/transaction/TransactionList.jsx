@@ -63,7 +63,6 @@ const TransactionList = () => {
         primaryActionText={"Close"}
         onPrimaryAction={onClose}
       />
-      <h1 className="text-xl font-bold">Daftar Transaksi</h1>
       <Select
         value={transactionStatus}
         onChange={(e) => setTransactionStatus(e.target.value)}

@@ -10,9 +10,9 @@ const SideBar = ({ children, active }) => {
     { name: "Dashboard", link: "/dashboard" },
     { name: "Mountain", link: "/mountain" },
     { name: "Tour Guide", link: "/tour-guide" },
-    { name: "Rute", link: "/route" },
-    { name: "Daftar Transaction", link: "/transaction" },
-    { name: "Widraw", link: "/widraw" },
+    { name: "Route", link: "/route" },
+    { name: "List Transaction", link: "/transaction" },
+    { name: "Withdraw", link: "/withdraw" },
   ];
 
   const navigate = useNavigate();
@@ -47,10 +47,11 @@ const SideBar = ({ children, active }) => {
 
   return (
     <div className="flex h-screen">
-      {/* Sidebar */}
       <nav className="bg-gray-100 h-screen flex flex-col shadow-lg w-[300px] fixed">
         <header className="p-6 bg-white flex-shrink-0 shadow-md">
-          <h1 className="text-2xl font-bold text-mainGreen">GiriGuide</h1>
+          <h1 className="text-2xl font-bold text-mainGreen">
+            <span className="text-mainSoil">Giri</span>Guide
+          </h1>
         </header>
         <section className="flex flex-col flex-grow mt-4">
           {links.map((link) => (
@@ -65,29 +66,22 @@ const SideBar = ({ children, active }) => {
               </Link>
             </button>
           ))}
-          <li className="p-4 hover:text-white transition-colors">
-            <form onSubmit={handleSearchSubmit}>
-              {navbarActive === "/mountain" && (
-                <input
-                  type="search"
-                  className="w-full p-2 rounded-md text-zinc-950"
-                  placeholder="Search Mountain Name"
-                  value={searchMountain}
-                  onChange={handleSearch}
-                />
-              )}
-            </form>
-          </li>
-          <li className="p-4 hover:text-white transition-colors">
-            <Button
-              className="w-full bg-error text-white"
-              onClick={handleLogout}>
-              Logout
-            </Button>
-          </li>
+          <form onSubmit={handleSearchSubmit}>
+            {navbarActive === "/mountain" && (
+              <input
+                type="search"
+                className="w-full p-2 rounded-md text-zinc-950"
+                placeholder="Search Mountain Name"
+                value={searchMountain}
+                onChange={handleSearch}
+              />
+            )}
+          </form>
+          <Button className="w-full bg-error text-white" onClick={handleLogout}>
+            Logout
+          </Button>
         </section>
       </nav>
-      {/* Main Content */}
       <section className="ml-[300px] flex-grow p-6 h-screen overflow-y-scroll">
         {children}
       </section>

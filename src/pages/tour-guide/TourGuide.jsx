@@ -38,7 +38,7 @@ const TourGuide = () => {
   }, [status]);
 
   return (
-    <section className="font-inter h-full overflow-y-scroll">
+    <section className="font-inter h-full">
       <h1 className="mb-5 text-3xl font-bold text-mainSoil">
         Tour Guide Management
       </h1>

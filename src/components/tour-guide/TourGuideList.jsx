@@ -28,6 +28,7 @@ import FormTourGuide from "./FormTourGuide";
 import TourGuideHikingPointList from "./TourGuideHikingPointList";
 import AddMasteredHikingPoint from "./AddMasteredHikingPoint";
 import HamsterLoading from "../HamsterLoading";
+import { MdDelete } from "react-icons/md";
 
 const TourGuideList = () => {
   const { tourGuides, paging, status } = useSelector(
@@ -159,12 +160,11 @@ const TourGuideList = () => {
                   </CardBody>
                   <CardFooter className="text-small justify-between gap-5">
                     <b>{tourGuide.name}</b>
-                    <section className="buttonGroup flex gap-5">
-                      <Button
+                    <section className="buttonGroup flex gap-4 items-center">
+                      <MdDelete
+                        className="text-3xl text-error font-bold"
                         onClick={() => handleDelete(tourGuide.id)}
-                        className="text-neutral-50 bg-error hover:bg-successfulHover font-bold">
-                        Delete
-                      </Button>
+                      />
                       <Button
                         className="text-neutral-50 bg-successful hover:bg-successfulHover font-bold"
                         onClick={() => handleDetails(tourGuide)}>
