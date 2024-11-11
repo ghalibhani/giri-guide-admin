@@ -52,7 +52,7 @@ const StatusPieChart = () => {
   return (
     <div className="flex flex-col items-center w-full relative -top-6 h-[500px]">
       <section>
-        <h2 className="text-4xl text-mainSoil text-center font-extrabold">
+        <h2 className="text-4xl text-mainSoil text-center font-extrabold my-6">
           Transaction status
         </h2>
       </section>

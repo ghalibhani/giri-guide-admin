@@ -64,8 +64,7 @@ const FormMountain = ({ onClose, formInput = false }) => {
         alert("No selected mountain provided");
         return;
       }
-      if (image) {
-        const formData = new FormData();
+      if (image.type === "image/jpeg" || image.type === "image/png") {
         formData.append("image", image);
         dispatch(
           updateImageMountain({ id: selectedMountain.id, data: formData })
@@ -99,6 +98,8 @@ const FormMountain = ({ onClose, formInput = false }) => {
       if (selectedMountain.bestTime !== bestTime) {
         editedMountain.bestTime = bestTime;
       }
+
+      console.log(editedMountain);
 
       await dispatch(
         updateMountain({
@@ -139,9 +140,9 @@ const FormMountain = ({ onClose, formInput = false }) => {
     formData.append("tips", tips);
     formData.append("bestTime", bestTime);
 
-    dispatch(createMountain(formData));
+    await dispatch(createMountain(formData));
     resetForm();
-    dispatch(fetchMountain());
+    dispatch(fetchMountain({ page: 1, size: 5 }));
   };
 
   const handleImageChange = (e) => {

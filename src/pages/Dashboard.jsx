@@ -51,9 +51,13 @@ const AdminDashboard = () => {
           </section>
         </Card>
       </section>
-      <section className="flex">
-        <ChartCompose />
-        <ChartPie />
+      <section className="flex gap-4">
+        <section className="bg-neutral-50 w-full rounded-xl py-4 px-6">
+          <ChartCompose />
+        </section>
+        <section className="bg-neutral-50 w-full p-6 rounded-xl py-4 px-6">
+          <ChartPie />
+        </section>
       </section>
     </section>
   );

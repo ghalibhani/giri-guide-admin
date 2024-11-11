@@ -40,41 +40,58 @@ const MountainList = () => {
   const mountains = useSelector((state) => state.mountain.mountains || []);
   const status = useSelector((state) => state.mountain.status);
   const paging = useSelector((state) => state.mountain.paging);
+  const [isDelete, setIsDelete] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+  const [customAlertMessage, setCustomAlertMessage] = useState("");
+  const [isCustomAlertOpen, setIsCustomAlertOpen] = useState(false);
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure(false);
+
+  const handleCloseCustomAlert = () => {
+    setIsCustomAlertOpen(false);
+    setIsDelete(false);
+    setDeleteId(null);
+    setCustomAlertMessage("");
+  };
+
+  const handleOpenCustomAlert = (message) => {
+    setIsCustomAlertOpen(true);
+    setCustomAlertMessage(message);
+  };
 
   const handleChangePagination = (page) => {
     setCurrentPage(page);
   };
+
   const handleOnMountainDetailsClose = () => {
     onClose();
     dispatch(clearSeletedHikingPoint());
     dispatch(setIsMountainUpdating(false));
     dispatch(setSelectedMountain(null));
   };
+
+  const confirmDelete = (id, name) => {
+    setIsDelete(true);
+    setDeleteId(id);
+    handleOpenCustomAlert(`Yakin ingin menghapus  ${name}?`);
+  };
+
   const handleDelete = (id) => {
     if (!id) {
-      alert("Id is required for delete");
+      handleOpenCustomAlert("Id is required for delete");
       return;
     }
-
-    const isReadyForDelete = confirm(
-      `Yakin ingin menghapus gunung dengan id ${id}?`
-    );
-    if (!isReadyForDelete) {
-      return;
-    }
-
     try {
       dispatch(deleteMountain(id));
       dispatch(fetchMountain({ page: currentPage, size: mountainsPerPage }));
+      handleCloseCustomAlert();
     } catch (error) {
-      alert(error?.message);
+      handleOpenCustomAlert(error?.message);
     }
   };
 
   const handleDetails = async (mountain) => {
     if (!mountain.id) {
-      alert("Id is required for update");
+      handleOpenCustomAlert("Id is required for update");
       return;
     }
     try {
@@ -83,7 +100,7 @@ const MountainList = () => {
       setIsMountainUpdating(true);
       onOpen();
     } catch (error) {
-      alert(error?.message);
+      handleOpenCustomAlert(error?.message);
     }
   };
 
@@ -91,7 +108,7 @@ const MountainList = () => {
     try {
       dispatch(fetchMountain({ page: currentPage, size: mountainsPerPage }));
     } catch (error) {
-      alert(error?.message);
+      handleOpenCustomAlert(error?.message);
     }
   }, [dispatch, currentPage, mountainsPerPage]);
 
@@ -135,6 +152,41 @@ const MountainList = () => {
             )}
           </ModalContent>
         </Modal>
+        <Modal
+          isOpen={isCustomAlertOpen}
+          onClose={handleCloseCustomAlert}
+          classNames={{
+            backdrop:
+              "bg-gradient-to-t from-zinc-900 to-zinc-900/10 backdrop-opacity-20",
+          }}>
+          <ModalContent>
+            {() => (
+              <>
+                <ModalHeader className="flex flex-col gap-1">
+                  {isDelete ? "Delete" : "Error"}
+                </ModalHeader>
+                <ModalBody>
+                  <p className="text-error">{customAlertMessage}</p>
+                </ModalBody>
+                <ModalFooter className="flex gap-2 items-center">
+                  {isDelete && (
+                    <MdDelete
+                      className="text-error text-3xl cursor-pointer"
+                      onClick={() => handleDelete(deleteId)}>
+                      Delete
+                    </MdDelete>
+                  )}
+                  <Button
+                    color="danger"
+                    variant="light"
+                    onPress={handleCloseCustomAlert}>
+                    Close
+                  </Button>
+                </ModalFooter>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
         <section className="flex flex-wrap justify-center gap-5">
           {status === "loading" ? (
             <HamsterLoading></HamsterLoading>
@@ -142,7 +194,7 @@ const MountainList = () => {
             <>
               {mountains?.map((mountain) => {
                 if (!mountain || !mountain?.id) {
-                  console.error("Invalid mountain data:", mountain);
+                  handleOpenCustomAlert("Invalid mountain data:", mountain);
                   return null;
                 }
                 return (
@@ -170,7 +222,9 @@ const MountainList = () => {
                           <section className="buttonGroup flex gap-4 items-center">
                             <MdDelete
                               className="text-3xl text-error font-bold"
-                              onClick={() => handleDelete(mountain?.id)}
+                              onClick={() =>
+                                confirmDelete(mountain?.id, mountain.name)
+                              }
                             />
                             <Button
                               className="text-neutral-50 bg-successful hover:bg-successfulHover font-bold"
