@@ -1,5 +1,7 @@
 import { Card } from "@nextui-org/react";
-import DashboardCharts from "../components/dashboard/Chart"; // Assuming correct path
+import ChartCompose from "../components/dashboard/ChartCompose";
+import ChartPie from "../components/dashboard/ChartPie";
+import Chart from "../components/dashboard/Chart";
 
 const AdminDashboard = () => {
   const transactions = [
@@ -84,8 +86,11 @@ const AdminDashboard = () => {
           <p>{newCustomers.toLocaleString("id-ID")} customers</p>
         </Card>
       </section>
-      <DashboardCharts />
-      <DashboardCharts />
+      <section className="flex gap-6">
+        <ChartCompose />
+        <ChartPie />
+      </section>
+      <Chart />
     </section>
   );
 };

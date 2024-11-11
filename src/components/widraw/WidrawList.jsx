@@ -104,19 +104,13 @@ const WidrawList = () => {
         <Input
           className="mb-3"
           label="Search by Tour Guide Name"
-          placeholder="Search by Tour Guide Name"
-          size="sm"
-          color="#503a3a"
-          bordered
+          variant="bordered"
           value={searchByName}
           onChange={(e) => setSearchByName(e.target.value)}
         />
         <Select
           label="Status Widraw"
-          placeholder="Pilih status widraw"
-          size="sm"
-          color="#503a3a"
-          bordered
+          variant="bordered"
           value={status}
           onChange={(e) => setStatus(e.target.value)}>
           <SelectItem value="" key={"all"}>

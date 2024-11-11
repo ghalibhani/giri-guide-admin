@@ -35,7 +35,7 @@ const TourGuideList = () => {
   );
   const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const tourGuidesPerPage = 5;
+  const tourGuidesPerPage = 12;
   const dispatch = useDispatch();
 
   const handleChangePagination = (page) => {

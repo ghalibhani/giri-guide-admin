@@ -82,8 +82,7 @@ const TransactionList = () => {
             <p className="w-[150px] font-bold text-md">Tour Guide Name</p>
             <p className="w-[150px] font-bold text-md">Customer Name</p>
             <p className="w-[200px] font-bold text-md">Status</p>
-            <p className="w-[150px] font-bold text-md">nominal</p>
-            <p className="w-[150px] font-bold text-md">description</p>
+            <p className="w-[150px] font-bold text-md">Nama Gunung</p>
           </section>
           <p className="w-[150px] font-bold text-md">Action</p>
         </CardBody>
@@ -92,29 +91,31 @@ const TransactionList = () => {
         <Card key={transaction.id}>
           <CardBody>
             <section className="flex justify-between gap-4 px-6 items-center">
-              <p className="w-[150px] font-bold text-md">
-                {transaction.tourGuideName}
-              </p>
-              <p className="w-[150px] font-bold text-md">
-                {transaction.customerName}
-              </p>
-              <p
-                className={
-                  {
-                    WAITING_APPROVE:
-                      "bg-warning text-white font-bold px-6 py-2 rounded-lg [200px] flex justify-center items-center h-10",
-                    DONE: "bg-successful text-white font-bold px-6 py-2 rounded-lg [200px] flex justify-center items-center h-10",
-                    REJECTED:
-                      "bg-error text-white font-bold px-6 py-2 rounded-lg [200px] flex justify-center items-center h-10",
-                    WAITING_PAY:
-                      "bg-purple-600 text-white font-bold px-6 py-2 rounded-lg [200px] flex justify-center items-center h-10",
-                    UPCOMING:
-                      "bg-blue-600 text-white font-bold px-6 py-2 rounded-lg [200px] flex justify-center items-center h-10",
-                  }[transaction.transactionStatus]
-                }>
-                {transaction.transactionStatus}
-              </p>
-              <p>{transaction.mountainName}</p>
+              <section className="flex gap-4">
+                <p className="w-[150px] font-bold text-md">
+                  {transaction.tourGuideName}
+                </p>
+                <p className="w-[150px] font-bold text-md">
+                  {transaction.customerName}
+                </p>
+                <p
+                  className={
+                    {
+                      WAITING_APPROVE:
+                        "bg-warning text-white font-bold px-6 py-2 rounded-lg w-[200px] flex justify-center items-center h-10",
+                      DONE: "bg-successful text-white font-bold px-6 py-2 rounded-lg w-[200px] flex justify-center items-center h-10",
+                      REJECTED:
+                        "bg-error text-white font-bold px-6 py-2 rounded-lg w-[200px] flex justify-center items-center h-10",
+                      WAITING_PAY:
+                        "bg-purple-600 text-white font-bold px-6 py-2 rounded-lg w-[200px] flex justify-center items-center h-10",
+                      UPCOMING:
+                        "bg-blue-600 text-white font-bold px-6 py-2 rounded-lg w-[200px] flex justify-center items-center h-10",
+                    }[transaction.transactionStatus]
+                  }>
+                  {transaction.transactionStatus}
+                </p>
+                <p>{transaction.mountainName}</p>
+              </section>
               <CustomButton
                 onClick={() => {
                   dispatch(fetchTransactionById(transaction.id));

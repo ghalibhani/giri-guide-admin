@@ -6,6 +6,7 @@ import HikingPointReducer from "./feature/hikingPointSlice";
 import transactionReducer from "./feature/transactionSlice";
 import widrawReducer from "./feature/widrawSlice";
 import routeReducer from "./feature/routeSlice";
+import dashboardReducer from "./feature/dashboardSlice";
 const store = configureStore({
   reducer: {
     auth: authReducer,
@@ -15,6 +16,7 @@ const store = configureStore({
     transaction: transactionReducer,
     widraw: widrawReducer,
     route: routeReducer,
+    dashboard: dashboardReducer,
   },
 });
 
