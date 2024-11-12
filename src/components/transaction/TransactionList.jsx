@@ -92,10 +92,10 @@ const TransactionList = () => {
           <CardBody>
             <section className='flex justify-between gap-4 px-6 items-center'>
               <section className='flex gap-4 items-center'>
-                <p className='w-[200px] font-bold text-md'>
+                <p className='w-[200px] font-medium text-md'>
                   {transaction.tourGuideName}
                 </p>
-                <p className='w-[180px] font-bold text-md'>
+                <p className='w-[180px] font-medium text-md'>
                   {transaction.customerName}
                 </p>
                 <p
@@ -115,7 +115,7 @@ const TransactionList = () => {
                 >
                   {transaction.transactionStatus}
                 </p>
-                <p className='ml-20'>{transaction.mountainName}</p>
+                <p className='ml-20 font-medium'>{transaction.mountainName}</p>
               </section>
               {/* <CustomButton
                 onClick={() => {
