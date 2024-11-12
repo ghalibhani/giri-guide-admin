@@ -1,4 +1,15 @@
-import { Input, Select, SelectItem, Textarea } from "@nextui-org/react";
+import {
+  Button,
+  Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  Select,
+  SelectItem,
+  Textarea,
+} from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import CustomButton from "../CustomButton";
 import {
@@ -12,6 +23,7 @@ import {
   isPositiveNumber,
   isStrongPassword,
   isEmailValid,
+  isNikValid,
 } from "../../validation/validate";
 
 const FormTourGuide = ({ formInput = false }) => {
@@ -35,10 +47,24 @@ const FormTourGuide = ({ formInput = false }) => {
   const [isDescriptionValid, setIsDescriptionValid] = useState(true);
   const [isImageValid, setIsImageValid] = useState(true);
   const [isValidNIK, setIsValidNIK] = useState(true);
+  const [isValidOld, setIsValidOld] = useState(true);
 
   const { selectedTourGuide, isTourGuideUpdating, tourGuideId } = useSelector(
     (state) => state.tourGuide
   );
+
+  const [customAlertMessage, setCustomAlertMessage] = useState("");
+  const [isCustomAlertOpen, setIsCustomAlertOpen] = useState(false);
+
+  const handleCloseCustomAlert = () => {
+    setIsCustomAlertOpen(false);
+    setCustomAlertMessage("");
+  };
+
+  const handleOpenCustomAlert = (message) => {
+    setIsCustomAlertOpen(true);
+    setCustomAlertMessage(message);
+  };
 
   useEffect(() => {
     if (selectedTourGuide) {
@@ -48,29 +74,36 @@ const FormTourGuide = ({ formInput = false }) => {
       setDescription(selectedTourGuide.description);
       setImage(selectedTourGuide.image);
       setEmail(selectedTourGuide.email);
-      setPassword(selectedTourGuide.password);
       setMaxHiker(selectedTourGuide.maxHiker);
       setPrice(selectedTourGuide.price);
       setAdditionalPrice(selectedTourGuide.additionalPrice);
       setTotalPorter(selectedTourGuide.totalPorter);
       setPricePorter(selectedTourGuide.pricePorter);
-      setBirthDate(selectedTourGuide.birthDate);
+      setBirthDate(
+        new Date(selectedTourGuide.birthDate).toISOString().split("T")[0]
+      );
       setGender(selectedTourGuide.gender);
       setBankAccount(selectedTourGuide.bankAccount);
     }
   }, [selectedTourGuide]);
 
   useEffect(() => {
-    if ((nik?.length === 16 && nik.match(/^[0-9]+$/)) || nik?.length === 0) {
-      setIsValidNIK(true);
-    } else {
-      setIsValidNIK(false);
-    }
+    setIsValidNIK(isNikValid(nik));
   }, [nik]);
 
   useEffect(() => {
     setIsDescriptionValid(description?.length <= 900);
   }, [description]);
+
+  const validate17Year = () => {
+    const today = new Date();
+    const minYear = today.getFullYear() - 17;
+    const minDate = new Date(minYear, today.getMonth(), today.getDate());
+    return new Date(birthDate) >= minDate;
+  };
+  useEffect(() => {
+    setIsValidOld(validate17Year());
+  }, [birthDate]);
 
   useEffect(() => {
     if (!isTourGuideUpdating) {
@@ -103,12 +136,6 @@ const FormTourGuide = ({ formInput = false }) => {
       }
       if (selectedTourGuide.description != description) {
         tourGuideUpdate.description = description;
-      }
-      if (selectedTourGuide.email != email) {
-        tourGuideUpdate.email = email;
-      }
-      if (selectedTourGuide.password != password) {
-        tourGuideUpdate.password = password;
       }
       if (selectedTourGuide.maxHiker != maxHiker) {
         tourGuideUpdate.maxHiker = maxHiker;
@@ -157,7 +184,31 @@ const FormTourGuide = ({ formInput = false }) => {
       !address ||
       !bankAccount
     ) {
-      alert("Please fill in all the required fields.");
+      handleOpenCustomAlert("Please fill in all the required fields.");
+      return;
+    }
+    if (isPositiveNumber(maxHiker) === false && maxHiker >= 5) {
+      handleOpenCustomAlert("Max Hiker must be a positive number and");
+      return;
+    }
+
+    if (isPositiveNumber(price) === false) {
+      handleOpenCustomAlert("Price must be a positive number.");
+      return;
+    }
+
+    if (isPositiveNumber(additionalPrice) === false) {
+      handleOpenCustomAlert("Additional Price must be a positive number.");
+      return;
+    }
+
+    if (isPositiveNumber(totalPorter) === false) {
+      handleOpenCustomAlert("Total Porter must be a positive number.");
+      return;
+    }
+
+    if (isPositiveNumber(pricePorter) === false) {
+      handleOpenCustomAlert("Price Porter must be a positive number.");
       return;
     }
     const formData = new FormData();
@@ -178,6 +229,10 @@ const FormTourGuide = ({ formInput = false }) => {
     formData.append("bankAccount", bankAccount);
 
     dispatch(createTourGuide(formData));
+    clearState();
+  };
+
+  const clearState = () => {
     setName("");
     setNIK("");
     setAddress("");
@@ -193,7 +248,6 @@ const FormTourGuide = ({ formInput = false }) => {
     setBirthDate("");
     setGender("");
     setBankAccount("");
-
     setIsDescriptionValid(true);
     setIsImageValid(true);
     setIsValidNIK(true);
@@ -236,7 +290,7 @@ const FormTourGuide = ({ formInput = false }) => {
             color="successSecondary"
             isRequired
             isInvalid={!isPositiveNumber(nik) || !isValidNIK}
-            errorMessage="NIK harus lebih panjang dari 16 digit dan hanya angka"
+            errorMessage="NIK must be longer than 16 digits and only numbers"
             variant="bordered"
             onChange={(e) => setNIK(e.target.value)}
             value={nik}
@@ -273,25 +327,22 @@ const FormTourGuide = ({ formInput = false }) => {
         }}
         value={description}
       />
-      {!isDescriptionValid && (
-        <p className="text-error">
-          Description is too long, please use 900 characters or less
-        </p>
-      )}
-      <Input
-        isDisabled={isTourGuideUpdating == false && formInput == false}
-        type="file"
-        label="Image"
-        color="successSecondary"
-        isRequired
-        isInvalid={!isImageValid}
-        errorMessage="Image must be in JPEG or PNG format and less than 1MB"
-        variant="bordered"
-        onChange={handleImageChange}
-      />
-      <section className="flex gap-4 w-full">
+      {(isTourGuideUpdating || formInput) && (
         <Input
           isDisabled={isTourGuideUpdating == false && formInput == false}
+          type="file"
+          label="Image"
+          color="successSecondary"
+          isRequired
+          isInvalid={!isImageValid && !isTourGuideUpdating}
+          errorMessage="Image must be in JPEG or PNG format and less than 1MB"
+          variant="bordered"
+          onChange={handleImageChange}
+        />
+      )}
+      <section className="flex gap-4 w-full">
+        <Input
+          isDisabled={!formInput}
           type="email"
           label="Email"
           color="successSecondary"
@@ -302,18 +353,20 @@ const FormTourGuide = ({ formInput = false }) => {
           onChange={(e) => setEmail(e.target.value)}
           value={email}
         />
-        <Input
-          isDisabled={isTourGuideUpdating == false && formInput == false}
-          type="password"
-          label="Password"
-          color="successSecondary"
-          variant="bordered"
-          isRequired
-          isInvalid={!isStrongPassword(password)}
-          errorMessage="Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character"
-          onChange={(e) => setPassword(e.target.value)}
-          value={password}
-        />
+        {formInput && (
+          <Input
+            isDisabled={isTourGuideUpdating == false && formInput == false}
+            type="password"
+            label="Password"
+            color="successSecondary"
+            variant="bordered"
+            isRequired
+            isInvalid={!isStrongPassword(password)}
+            errorMessage="Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character"
+            onChange={(e) => setPassword(e.target.value)}
+            value={password}
+          />
+        )}
       </section>
       <section className="flex gap-4 w-full">
         <Input
@@ -322,8 +375,8 @@ const FormTourGuide = ({ formInput = false }) => {
           label="Max Hiker"
           color="successSecondary"
           isRequired
-          isInvalid={!isPositiveNumber(maxHiker) && maxHiker >= 5}
-          errorMessage="Please use a positive number"
+          isInvalid={!isPositiveNumber(maxHiker) || maxHiker < 5}
+          errorMessage="Please use a positive number and min 5"
           variant="bordered"
           onChange={(e) => setMaxHiker(e.target.value)}
           value={maxHiker}
@@ -388,24 +441,21 @@ const FormTourGuide = ({ formInput = false }) => {
           color="successSecondary"
           isRequired
           variant="bordered"
+          isInvalid={isValidOld}
+          errorMessage="Tour guide must be older than 17 years old"
           onChange={(e) => setBirthDate(e.target.value)}
           value={birthDate}
         />
         <Select
-          isDisabled={isTourGuideUpdating == false && formInput == false}
+          isDisabled={isTourGuideUpdating === false && formInput === false}
           label="Gender"
           color="successSecondary"
           isRequired
           variant="bordered"
-          value={gender}
-          onChange={(e) => setGender(e.target.value)}
-          defaultSelectedKeys={[gender]}>
-          <SelectItem value="MALE" key={"MALE"}>
-            MALE
-          </SelectItem>
-          <SelectItem value="FEMALE" key={"FEMALE"}>
-            FEMALE
-          </SelectItem>
+          selectedKeys={gender ? [gender] : ["MALE"]}
+          onSelectionChange={(keys) => setGender(Array.from(keys)[0])}>
+          <SelectItem key="MALE">MALE</SelectItem>
+          <SelectItem key="FEMALE">FEMALE</SelectItem>
         </Select>
       </section>
       <Input
@@ -451,6 +501,34 @@ const FormTourGuide = ({ formInput = false }) => {
           Add Tour Guide
         </CustomButton>
       )}
+      <Modal
+        isOpen={isCustomAlertOpen}
+        onClose={handleCloseCustomAlert}
+        classNames={{
+          backdrop:
+            "bg-gradient-to-t from-zinc-900 to-zinc-900/10 backdrop-opacity-20",
+        }}>
+        <ModalContent>
+          {() => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                {"Message"}
+              </ModalHeader>
+              <ModalBody>
+                <p className="text-error">{customAlertMessage}</p>
+              </ModalBody>
+              <ModalFooter className="flex gap-2 items-center">
+                <Button
+                  color="danger"
+                  variant="light"
+                  onPress={handleCloseCustomAlert}>
+                  Close
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </form>
   );
 };
