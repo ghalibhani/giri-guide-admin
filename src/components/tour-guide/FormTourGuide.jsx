@@ -24,6 +24,7 @@ import {
   isStrongPassword,
   isEmailValid,
   isNikValid,
+  isPositiveNumberWithMinValue,
 } from "../../validation/validate";
 
 const FormTourGuide = ({ formInput = false }) => {
@@ -170,8 +171,6 @@ const FormTourGuide = ({ formInput = false }) => {
       !nik ||
       !description ||
       !image ||
-      !isValidNIK ||
-      !isImageValid ||
       !email ||
       !password ||
       !maxHiker ||
@@ -187,28 +186,46 @@ const FormTourGuide = ({ formInput = false }) => {
       handleOpenCustomAlert("Please fill in all the required fields.");
       return;
     }
-    if (isPositiveNumber(maxHiker) === false && maxHiker >= 5) {
+    if (!isPositiveNumberWithMinValue(maxHiker, 5)) {
       handleOpenCustomAlert("Max Hiker must be a positive number and");
       return;
     }
 
-    if (isPositiveNumber(price) === false) {
+    if (!isPositiveNumber(price)) {
       handleOpenCustomAlert("Price must be a positive number.");
       return;
     }
 
-    if (isPositiveNumber(additionalPrice) === false) {
+    if (!isPositiveNumber(additionalPrice)) {
       handleOpenCustomAlert("Additional Price must be a positive number.");
       return;
     }
 
-    if (isPositiveNumber(totalPorter) === false) {
+    if (!isPositiveNumber(totalPorter)) {
       handleOpenCustomAlert("Total Porter must be a positive number.");
       return;
     }
 
-    if (isPositiveNumber(pricePorter) === false) {
+    if (!isPositiveNumber(pricePorter)) {
       handleOpenCustomAlert("Price Porter must be a positive number.");
+      return;
+    }
+    if (!isImageValid) {
+      handleOpenCustomAlert(
+        "Image must be a JPEG or PNG file and less than 1MB."
+      );
+      return;
+    }
+    if (!isEmailValid(email)) {
+      handleOpenCustomAlert("Email is not valid.");
+      return;
+    }
+    if (!isValidNIK) {
+      handleOpenCustomAlert("NIK is not valid.");
+      return;
+    }
+    if (!isValidOld) {
+      handleOpenCustomAlert("You must be at least 17 years old.");
       return;
     }
     const formData = new FormData();
@@ -371,11 +388,11 @@ const FormTourGuide = ({ formInput = false }) => {
       <section className="flex gap-4 w-full">
         <Input
           isDisabled={isTourGuideUpdating == false && formInput == false}
-          type="number"
+          type="text"
           label="Max Hiker"
           color="successSecondary"
           isRequired
-          isInvalid={!isPositiveNumber(maxHiker) || maxHiker < 5}
+          isInvalid={!isPositiveNumberWithMinValue(maxHiker, 5)}
           errorMessage="Please use a positive number and min 5"
           variant="bordered"
           onChange={(e) => setMaxHiker(e.target.value)}
@@ -383,7 +400,7 @@ const FormTourGuide = ({ formInput = false }) => {
         />
         <Input
           isDisabled={isTourGuideUpdating == false && formInput == false}
-          type="number"
+          type="text"
           label="Price"
           color="successSecondary"
           isRequired
@@ -395,7 +412,7 @@ const FormTourGuide = ({ formInput = false }) => {
         />
         <Input
           isDisabled={isTourGuideUpdating == false && formInput == false}
-          type="number"
+          type="text"
           label="Additional Price"
           color="successSecondary"
           isRequired
@@ -410,7 +427,7 @@ const FormTourGuide = ({ formInput = false }) => {
       <section className="flex gap-4 w-full">
         <Input
           isDisabled={isTourGuideUpdating == false && formInput == false}
-          type="number"
+          type="text"
           label="Total Porter"
           color="successSecondary"
           isRequired
@@ -422,7 +439,7 @@ const FormTourGuide = ({ formInput = false }) => {
         />
         <Input
           isDisabled={isTourGuideUpdating == false && formInput == false}
-          type="number"
+          type="text"
           label="Price Porter"
           color="successSecondary"
           isRequired
@@ -452,7 +469,7 @@ const FormTourGuide = ({ formInput = false }) => {
           color="successSecondary"
           isRequired
           variant="bordered"
-          selectedKeys={gender ? [gender] : ["MALE"]}
+          selectedKeys={[gender]}
           onSelectionChange={(keys) => setGender(Array.from(keys)[0])}>
           <SelectItem key="MALE">MALE</SelectItem>
           <SelectItem key="FEMALE">FEMALE</SelectItem>
@@ -460,7 +477,7 @@ const FormTourGuide = ({ formInput = false }) => {
       </section>
       <Input
         isDisabled={isTourGuideUpdating == false && formInput == false}
-        type="number"
+        type="text"
         label="Bank Account"
         color="successSecondary"
         isRequired

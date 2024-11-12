@@ -1,4 +1,15 @@
-import { Input, Select, SelectItem, Textarea } from "@nextui-org/react";
+import {
+  Button,
+  Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  Select,
+  SelectItem,
+  Textarea,
+} from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import CustomButton from "../CustomButton";
 import {
@@ -10,6 +21,7 @@ import {
   updateMountain,
 } from "../../redux/feature/mountainSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { isPositiveNumber } from "../../validation/validate";
 
 const FormMountain = ({ onClose, formInput = false }) => {
   const dispatch = useDispatch();
@@ -28,6 +40,19 @@ const FormMountain = ({ onClose, formInput = false }) => {
   const { selectedMountain, isMountainUpdating } = useSelector(
     (state) => state.mountain
   );
+
+  const [customAlertMessage, setCustomAlertMessage] = useState("");
+  const [isCustomAlertOpen, setIsCustomAlertOpen] = useState(false);
+
+  const handleCloseCustomAlert = () => {
+    setIsCustomAlertOpen(false);
+    setCustomAlertMessage("");
+  };
+
+  const handleOpenCustomAlert = (message) => {
+    setIsCustomAlertOpen(true);
+    setCustomAlertMessage(message);
+  };
 
   useEffect(() => {
     if (selectedMountain) {
@@ -64,7 +89,7 @@ const FormMountain = ({ onClose, formInput = false }) => {
 
     if (isMountainUpdating) {
       if (!selectedMountain) {
-        alert("No selected mountain provided");
+        handleOpenCustomAlert("No selected mountain provided");
         return;
       }
       if (image.type === "image/jpeg" || image.type === "image/png") {
@@ -102,9 +127,7 @@ const FormMountain = ({ onClose, formInput = false }) => {
         editedMountain.bestTime = bestTime;
       }
 
-      console.log(editedMountain);
-
-      await dispatch(
+      dispatch(
         updateMountain({
           id: selectedMountain.id,
           data: editedMountain,
@@ -113,25 +136,29 @@ const FormMountain = ({ onClose, formInput = false }) => {
       resetForm();
       dispatch(setIsMountainUpdating(false));
       dispatch(setSelectedMountain(null));
-      await dispatch(fetchMountain({ page: 1, size: 5 }));
+      dispatch(fetchMountain({ page: 1, size: 5 }));
       onClose();
       return;
     }
 
-    if (
-      !name ||
-      !location ||
-      !description ||
-      !image ||
-      !isDescriptionValid ||
-      !isImageValid ||
-      !tips ||
-      !bestTime
-    ) {
-      alert("Form validation failed.");
+    if (!name || !location || !description || !image || !tips || !bestTime) {
+      handleOpenCustomAlert("Please fill in all the required fields.");
       return;
     }
 
+    if (!isPositiveNumber(simaksiPrice)) {
+      handleOpenCustomAlert("Please use a positive number");
+      return;
+    }
+    if (!isImageValid) {
+      handleOpenCustomAlert("Please upload a valid image");
+      return;
+    }
+    if (!isDescriptionValid) {
+      handleOpenCustomAlert(
+        "Description is too long, please use 900 characters or less"
+      );
+    }
     formData.append("name", name);
     formData.append("city", location);
     formData.append("description", description);
@@ -143,7 +170,7 @@ const FormMountain = ({ onClose, formInput = false }) => {
     formData.append("tips", tips);
     formData.append("bestTime", bestTime);
 
-    await dispatch(createMountain(formData));
+    dispatch(createMountain(formData));
     resetForm();
     dispatch(fetchMountain({ page: 1, size: 5 }));
   };
@@ -169,7 +196,7 @@ const FormMountain = ({ onClose, formInput = false }) => {
     setUseSimaksi(true);
     setSimaksiPrice("");
     setMessage("");
-    setStatus("NORMAL");
+    setStatus("");
     setIsDescriptionValid(true);
     setIsImageValid(true);
     setTips("");
@@ -194,6 +221,7 @@ const FormMountain = ({ onClose, formInput = false }) => {
         type="text"
         label="Name"
         color="successSecondary"
+        isRequired
         isDisabled={isMountainUpdating == false && formInput == false}
         variant="bordered"
         onChange={(e) => setName(e.target.value)}
@@ -203,6 +231,7 @@ const FormMountain = ({ onClose, formInput = false }) => {
         type="text"
         label="Location"
         color="successSecondary"
+        isRequired
         isDisabled={isMountainUpdating == false && formInput == false}
         variant="bordered"
         onChange={(e) => setLocation(e.target.value)}
@@ -212,50 +241,44 @@ const FormMountain = ({ onClose, formInput = false }) => {
         type="text"
         label="Description"
         color="successSecondary"
+        isRequired
         isDisabled={isMountainUpdating == false && formInput == false}
         variant="bordered"
+        isInvalid={!isDescriptionValid}
+        errorMessage="Description is too long, please use 900 characters or less"
         onChange={(e) => {
           setDescription(e.target.value);
           setIsDescriptionValid(e.target.value.length <= 900);
         }}
         value={description}
       />
-      {!isDescriptionValid && (
-        <p className="text-error">
-          Description is too long, please use 900 characters or less
-        </p>
+      {(isMountainUpdating || formInput) && (
+        <Input
+          type="file"
+          label="Image"
+          color="successSecondary"
+          isRequired
+          isDisabled={isMountainUpdating == false && formInput == false}
+          variant="bordered"
+          onChange={handleImageChange}
+          isInvalid={!isImageValid}
+          errorMessage="Image must be in JPEG or PNG format and less than 1MB"
+          accept="image/jpeg,image/png"
+          max-size={1024 * 1024}
+        />
       )}
-      <Input
-        type="file"
-        label="Image"
-        color="successSecondary"
-        isDisabled={isMountainUpdating == false && formInput == false}
-        variant="bordered"
-        onChange={handleImageChange}
-        isInvalid={!isImageValid}
-        errorMessage="Image must be in JPEG or PNG format and less than 1MB"
-        accept="image/jpeg,image/png"
-        max-size={1024 * 1024}
-      />
       <section className="flex w-full gap-4">
         <Select
           label="Status"
           className="w-full"
+          isRequired
           isDisabled={isMountainUpdating == false && formInput == false}
-          onChange={(e) => setStatus(e.target.value)}
-          value={status}>
-          <SelectItem key="normal" value="NORMAL">
-            NORMAL
-          </SelectItem>
-          <SelectItem key="siaga" value="SIAGA">
-            SIAGA
-          </SelectItem>
-          <SelectItem key="waspada" value="WASPADA">
-            WASPADA
-          </SelectItem>
-          <SelectItem key="awas" value="AWAS">
-            AWAS
-          </SelectItem>
+          selectedKeys={[status]}
+          onChange={(e) => setStatus(e.target.value)}>
+          <SelectItem key="NORMAL">NORMAL</SelectItem>
+          <SelectItem key="SIAGA">SIAGA</SelectItem>
+          <SelectItem key="WASPADA">WASPADA</SelectItem>
+          <SelectItem key="AWAS">AWAS</SelectItem>
         </Select>
         <Input
           type="text"
@@ -267,29 +290,55 @@ const FormMountain = ({ onClose, formInput = false }) => {
           value={message}
         />
       </section>
+      <Modal
+        isOpen={isCustomAlertOpen}
+        onClose={handleCloseCustomAlert}
+        classNames={{
+          backdrop:
+            "bg-gradient-to-t from-zinc-900 to-zinc-900/10 backdrop-opacity-20",
+        }}>
+        <ModalContent>
+          {() => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                {"Message"}
+              </ModalHeader>
+              <ModalBody>
+                <p className="text-error">{customAlertMessage}</p>
+              </ModalBody>
+              <ModalFooter className="flex gap-2 items-center">
+                <Button
+                  color="danger"
+                  variant="light"
+                  onPress={handleCloseCustomAlert}>
+                  Close
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
       <section className="flex w-full gap-4">
         <Select
           label="Use Simaksi"
           className="w-full"
           isDisabled={isMountainUpdating == false && formInput == false}
           onChange={(e) => setUseSimaksi(e.target.value === "yes")}
-          value={useSimaksi ? "yes" : "no"}
-          defaultSelectedKeys={useSimaksi ? "yes" : "no"}>
-          <SelectItem key={"yes"} value={true}>
-            Yes
-          </SelectItem>
-          <SelectItem key={"no"} value={false}>
-            No
-          </SelectItem>
+          selectedKeys={useSimaksi ? ["yes"] : ["no"]}>
+          <SelectItem key={"yes"}>Yes</SelectItem>
+          <SelectItem key={"no"}>No</SelectItem>
         </Select>
         {useSimaksi && (
           <Input
-            type="Price"
+            type="text"
             label="Simaksi Price"
             color="successSecondary"
+            isRequired
+            isInvalid={!isPositiveNumber(simaksiPrice)}
+            errorMessage="Please use a positive number"
             isDisabled={isMountainUpdating == false && formInput == false}
             variant="bordered"
-            onChange={(e) => setSimaksiPrice(Number(e.target.value) || 0)}
+            onChange={(e) => setSimaksiPrice(e.target.value)}
             value={simaksiPrice}
           />
         )}
@@ -298,6 +347,7 @@ const FormMountain = ({ onClose, formInput = false }) => {
         type="text"
         label="Tips"
         color="successSecondary"
+        isRequired
         isDisabled={isMountainUpdating == false && formInput == false}
         variant="bordered"
         onChange={(e) => setTips(e.target.value)}
@@ -307,6 +357,7 @@ const FormMountain = ({ onClose, formInput = false }) => {
         type="text"
         label="Best Time"
         color="successSecondary"
+        isRequired
         isDisabled={isMountainUpdating == false && formInput == false}
         variant="bordered"
         onChange={(e) => setBestTime(e.target.value)}
