@@ -26,9 +26,18 @@ export const isValidPositiveNumber = (number) => {
 };
 
 export const isPositiveNumber = (value) => {
-  console.log(value);
+  if (value.length === 0) {
+    return true;
+  }
   const regex = /^[0-9]+$/;
   return regex.test(value) && Number(value) > 0;
+};
+export const isPositiveNumberWithMinValue = (value, min) => {
+  if (value.length === 0) {
+    return true;
+  }
+  const regex = /^[0-9]+$/;
+  return regex.test(value) && Number(value) >= min;
 };
 export const isEmailValid = (email) => {
   if (email.length === 0) {
