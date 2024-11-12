@@ -22,6 +22,7 @@ import {
 import CustomButton from "../CustomButton";
 import CustomModal from "../CustomModal";
 import { MdDelete } from "react-icons/md";
+import { AiOutlineCloseCircle } from "react-icons/ai";
 
 const RouteList = () => {
   const dispatch = useDispatch();
@@ -119,8 +120,9 @@ const RouteList = () => {
               <ModalHeader className='flex flex-col gap-1'>
                 {isDelete ? "Delete" : "Error"}
               </ModalHeader>
-              <ModalBody>
-                <p className='text-error'>{customAlertMessage}</p>
+              <ModalBody className='flex justify-center items-center'>
+                <AiOutlineCloseCircle className='text-error text-center text-9xl mb-8 mt-3' />
+                <p>{customAlertMessage}</p>
               </ModalBody>
               <ModalFooter className='flex gap-2 items-center'>
                 {isDelete && (
