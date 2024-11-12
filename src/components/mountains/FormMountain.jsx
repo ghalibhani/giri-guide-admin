@@ -270,7 +270,8 @@ const FormMountain = ({ onClose, formInput = false }) => {
           className="w-full"
           isDisabled={isMountainUpdating == false && formInput == false}
           onChange={(e) => setUseSimaksi(e.target.value === "yes")}
-          value={useSimaksi}>
+          value={useSimaksi ? "yes" : "no"}
+          defaultSelectedKeys={useSimaksi ? "yes" : "no"}>
           <SelectItem key={"yes"} value={true}>
             Yes
           </SelectItem>
@@ -280,12 +281,12 @@ const FormMountain = ({ onClose, formInput = false }) => {
         </Select>
         {useSimaksi && (
           <Input
-            type="number"
+            type="Price"
             label="Simaksi Price"
             color="successSecondary"
             isDisabled={isMountainUpdating == false && formInput == false}
             variant="bordered"
-            onChange={(e) => setSimaksiPrice(e.target.value)}
+            onChange={(e) => setSimaksiPrice(Number(e.target.value) || 0)}
             value={simaksiPrice}
           />
         )}

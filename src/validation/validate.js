@@ -20,9 +20,15 @@ const validatePhoneNumber = (phone) => {
   return re.test(String(phone));
 };
 
+const isValidPositiveNumber = (number) => {
+  const re = /^[0-9]+$/;
+  return re.test(String(number));
+};
+
 export default {
   validateEmail,
   validatePassword,
   validateName,
   validatePhoneNumber,
+  isValidPositiveNumber,
 };

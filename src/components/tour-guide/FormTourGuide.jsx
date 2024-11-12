@@ -68,10 +68,12 @@ const FormTourGuide = ({ formInput = false }) => {
   }, [description]);
 
   useEffect(() => {
-    if (image && image.type !== "image/jpeg" && image.type !== "image/png") {
-      setIsImageValid(false);
-    } else {
-      setIsImageValid(true);
+    if (!isTourGuideUpdating) {
+      if (image && image.type !== "image/jpeg" && image.type !== "image/png") {
+        setIsImageValid(false);
+      } else {
+        setIsImageValid(true);
+      }
     }
   }, [image]);
 
@@ -199,6 +201,20 @@ const FormTourGuide = ({ formInput = false }) => {
     }
   };
 
+  const isPositiveNumber = (value) => {
+    const regex = /^[0-9]+$/;
+    return regex.test(value) && Number(value) > 0;
+  };
+  const isEmailValid = (email) => {
+    const re = /^\S+@\S+\.\S+$/;
+    return re.test(email);
+  };
+  const isStrongPassword = (password) => {
+    const re =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return re.test(password);
+  };
+
   return (
     <form
       className="flex flex-col gap-4 justify-center"
@@ -223,9 +239,11 @@ const FormTourGuide = ({ formInput = false }) => {
         <section className="w-full flex flex-col gap-4">
           <Input
             isDisabled={isTourGuideUpdating == false && formInput == false}
-            type="number"
+            type="text"
             label="NIK"
             color="successSecondary"
+            isInvalid={!isPositiveNumber(nik) || !isValidNIK}
+            errorMessage="NIK harus lebih panjang dari 16 digit dan hanya angka"
             variant="bordered"
             onChange={(e) => setNIK(e.target.value)}
             value={nik}
@@ -252,6 +270,8 @@ const FormTourGuide = ({ formInput = false }) => {
         label="Description"
         color="successSecondary"
         variant="bordered"
+        isInvalid={!isDescriptionValid}
+        errorMessage="Description is too long, please use 900 characters or less"
         onChange={(e) => {
           setDescription(e.target.value);
           setIsDescriptionValid(e.target.value.length <= 900);
@@ -268,18 +288,19 @@ const FormTourGuide = ({ formInput = false }) => {
         type="file"
         label="Image"
         color="successSecondary"
+        isInvalid={!isImageValid}
+        errorMessage="Image must be in JPEG or PNG format and less than 1MB"
         variant="bordered"
         onChange={handleImageChange}
       />
-      {!isImageValid && (
-        <p className="text-error">Image must be in JPEG or PNG format</p>
-      )}
       <section className="flex gap-4 w-full">
         <Input
           isDisabled={isTourGuideUpdating == false && formInput == false}
           type="email"
           label="Email"
           color="successSecondary"
+          isInvalid={!isEmailValid(email)}
+          errorMessage="Please enter a valid email"
           variant="bordered"
           onChange={(e) => setEmail(e.target.value)}
           value={email}
@@ -290,6 +311,8 @@ const FormTourGuide = ({ formInput = false }) => {
           label="Password"
           color="successSecondary"
           variant="bordered"
+          isInvalid={!isStrongPassword(password)}
+          errorMessage="Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character"
           onChange={(e) => setPassword(e.target.value)}
           value={password}
         />
@@ -300,6 +323,8 @@ const FormTourGuide = ({ formInput = false }) => {
           type="number"
           label="Max Hiker"
           color="successSecondary"
+          isInvalid={!isPositiveNumber(maxHiker)}
+          errorMessage="Please use a positive number"
           variant="bordered"
           onChange={(e) => setMaxHiker(e.target.value)}
           value={maxHiker}
@@ -309,6 +334,8 @@ const FormTourGuide = ({ formInput = false }) => {
           type="number"
           label="Price"
           color="successSecondary"
+          isInvalid={!isPositiveNumber(price)}
+          errorMessage="Please use a positive number"
           variant="bordered"
           onChange={(e) => setPrice(e.target.value)}
           value={price}
@@ -318,6 +345,8 @@ const FormTourGuide = ({ formInput = false }) => {
           type="number"
           label="Additional Price"
           color="successSecondary"
+          isInvalid={!isPositiveNumber(additionalPrice)}
+          errorMessage="Please use a positive number"
           variant="bordered"
           onChange={(e) => setAdditionalPrice(e.target.value)}
           value={additionalPrice}
@@ -330,6 +359,8 @@ const FormTourGuide = ({ formInput = false }) => {
           type="number"
           label="Total Porter"
           color="successSecondary"
+          isInvalid={!isPositiveNumber(totalPorter)}
+          errorMessage="Please use a positive number"
           variant="bordered"
           onChange={(e) => setTotalPorter(e.target.value)}
           value={totalPorter}
@@ -339,6 +370,8 @@ const FormTourGuide = ({ formInput = false }) => {
           type="number"
           label="Price Porter"
           color="successSecondary"
+          isInvalid={!isPositiveNumber(pricePorter)}
+          errorMessage="Please use a positive number"
           variant="bordered"
           onChange={(e) => setPricePorter(e.target.value)}
           value={pricePorter}
@@ -375,6 +408,8 @@ const FormTourGuide = ({ formInput = false }) => {
         type="number"
         label="Bank Account"
         color="successSecondary"
+        isInvalid={!isPositiveNumber(bankAccount)}
+        errorMessage="Please enter a valid bank account"
         variant="bordered"
         onChange={(e) => setBankAccount(e.target.value)}
         value={bankAccount}
