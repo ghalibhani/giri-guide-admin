@@ -17,7 +17,7 @@ const SideBar = ({ children, active }) => {
 
   const navigate = useNavigate();
   const [navbarActive, setNavbarActive] = useState(active || "/dashboard");
-  const [searchMountain, setSearchMountain] = useState("");
+  // const [searchMountain, setSearchMountain] = useState("");
   const dispatch = useDispatch();
 
   const handleLogout = () => {
@@ -30,15 +30,6 @@ const SideBar = ({ children, active }) => {
     }
   };
 
-  const handleSearch = (e) => {
-    setSearchMountain(e.target.value);
-  };
-
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    dispatch(fetchMountain({ search: searchMountain, page: 1, limit: 12 }));
-  };
-
   useEffect(() => {
     if (active) {
       setNavbarActive(active);
@@ -46,43 +37,33 @@ const SideBar = ({ children, active }) => {
   }, [active]);
 
   return (
-    <div className="flex h-screen">
-      <nav className="bg-gray-100 h-screen flex flex-col shadow-lg w-[300px] fixed">
-        <header className="p-6 bg-white flex-shrink-0 shadow-md">
-          <h1 className="text-2xl font-bold text-mainGreen">
-            <span className="text-mainSoil">Giri</span>Guide
+    <div className='flex h-screen'>
+      <nav className='bg-gray-100 h-screen flex flex-col shadow-lg w-[300px] fixed'>
+        <header className='p-6 bg-white flex-shrink-0 shadow-md'>
+          <h1 className='text-2xl font-bold text-mainGreen'>
+            <span className='text-mainSoil'>Giri</span>Guide
           </h1>
         </header>
-        <section className="flex flex-col flex-grow mt-4">
+        <section className='flex flex-col flex-grow mt-4'>
           {links.map((link) => (
             <button
               key={link.name}
               className={`hover:bg-mainGreen hover:text-white transition-colors w-full px-4 ${
                 navbarActive === link.link ? "bg-mainSoil text-white" : ""
               }`}
-              onClick={() => setNavbarActive(link.link)}>
-              <Link to={link.link} className="block py-4 text-start">
+              onClick={() => setNavbarActive(link.link)}
+            >
+              <Link to={link.link} className='block py-4 text-start'>
                 {link.name}
               </Link>
             </button>
           ))}
-          <form onSubmit={handleSearchSubmit}>
-            {navbarActive === "/mountain" && (
-              <input
-                type="search"
-                className="w-full p-2 rounded-md text-zinc-950"
-                placeholder="Search Mountain Name"
-                value={searchMountain}
-                onChange={handleSearch}
-              />
-            )}
-          </form>
-          <Button className="w-full bg-error text-white" onClick={handleLogout}>
+          <Button className='w-full bg-error text-white' onClick={handleLogout}>
             Logout
           </Button>
         </section>
       </nav>
-      <section className="ml-[300px] flex-grow p-6 h-screen overflow-y-scroll">
+      <section className='ml-[300px] flex-grow p-6 h-screen overflow-y-scroll'>
         {children}
       </section>
     </div>
