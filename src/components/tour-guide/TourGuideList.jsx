@@ -177,7 +177,7 @@ const TourGuideList = () => {
                 </ModalHeader>
                 <ModalBody className='flex justify-center items-center'>
                   <AiOutlineCloseCircle className='text-error text-center text-9xl mb-8 mt-3' />
-                  <p>{customAlertMessage}</p>
+                  <p className='text-center text-error'>{customAlertMessage}</p>
                 </ModalBody>
                 <ModalFooter className='flex gap-2 items-center'>
                   {isDelete && (
