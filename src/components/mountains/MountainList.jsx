@@ -114,27 +114,28 @@ const MountainList = () => {
 
   return (
     <section>
-      <section className="mt-5 flex flex-col gap-5">
+      <section className='mt-5 flex flex-col gap-5'>
         <Modal
           isOpen={isOpen}
-          size="5xl"
+          size='5xl'
           onClose={handleOnMountainDetailsClose}
           onOpenChange={onOpenChange}
-          className="h-4/5 overflow-scroll w-full">
+          className='h-4/5 overflow-scroll w-full'
+        >
           <ModalContent>
             {(closeModal) => (
               <>
-                <ModalHeader className="flex flex-col gap-1">
+                <ModalHeader className='flex flex-col gap-1'>
                   Mountain
                 </ModalHeader>
                 <ModalBody>
-                  <section className="flex gap-5 w-full px-5 py-2">
+                  <section className='flex gap-5 w-full px-5 py-2'>
                     <FormMountain
                       onClose={() => {
                         closeModal();
                       }}
                     />
-                    <section className="w-full">
+                    <section className='w-full'>
                       <FormHikingPoint onClose={closeModal} />
                       <HikingPointList id={selectedMountain?.id} />
                     </section>
@@ -142,9 +143,10 @@ const MountainList = () => {
                 </ModalBody>
                 <ModalFooter>
                   <Button
-                    color="danger"
-                    variant="light"
-                    onPress={handleOnMountainDetailsClose}>
+                    color='danger'
+                    variant='light'
+                    onPress={handleOnMountainDetailsClose}
+                  >
                     Close
                   </Button>
                 </ModalFooter>
@@ -158,28 +160,31 @@ const MountainList = () => {
           classNames={{
             backdrop:
               "bg-gradient-to-t from-zinc-900 to-zinc-900/10 backdrop-opacity-20",
-          }}>
+          }}
+        >
           <ModalContent>
             {() => (
               <>
-                <ModalHeader className="flex flex-col gap-1">
+                <ModalHeader className='flex flex-col gap-1'>
                   {isDelete ? "Delete" : "Error"}
                 </ModalHeader>
                 <ModalBody>
-                  <p className="text-error">{customAlertMessage}</p>
+                  <p className='text-error'>{customAlertMessage}</p>
                 </ModalBody>
-                <ModalFooter className="flex gap-2 items-center">
+                <ModalFooter className='flex gap-2 items-center'>
                   {isDelete && (
                     <MdDelete
-                      className="text-error text-3xl cursor-pointer"
-                      onClick={() => handleDelete(deleteId)}>
+                      className='text-error text-3xl cursor-pointer'
+                      onClick={() => handleDelete(deleteId)}
+                    >
                       Delete
                     </MdDelete>
                   )}
                   <Button
-                    color="danger"
-                    variant="light"
-                    onPress={handleCloseCustomAlert}>
+                    color='danger'
+                    variant='light'
+                    onPress={handleCloseCustomAlert}
+                  >
                     Close
                   </Button>
                 </ModalFooter>
@@ -187,7 +192,7 @@ const MountainList = () => {
             )}
           </ModalContent>
         </Modal>
-        <section className="flex flex-wrap justify-center gap-5">
+        <section className='flex flex-wrap justify-center gap-5'>
           {status === "loading" ? (
             <HamsterLoading></HamsterLoading>
           ) : (
@@ -200,39 +205,51 @@ const MountainList = () => {
                 return (
                   <section
                     key={mountain?.id}
-                    className="flex gap-4 justify-between mb-5">
-                    <section className="flex flex-1 justify-between w-[300px]">
+                    className='flex gap-4 justify-between mb-5'
+                  >
+                    <section className='flex flex-1 justify-between w-[300px]'>
                       <Card
-                        shadow="sm"
+                        shadow='sm'
                         key={mountain?.id}
                         isPressable
-                        className="w-[300px]">
-                        <CardBody className="overflow-visible p-0">
+                        className='w-[300px]'
+                      >
+                        <CardBody className='overflow-visible p-0'>
                           <Image
-                            shadow="sm"
-                            radius="lg"
-                            width="100%"
+                            shadow='sm'
+                            radius='lg'
+                            width='100%'
                             alt={mountain?.name || "Mountain Image"}
-                            className="w-full object-cover h-[140px]"
+                            className='w-full object-cover h-[140px]'
                             src={mountain?.image}
                           />
                         </CardBody>
-                        <CardFooter className="text-small justify-between gap-5">
+                        <CardFooter className='text-small justify-between gap-5'>
                           <b>{mountain?.name}</b>
-                          <section className="buttonGroup flex gap-4 items-center">
-                            <MdDelete
+                          <section className='buttonGroup flex gap-2 items-center'>
+                            {/* <MdDelete
                               className="text-3xl text-error font-bold"
                               onClick={() =>
                                 confirmDelete(mountain?.id, mountain.name)
                               }
-                            />
-                            <Button
-                              className="text-neutral-50 bg-successful hover:bg-successfulHover font-bold"
+                              
+                            /> */}
+                            <button
+                              className='bg-red-500 hover:bg-red-400 text-white font-bold py-1 px-4 border-b-4 border-red-700 hover:border-red-500 rounded-md'
+                              onClick={() =>
+                                confirmDelete(mountain?.id, mountain.name)
+                              }
+                            >
+                              Delete
+                            </button>
+                            <button
+                              className='bg-blue-500 hover:bg-blue-400 text-white font-bold py-1 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded-md'
                               onClick={() => {
                                 handleDetails(mountain);
-                              }}>
+                              }}
+                            >
                               Details
-                            </Button>
+                            </button>
                           </section>
                         </CardFooter>
                       </Card>
