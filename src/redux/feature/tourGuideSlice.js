@@ -44,7 +44,7 @@ const fetchHikingPointByMountainId = createAsyncThunk(
   async (id, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.get(`/mountains/${id}`);
-      return response.data.data.hikingPoints;
+      return response.data.data;
     } catch (e) {
       return rejectWithValue(e.response.data);
     }
@@ -141,6 +141,7 @@ const tourGuideSlice = createSlice({
     selectedTourGuide: null,
     tourGuideId: null,
     mountainIdForSelectingHikingPoint: null,
+    mountainNameSelected: null,
     hikingPointIdSelected: [],
     hikingPointFromMountainId: null,
     isTourGuideUpdating: false,
@@ -209,7 +210,6 @@ const tourGuideSlice = createSlice({
         state.status = "loading";
       })
       .addCase(fetchMasteredHikingPoint.fulfilled, (state, action) => {
-        console.log("payload", action.payload);
         state.status = "succeeded";
         state.mountains = action.payload;
       })
@@ -222,7 +222,8 @@ const tourGuideSlice = createSlice({
       })
       .addCase(fetchHikingPointByMountainId.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.hikingPointFromMountainId = action.payload.filter(
+        state.mountainNameSelected = action.payload.name;
+        state.hikingPointFromMountainId = action.payload.hikingPoints.filter(
           (hikingPoint) =>
             !state.hikingPointIdSelected.includes(hikingPoint.id) &&
             !state.mountains.some(
@@ -238,7 +239,6 @@ const tourGuideSlice = createSlice({
         state.status = "loading";
       })
       .addCase(createTourGuide.fulfilled, (state, action) => {
-        console.log("payload", action.payload);
         state.status = "succeeded";
         state.tourGuides.push(action.payload);
       })

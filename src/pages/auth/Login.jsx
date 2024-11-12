@@ -56,8 +56,8 @@ const Login = () => {
       const token = localStorage.getItem("token");
       const jwt = jwtDecode(token);
       const isTokenExpired = jwt.exp < Date.now() / 1000;
-      console.log("Decoded", jwt);
-      console.log("Is expired", token, isTokenExpired);
+      console.log("Decoded", jwt.exp);
+      console.log("Is expired", token, isTokenExpired, Date.now()), jwt.exp;
       const condition = token && !isTokenExpired;
       if (condition) {
         dispatch(keepLogin(token));

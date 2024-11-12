@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import {
   addTourGuideId,
+  clearHikingPointIdSelected,
   deleteTourGuide,
   fetchMasteredHikingPoint,
   fetchTourGuide,
@@ -70,6 +71,7 @@ const TourGuideList = () => {
     dispatch(setIsTourGuideUpdating(false));
     dispatch(setSelectedTourGuide(null));
     dispatch(setMountainIdForSelectingHikingPoint(null));
+    dispatch(clearHikingPointIdSelected());
   };
 
   useEffect(() => {

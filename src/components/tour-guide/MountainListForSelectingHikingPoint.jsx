@@ -13,6 +13,7 @@ import {
 } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { setMountainIdForSelectingHikingPoint } from "../../redux/feature/tourGuideSlice";
+import HamsterLoading from "../HamsterLoading";
 const MountainListForSelectingHikingPoint = () => {
   const dispatch = useDispatch();
   const [currentPage, setCurrentPage] = useState(1);
@@ -44,10 +45,10 @@ const MountainListForSelectingHikingPoint = () => {
   }, [dispatch, currentPage, mountainsPerPage]);
 
   return (
-    <section className="flex flex-col gap-5">
+    <section className="flex flex-col gap-5 mb-6">
       <section className="flex flex-wrap gap-5 justify-center">
         {status === "loading" ? (
-          <div>Loading...</div>
+          <HamsterLoading />
         ) : (
           <>
             {mountains?.map((mountain) => {

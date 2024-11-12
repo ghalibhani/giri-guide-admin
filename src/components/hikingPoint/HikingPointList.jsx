@@ -7,7 +7,8 @@ import {
   setIsUpdate,
 } from "../../redux/feature/hikingPointSlice";
 import { useEffect } from "react";
-import CustomButton from "../CustomButton";
+import { MdDelete } from "react-icons/md";
+import { GrEdit } from "react-icons/gr";
 
 const HikingPointList = () => {
   const dispatch = useDispatch();
@@ -42,7 +43,7 @@ const HikingPointList = () => {
   }
 
   return (
-    <section className="flex flex-wrap gap-5 mt-5">
+    <section className="flex flex-wrap gap-3 mt-5 p-4">
       {hikingPoints.map((hikingPoint) => (
         <Card
           key={hikingPoint?.id}
@@ -51,30 +52,33 @@ const HikingPointList = () => {
           className="w-full"
           onPress={() => console.log("item pressed")}>
           <CardHeader>
-            <p>{hikingPoint?.name || "Unnamed Hiking Point"}</p>
+            <p className="font-bold text-mainSoil text-xl">
+              {hikingPoint?.name || "Unnamed Hiking Point"}
+            </p>
           </CardHeader>
 
           <CardBody>
-            <p>
+            <p className="text-mainGreen">
               Coordinate: {hikingPoint?.coordinate || "N/A"}
               <br />
               Price: {hikingPoint?.price || "N/A"}
             </p>
           </CardBody>
 
-          <CardFooter className="flex items-center justify-between gap-4">
-            <CustomButton
-              onPress={() => {
+          <CardFooter className="flex items-center justify-end gap-4">
+            <GrEdit
+              className="text-3xl rounded-full text-mainSoil"
+              onClick={() => {
                 dispatch(addSelectedHikingPoint(hikingPoint));
                 dispatch(setIsUpdate(true));
-              }}>
-              Edit
-            </CustomButton>
-            <CustomButton
-              customStyles={"bg-error"}
-              onPress={() => handleDeleteHikingPoint(hikingPoint?.id)}>
-              Delete
-            </CustomButton>
+              }}
+            />
+            <MdDelete
+              className="text-3xl rounded-full text-errorHover"
+              onClick={() => {
+                handleDeleteHikingPoint(hikingPoint?.id);
+              }}
+            />
           </CardFooter>
         </Card>
       ))}

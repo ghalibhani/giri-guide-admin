@@ -5,7 +5,10 @@ import { Button, Input } from "@nextui-org/react";
 import MountainListForSelectingHikingPoint from "./MountainListForSelectingHikingPoint";
 import CustomButton from "../CustomButton";
 import HikingPointListForAddingMasteredHikingPoint from "./HikingPointListForAddingMasteredHikingPoint";
-import { createMasteredHikingPoint } from "../../redux/feature/tourGuideSlice";
+import {
+  clearHikingPointIdSelected,
+  createMasteredHikingPoint,
+} from "../../redux/feature/tourGuideSlice";
 
 const AddMasteredHikingPoint = () => {
   const dispatch = useDispatch();
@@ -24,6 +27,7 @@ const AddMasteredHikingPoint = () => {
         })
       );
     });
+    dispatch(clearHikingPointIdSelected());
   };
   return (
     <section className="flex flex-col gap-4">
@@ -31,10 +35,11 @@ const AddMasteredHikingPoint = () => {
         <CustomButton
           onClick={() => {
             setIsAddingHikingPoint(true);
-          }}>
+          }}
+          className="bg-successful text-white mb-6">
           Add Hiking Point Mastered
         </CustomButton>
-        )}
+      )}
       {isAddingHikingPoint && !mountainIdForSelectingHikingPoint && (
         <>
           <h1>Select Mountain for add Hiking Point Mastered</h1>
