@@ -30,6 +30,8 @@ import FormHikingPoint from "../hikingPoint/FormHikingPoint";
 import HikingPointList from "../hikingPoint/HikingPointList";
 import HamsterLoading from "../HamsterLoading";
 import { MdDelete } from "react-icons/md";
+import { AiOutlineCloseCircle } from "react-icons/ai";
+
 const MountainList = () => {
   const dispatch = useDispatch();
   const [currentPage, setCurrentPage] = useState(1);
@@ -168,17 +170,24 @@ const MountainList = () => {
                 <ModalHeader className='flex flex-col gap-1'>
                   {isDelete ? "Delete" : "Error"}
                 </ModalHeader>
-                <ModalBody>
+                <ModalBody className='flex justify-center items-center'>
+                  <AiOutlineCloseCircle className='text-error text-center text-9xl mb-8 mt-3' />
                   <p className='text-error'>{customAlertMessage}</p>
                 </ModalBody>
                 <ModalFooter className='flex gap-2 items-center'>
                   {isDelete && (
-                    <MdDelete
-                      className='text-error text-3xl cursor-pointer'
+                    // <MdDelete
+                    //   className='text-error text-3xl cursor-pointer'
+                    //   onClick={() => handleDelete(deleteId)}
+                    // >
+                    //   Delete
+                    // </MdDelete>
+                    <button
+                      className='bg-red-500 hover:bg-red-400 text-white font-bold py-1 px-4 border-b-4 border-red-700 hover:border-red-500 rounded-md'
                       onClick={() => handleDelete(deleteId)}
                     >
                       Delete
-                    </MdDelete>
+                    </button>
                   )}
                   <Button
                     color='danger'
