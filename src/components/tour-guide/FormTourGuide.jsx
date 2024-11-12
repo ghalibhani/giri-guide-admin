@@ -8,6 +8,11 @@ import {
   updateTourGuideImage,
 } from "../../redux/feature/tourGuideSlice";
 import { useDispatch, useSelector } from "react-redux";
+import {
+  isPositiveNumber,
+  isStrongPassword,
+  isEmailValid,
+} from "../../validation/validate";
 
 const FormTourGuide = ({ formInput = false }) => {
   const dispatch = useDispatch();
@@ -201,20 +206,6 @@ const FormTourGuide = ({ formInput = false }) => {
     }
   };
 
-  const isPositiveNumber = (value) => {
-    const regex = /^[0-9]+$/;
-    return regex.test(value) && Number(value) > 0;
-  };
-  const isEmailValid = (email) => {
-    const re = /^\S+@\S+\.\S+$/;
-    return re.test(email);
-  };
-  const isStrongPassword = (password) => {
-    const re =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    return re.test(password);
-  };
-
   return (
     <form
       className="flex flex-col gap-4 justify-center"
@@ -232,6 +223,7 @@ const FormTourGuide = ({ formInput = false }) => {
           label="Full Name"
           color="successSecondary"
           variant="bordered"
+          isRequired
           isDisabled={isTourGuideUpdating == false && formInput == false}
           onChange={(e) => setName(e.target.value)}
           value={name}
@@ -242,6 +234,7 @@ const FormTourGuide = ({ formInput = false }) => {
             type="text"
             label="NIK"
             color="successSecondary"
+            isRequired
             isInvalid={!isPositiveNumber(nik) || !isValidNIK}
             errorMessage="NIK harus lebih panjang dari 16 digit dan hanya angka"
             variant="bordered"
@@ -260,6 +253,7 @@ const FormTourGuide = ({ formInput = false }) => {
         type="text"
         label="Address"
         color="successSecondary"
+        isRequired
         variant="bordered"
         onChange={(e) => setAddress(e.target.value)}
         value={address}
@@ -269,6 +263,7 @@ const FormTourGuide = ({ formInput = false }) => {
         type="text"
         label="Description"
         color="successSecondary"
+        isRequired
         variant="bordered"
         isInvalid={!isDescriptionValid}
         errorMessage="Description is too long, please use 900 characters or less"
@@ -288,6 +283,7 @@ const FormTourGuide = ({ formInput = false }) => {
         type="file"
         label="Image"
         color="successSecondary"
+        isRequired
         isInvalid={!isImageValid}
         errorMessage="Image must be in JPEG or PNG format and less than 1MB"
         variant="bordered"
@@ -299,6 +295,7 @@ const FormTourGuide = ({ formInput = false }) => {
           type="email"
           label="Email"
           color="successSecondary"
+          isRequired
           isInvalid={!isEmailValid(email)}
           errorMessage="Please enter a valid email"
           variant="bordered"
@@ -311,6 +308,7 @@ const FormTourGuide = ({ formInput = false }) => {
           label="Password"
           color="successSecondary"
           variant="bordered"
+          isRequired
           isInvalid={!isStrongPassword(password)}
           errorMessage="Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character"
           onChange={(e) => setPassword(e.target.value)}
@@ -323,7 +321,8 @@ const FormTourGuide = ({ formInput = false }) => {
           type="number"
           label="Max Hiker"
           color="successSecondary"
-          isInvalid={!isPositiveNumber(maxHiker)}
+          isRequired
+          isInvalid={!isPositiveNumber(maxHiker) && maxHiker >= 5}
           errorMessage="Please use a positive number"
           variant="bordered"
           onChange={(e) => setMaxHiker(e.target.value)}
@@ -334,6 +333,7 @@ const FormTourGuide = ({ formInput = false }) => {
           type="number"
           label="Price"
           color="successSecondary"
+          isRequired
           isInvalid={!isPositiveNumber(price)}
           errorMessage="Please use a positive number"
           variant="bordered"
@@ -345,6 +345,7 @@ const FormTourGuide = ({ formInput = false }) => {
           type="number"
           label="Additional Price"
           color="successSecondary"
+          isRequired
           isInvalid={!isPositiveNumber(additionalPrice)}
           errorMessage="Please use a positive number"
           variant="bordered"
@@ -359,6 +360,7 @@ const FormTourGuide = ({ formInput = false }) => {
           type="number"
           label="Total Porter"
           color="successSecondary"
+          isRequired
           isInvalid={!isPositiveNumber(totalPorter)}
           errorMessage="Please use a positive number"
           variant="bordered"
@@ -370,6 +372,7 @@ const FormTourGuide = ({ formInput = false }) => {
           type="number"
           label="Price Porter"
           color="successSecondary"
+          isRequired
           isInvalid={!isPositiveNumber(pricePorter)}
           errorMessage="Please use a positive number"
           variant="bordered"
@@ -383,6 +386,7 @@ const FormTourGuide = ({ formInput = false }) => {
           type="date"
           label="Birth Date"
           color="successSecondary"
+          isRequired
           variant="bordered"
           onChange={(e) => setBirthDate(e.target.value)}
           value={birthDate}
@@ -391,6 +395,7 @@ const FormTourGuide = ({ formInput = false }) => {
           isDisabled={isTourGuideUpdating == false && formInput == false}
           label="Gender"
           color="successSecondary"
+          isRequired
           variant="bordered"
           value={gender}
           onChange={(e) => setGender(e.target.value)}
@@ -408,6 +413,7 @@ const FormTourGuide = ({ formInput = false }) => {
         type="number"
         label="Bank Account"
         color="successSecondary"
+        isRequired
         isInvalid={!isPositiveNumber(bankAccount)}
         errorMessage="Please enter a valid bank account"
         variant="bordered"

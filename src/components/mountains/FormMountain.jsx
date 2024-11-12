@@ -49,6 +49,10 @@ const FormMountain = ({ onClose, formInput = false }) => {
   }, [description]);
 
   useEffect(() => {
+    if (!image) {
+      setIsImageValid(true);
+      return;
+    }
     setIsImageValid(
       image && (image.type === "image/jpeg" || image.type === "image/png")
     );
@@ -228,12 +232,11 @@ const FormMountain = ({ onClose, formInput = false }) => {
         isDisabled={isMountainUpdating == false && formInput == false}
         variant="bordered"
         onChange={handleImageChange}
+        isInvalid={!isImageValid}
+        errorMessage="Image must be in JPEG or PNG format and less than 1MB"
         accept="image/jpeg,image/png"
         max-size={1024 * 1024}
       />
-      {!isImageValid && (
-        <p className="text-error">Image must be in JPEG or PNG format</p>
-      )}
       <section className="flex w-full gap-4">
         <Select
           label="Status"
