@@ -252,19 +252,21 @@ const FormMountain = ({ onClose, formInput = false }) => {
         }}
         value={description}
       />
-      <Input
-        type="file"
-        label="Image"
-        color="successSecondary"
-        isRequired
-        isDisabled={isMountainUpdating == false && formInput == false}
-        variant="bordered"
-        onChange={handleImageChange}
-        isInvalid={!isImageValid}
-        errorMessage="Image must be in JPEG or PNG format and less than 1MB"
-        accept="image/jpeg,image/png"
-        max-size={1024 * 1024}
-      />
+      {(isMountainUpdating || formInput) && (
+        <Input
+          type="file"
+          label="Image"
+          color="successSecondary"
+          isRequired
+          isDisabled={isMountainUpdating == false && formInput == false}
+          variant="bordered"
+          onChange={handleImageChange}
+          isInvalid={!isImageValid}
+          errorMessage="Image must be in JPEG or PNG format and less than 1MB"
+          accept="image/jpeg,image/png"
+          max-size={1024 * 1024}
+        />
+      )}
       <section className="flex w-full gap-4">
         <Select
           label="Status"
