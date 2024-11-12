@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { keepLogin, login } from "../../redux/feature/authSlice";
 import { useNavigate } from "react-router";
 import InputPassword from "../../components/InputPassword";
+import { jwtDecode } from "jwt-decode";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -33,9 +34,9 @@ const Login = () => {
   useEffect(() => {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     setIsEmailValid(email ? emailRegex.test(email) : true);
-    const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    setIsPasswordValid(password ? passwordRegex.test(password) : true);
+    // const passwordRegex =
+    // /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    // setIsPasswordValid(password ? passwordRegex.test(password) : true);
   }, [email, password]);
 
   const handleLogin = async () => {
@@ -44,7 +45,7 @@ const Login = () => {
       onOpen();
       return;
     }
-    if (!isEmailValid || !isPasswordValid) {
+    if (!isEmailValid) {
       return;
     }
     dispatch(login({ email, password }));
@@ -53,7 +54,12 @@ const Login = () => {
   useEffect(() => {
     const getKeepLogin = async () => {
       const token = localStorage.getItem("token");
-      if (token) {
+      const jwt = jwtDecode(token);
+      const isTokenExpired = jwt.exp < Date.now() / 1000;
+      console.log("Decoded", jwt);
+      console.log("Is expired", token, isTokenExpired);
+      const condition = token && !isTokenExpired;
+      if (condition) {
         dispatch(keepLogin(token));
       }
     };
@@ -89,7 +95,6 @@ const Login = () => {
 
   useEffect(() => {
     if (status === "failed") {
-      console.log("status", status);
       setErrorMessage("Email atau Password anda salah");
       onOpen();
     }
@@ -139,10 +144,10 @@ const Login = () => {
           <InputPassword
             onChange={(e) => setPassword(e.target.value)}
             className="w-full"
-            isInvalid={!isPasswordValid}
-            color={!isPasswordValid ? "danger" : "success"}
-            errorMessage="Password Invalid ( minimal 8 character , uppercase , lowercase ,
-              number , special character)"
+            // isInvalid={!isPasswordValid}
+            // color={!isPasswordValid ? "danger" : "success"}
+            // errorMessage="Password Invalid ( minimal 8 character , uppercase , lowercase ,
+            // number , special character)"
           />
         </section>
         <Button

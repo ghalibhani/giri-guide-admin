@@ -91,22 +91,22 @@ const RouteForm = () => {
 
   const handleEditRoute = (index) => {
     if (!from || !to || !transportation || !estimate || !distance) {
-      alert("Isi semua data");
+      handleOpenCustomAlert("Isi semua data");
       return;
     }
-    if (confirm("Are you sure you want to edit this route?")) {
-      try {
-        dispatch(
-          updateFragmentRoute({
-            index,
-            data: { from, to, transportation, estimate, distance },
-          })
-        );
-        clearForm();
-        setIndexEditStep(fragmentRoute.length);
-      } catch (error) {
-        handleOpenCustomAlert("Error when editing route", error);
-      }
+    try {
+      dispatch(
+        updateFragmentRoute({
+          index,
+          data: { from, to, transportation, estimate, distance },
+        })
+      );
+      clearForm();
+      setTitle("");
+      setDescription("");
+      setIndexEditStep(fragmentRoute.length);
+    } catch (error) {
+      handleOpenCustomAlert("Error when editing route", error);
     }
   };
 
@@ -190,7 +190,6 @@ const RouteForm = () => {
     }
   }, [isRouteUpdating, routesDetail]);
   useEffect(() => {
-    console.log(fragmentRoute);
     if (indexEditStep < (fragmentRoute?.length || 0)) {
       const step = fragmentRoute[indexEditStep];
       setFrom(step.from);
@@ -237,9 +236,7 @@ const RouteForm = () => {
         <ModalContent>
           {() => (
             <>
-              <ModalHeader className="flex flex-col gap-1">
-                {isDelete ? "Delete" : "Error"}
-              </ModalHeader>
+              <ModalHeader className="flex flex-col gap-1">Message</ModalHeader>
               <ModalBody>
                 <p className="text-error">{customAlertMessage}</p>
               </ModalBody>

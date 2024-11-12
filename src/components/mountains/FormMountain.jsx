@@ -31,7 +31,6 @@ const FormMountain = ({ onClose, formInput = false }) => {
 
   useEffect(() => {
     if (selectedMountain) {
-      console.log("apakah ini running");
       setName(selectedMountain.name || "");
       setLocation(selectedMountain.city || "");
       setDescription(selectedMountain.description || "");

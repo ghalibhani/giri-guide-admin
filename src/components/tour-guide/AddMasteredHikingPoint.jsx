@@ -34,7 +34,7 @@ const AddMasteredHikingPoint = () => {
           }}>
           Add Hiking Point Mastered
         </CustomButton>
-      )}
+        )}
       {isAddingHikingPoint && !mountainIdForSelectingHikingPoint && (
         <>
           <h1>Select Mountain for add Hiking Point Mastered</h1>
@@ -49,14 +49,14 @@ const AddMasteredHikingPoint = () => {
             }
           />
           <MountainListForSelectingHikingPoint />
-          {hikingPointIdSelected.length >= 0 ? (
+          {hikingPointIdSelected.length > 0 ? (
             <Button
               onPress={handleAddHikingPoint}
-              className="bg-successful text-white">
+              className="bg-successful text-white mb-6">
               Add Mastered Hiking Point
             </Button>
           ) : (
-            <Button>Add Mastered Hiking Point</Button>
+            <Button className="mb-6">Add Mastered Hiking Point</Button>
           )}
         </>
       )}
