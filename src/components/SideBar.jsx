@@ -58,9 +58,12 @@ const SideBar = ({ children, active }) => {
               </Link>
             </button>
           ))}
-          <Button className='w-full bg-error text-white' onClick={handleLogout}>
+          <button
+            className='w-full py-2 px-2 transition-all bg-red-500 hover:bg-red-400 text-white'
+            onClick={handleLogout}
+          >
             Logout
-          </Button>
+          </button>
         </section>
       </nav>
       <section className='ml-[300px] flex-grow p-6 h-screen overflow-y-scroll'>

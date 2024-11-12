@@ -54,7 +54,7 @@ const Mountain = ({ active = "/mountain" }) => {
             />
           )}
         </form>
-        <CustomButton customStyles={"w-[200px]"} onClick={onOpen}>
+        <CustomButton customStyles={"w-[200px] border-b-4"} onClick={onOpen}>
           Add Mountain
         </CustomButton>
       </div>
