@@ -38,8 +38,8 @@ const TourGuide = () => {
   }, [status]);
 
   return (
-    <section className="font-inter h-full">
-      <h1 className="mb-5 text-3xl font-bold text-mainSoil">
+    <section className='font-inter h-full'>
+      <h1 className='mb-5 text-3xl font-bold text-mainSoil'>
         Tour Guide Management
       </h1>
       <CustomModal
@@ -48,16 +48,24 @@ const TourGuide = () => {
         content={error}
       />
 
-      <CustomButton onClick={handleOpenModal}>Add Tour Guide</CustomButton>
+      <div className='flex justify-end'>
+        <CustomButton
+          customStyles={"w-[200px] mr-28"}
+          onClick={handleOpenModal}
+        >
+          Add Tour Guide
+        </CustomButton>
+      </div>
       <Modal
-        className="h-4/5 overflow-scroll"
-        size="5xl"
+        className='h-4/5 overflow-scroll'
+        size='5xl'
         isOpen={isOpenModal}
-        onOpenChange={(open) => setIsOpenModal(open)}>
+        onOpenChange={(open) => setIsOpenModal(open)}
+      >
         <ModalContent>
           {(closeModal) => (
             <>
-              <ModalHeader className="flex flex-col gap-1">
+              <ModalHeader className='flex flex-col gap-1'>
                 Add New Tour Guide
               </ModalHeader>
               <ModalBody>
@@ -65,9 +73,10 @@ const TourGuide = () => {
               </ModalBody>
               <ModalFooter>
                 <Button
-                  color="danger"
-                  variant="light"
-                  onPress={handleCloseModal}>
+                  color='danger'
+                  variant='light'
+                  onPress={handleCloseModal}
+                >
                   Close
                 </Button>
               </ModalFooter>

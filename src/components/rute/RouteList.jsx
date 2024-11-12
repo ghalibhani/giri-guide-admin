@@ -22,6 +22,7 @@ import {
 import CustomButton from "../CustomButton";
 import CustomModal from "../CustomModal";
 import { MdDelete } from "react-icons/md";
+import { AiOutlineCloseCircle } from "react-icons/ai";
 
 const RouteList = () => {
   const dispatch = useDispatch();
@@ -76,7 +77,7 @@ const RouteList = () => {
   }, [page, size]);
 
   return (
-    <section className="flex flex-col">
+    <section className='flex flex-col'>
       <CustomModal
         isOpen={isOpen}
         onOpenChange={onOpen}
@@ -94,7 +95,7 @@ const RouteList = () => {
             ))}
           </>
         }
-        title="Details"
+        title='Details'
         primaryActionText={"Update"}
         secondaryActionText={"Close"}
         onPrimaryAction={() => {
@@ -111,28 +112,38 @@ const RouteList = () => {
         classNames={{
           backdrop:
             "bg-gradient-to-t from-zinc-900 to-zinc-900/10 backdrop-opacity-20",
-        }}>
+        }}
+      >
         <ModalContent>
           {() => (
             <>
-              <ModalHeader className="flex flex-col gap-1">
+              <ModalHeader className='flex flex-col gap-1'>
                 {isDelete ? "Delete" : "Error"}
               </ModalHeader>
-              <ModalBody>
-                <p className="text-error">{customAlertMessage}</p>
+              <ModalBody className='flex justify-center items-center'>
+                <AiOutlineCloseCircle className='text-error text-center text-9xl mb-8 mt-3' />
+                <p>{customAlertMessage}</p>
               </ModalBody>
-              <ModalFooter className="flex gap-2 items-center">
+              <ModalFooter className='flex gap-2 items-center'>
                 {isDelete && (
-                  <MdDelete
-                    className="text-error text-3xl cursor-pointer"
-                    onClick={() => handleDelete(deleteId)}>
+                  // <MdDelete
+                  //   className='text-error text-3xl cursor-pointer'
+                  //   onClick={() => handleDelete(deleteId)}
+                  // >
+                  //   Delete
+                  // </MdDelete>
+                  <button
+                    className='bg-red-500 hover:bg-red-400 text-white font-bold py-1 px-4 border-b-4 border-red-700 hover:border-red-500 rounded-md'
+                    onClick={() => handleDelete(deleteId)}
+                  >
                     Delete
-                  </MdDelete>
+                  </button>
                 )}
                 <Button
-                  color="danger"
-                  variant="light"
-                  onPress={handleCloseCustomAlert}>
+                  color='danger'
+                  variant='light'
+                  onPress={handleCloseCustomAlert}
+                >
                   Close
                 </Button>
               </ModalFooter>
@@ -140,35 +151,50 @@ const RouteList = () => {
           )}
         </ModalContent>
       </Modal>
-      <Card className="mb-3">
-        <CardBody className="flex bg-mainSoil text-white flex-row justify-between">
-          <section className="flex gap-4 px-6">
-            <p className="w-[150px] font-bold text-md">Judul</p>
-            <p className="w-[200px] font-bold text-md">Deskripsi</p>
+      <Card className='mb-3'>
+        <CardBody className='flex bg-mainSoil text-white flex-row justify-between'>
+          <section className='flex gap-4 px-6'>
+            <p className='w-[150px] font-bold text-md'>Judul</p>
+            <p className='w-[200px] ml-14 font-bold text-md'>Deskripsi</p>
           </section>
-          <p className="w-[150px] font-bold text-md">Action</p>
+          <p className='w-[150px] font-bold text-md'>Action</p>
         </CardBody>
       </Card>
       {routes.map((route) => (
-        <Card key={route.id} className="mb-3">
-          <CardBody className="flex flex-row justify-between items-center text-mainSoil">
-            <section className="flex gap-4 px-6">
-              <p className="w-[200px] font-bold text-md">{route.title}</p>
-              <p className="w-auto">{route.description}</p>
+        <Card key={route.id} className='mb-3'>
+          <CardBody className='flex flex-row justify-between items-center text-mainSoil'>
+            <section className='flex gap-4 px-6'>
+              <p className='w-[200px] font-bold text-md'>{route.title}</p>
+              <p className='w-auto'>{route.description}</p>
             </section>
-            <section className="flex gap-3 items-center">
-              <MdDelete
-                className="text-error text-3xl"
+            <section className='flex gap-3 items-center'>
+              {/* <MdDelete
+                className='text-error text-3xl'
                 onClick={() => confirmDelete(route.id, route.title)}
-              />
-              <CustomButton
+              /> */}
+              <button
+                className='bg-red-500 hover:bg-red-400 text-white font-bold py-1 px-4 border-b-4 border-red-700 hover:border-red-500 rounded-md'
+                onClick={() => confirmDelete(route.id, route.title)}
+              >
+                Delete
+              </button>
+              <button
+                onClick={() => {
+                  handleDetails(route.id);
+                }}
+                // text='Approve'
+                className='bg-blue-500 hover:bg-blue-400 text-white font-bold py-1 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded-md'
+              >
+                Details
+              </button>
+              {/* <CustomButton
                 customStyles={"bg-successful"}
                 onPress={() => {
                   handleDetails(route.id);
                 }}
-                text="Approve">
+              >
                 Details
-              </CustomButton>
+              </CustomButton> */}
             </section>
           </CardBody>
         </Card>
