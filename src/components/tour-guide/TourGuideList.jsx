@@ -79,7 +79,7 @@ const TourGuideList = () => {
       try {
         await dispatch(
           fetchTourGuide({ page: currentPage, size: tourGuidesPerPage })
-        );
+        ).unwrap();
       } catch (error) {
         handleOpenCustomAlert(error.message || "An error occurred");
       }
@@ -96,7 +96,7 @@ const TourGuideList = () => {
       await dispatch(deleteTourGuide(id)).unwrap();
       await dispatch(
         fetchTourGuide({ page: currentPage, size: tourGuidesPerPage })
-      );
+      ).unwrap();
     } catch (error) {
       handleOpenCustomAlert(error.message || "An error occurred");
     }
@@ -109,9 +109,9 @@ const TourGuideList = () => {
     }
 
     try {
-      await dispatch(fetchTourGuideById(tourGuide.id));
-      await dispatch(addTourGuideId(tourGuide.id));
-      await dispatch(fetchMasteredHikingPoint(tourGuide.id));
+      dispatch(fetchTourGuideById(tourGuide.id));
+      dispatch(addTourGuideId(tourGuide.id));
+      dispatch(fetchMasteredHikingPoint(tourGuide.id));
       dispatch(setIsTourGuideUpdating(false));
       onOpen();
     } catch (error) {

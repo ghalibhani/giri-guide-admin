@@ -50,3 +50,11 @@ export const validateImageType = (file) => {
   const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
   return allowedTypes.includes(file.type);
 };
+
+export const isNikValid = (nik) => {
+  if (nik.length === 0) {
+    return true;
+  }
+  const re = /^[0-9]{16}$/;
+  return re.test(nik);
+};
