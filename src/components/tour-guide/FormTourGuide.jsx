@@ -511,7 +511,7 @@ const FormTourGuide = ({ formInput = false }) => {
       {/* INI WOYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY */}
       <ConfirmationModal
         onClose={closeModal}
-        message={"Data berhasil di Update"}
+        message={"Data tourguide berhasil di Update"}
         isOpen={isModalOpen}
       />
       {isTourGuideUpdating && (
