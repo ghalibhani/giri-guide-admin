@@ -1,8 +1,20 @@
-# React + Vite
+# GiriGuide Admin Panel
+The Admin Panel is a web-based dashboard for managing the GiriGuide platform. It allows administrators to oversee tour guide listings, bookings, and user management effectively. Built with modern web technologies, the Admin Panel ensures a responsive and user-friendly experience.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Features
+- Dashboard Overview: Real-time insights into bookings, transactions, and platform activity.
+- Mountain Management: Add, update, or delete mountain details, including altitude, difficulty level, and general information.
+- Hiking Point Management: Manage starting points for hikes, including routes and associated guides.
+- Route Management: Configure hiking routes, including distances, estimated times, and difficulty levels.
+- Tour Guide Management: Add, update, or delete tour guide profiles, including availability and pricing.
+- Booking Management: View and manage user bookings and payment statuses.
+- Transaction Management: Monitor and manage all transactions, including refunds and payment statuses.
+- Withdrawal Management: Process withdrawal requests from tour guides for their earnings.
+- User Management: Monitor and manage user accounts securely.
 
-Currently, two official plugins are available:
+## Tech Stack
+- Framework: React.js
+- Build Tool: Vite
+- Styling: Tailwind CSS and NextUI
+- State Management: Redux
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
